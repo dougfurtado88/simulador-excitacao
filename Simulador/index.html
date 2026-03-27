@@ -138,7 +138,7 @@ header{
 .section-sub{
   font-size:12px;color:var(--mid);text-align:center;margin-bottom:36px;line-height:1.6;
 }
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 .card{
   background:#fff;border-radius:14px;padding:24px;
   box-shadow:0 2px 14px rgba(0,0,0,.07);
@@ -262,7 +262,11 @@ footer b{color:var(--gold)}
 }
 
 /* ── RESPONSIVE ───────────────────────────────────────── */
+@media(max-width:1100px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+}
 @media(max-width:640px){
+  .cards{grid-template-columns:1fr}
   header{padding:10px 16px}
   .logo-area img{height:32px}
   .logo-text h1{font-size:11px}
@@ -280,7 +284,7 @@ footer b{color:var(--gold)}
   <div class="logo-area">
     <img src="Assinatura.svg" alt="EPSE">
     <div class="logo-text">
-      <h1>ENERGY POWER — SERVIÇOS TÉCNICOS LTDA</h1>
+      <h1>ENERGY POWER SOLUTIONS & ENGINEERING LTDA</h1>
       <p>Engenharia de Sistemas de Excitação · Comissionamento · Ensaios Dinâmicos</p>
     </div>
   </div>
@@ -325,6 +329,29 @@ footer b{color:var(--gold)}
     </div>
     <div class="cards">
 
+      <!-- LINHA 1 -->
+      <div class="card">
+        <div class="card-icon">📋</div>
+        <div class="card-title">Sumário com Normas Referenciadas</div>
+        <div class="card-desc">Aba de sumário com tabela consolidada de todas as normas aplicadas, modelos de simulação implementados e método numérico, pronto para uso em relatórios técnicos.</div>
+        <div class="card-tags">
+          <span class="tag">Relatório</span>
+          <span class="tag">Comissionamento</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🏭</div>
+        <div class="card-title">5 Tipos de Máquinas Suportados</div>
+        <div class="card-desc">Hidráulico (Tdo'=8s), Turbo-Vapor (5s), Turbo-Gás (6s), Compensador Síncrono (7,5s) e Gerador Diesel (4,5s). Kag ajustado automaticamente por tipo.</div>
+        <div class="card-tags">
+          <span class="tag">Hidráulico</span>
+          <span class="tag">Vapor</span>
+          <span class="tag">Gás</span>
+          <span class="tag">Diesel</span>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-icon">📈</div>
         <div class="card-title">Degrau Positivo — AVR</div>
@@ -347,17 +374,7 @@ footer b{color:var(--gold)}
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-icon">⚡</div>
-        <div class="card-title">Rejeição de Carga</div>
-        <div class="card-desc">Distúrbio de tensão simulado após abertura do disjuntor em carga plena. Avalia sobressinal de rejeição e tempo de retorno à banda ±5% (trees ≤ 2 s).</div>
-        <div class="card-tags">
-          <span class="tag">OS ≤ 10%</span>
-          <span class="tag">trees ≤ 2 s</span>
-          <span class="tag">ONS 2.10</span>
-        </div>
-      </div>
-
+      <!-- LINHA 2 -->
       <div class="card">
         <div class="card-icon">🎛️</div>
         <div class="card-title">Regulador de Corrente de Campo (FCR)</div>
@@ -366,6 +383,17 @@ footer b{color:var(--gold)}
           <span class="tag">OS ≤ 15%</span>
           <span class="tag">ts ≤ 10 s</span>
           <span class="tag">ERF ≥ 2 pu/s</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Rejeição de Carga</div>
+        <div class="card-desc">Distúrbio de tensão simulado após abertura do disjuntor em carga plena. Avalia sobressinal de rejeição e tempo de retorno à banda ±5% (trees ≤ 2 s).</div>
+        <div class="card-tags">
+          <span class="tag">OS ≤ 10%</span>
+          <span class="tag">trees ≤ 2 s</span>
+          <span class="tag">ONS 2.10</span>
         </div>
       </div>
 
@@ -388,28 +416,6 @@ footer b{color:var(--gold)}
           <span class="tag">IEEE 421.2</span>
           <span class="tag">IEC 60034-16</span>
           <span class="tag">ONS 2.10</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-icon">🏭</div>
-        <div class="card-title">5 Tipos de Máquinas Suportados</div>
-        <div class="card-desc">Hidráulico (Tdo'=8s), Turbo-Vapor (5s), Turbo-Gás (6s), Compensador Síncrono (7,5s) e Gerador Diesel (4,5s). Kag ajustado automaticamente por tipo.</div>
-        <div class="card-tags">
-          <span class="tag">Hidráulico</span>
-          <span class="tag">Vapor</span>
-          <span class="tag">Gás</span>
-          <span class="tag">Diesel</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-icon">📋</div>
-        <div class="card-title">Sumário com Normas Referenciadas</div>
-        <div class="card-desc">Aba de sumário com tabela consolidada de todas as normas aplicadas, modelos de simulação implementados e método numérico, pronto para uso em relatórios técnicos.</div>
-        <div class="card-tags">
-          <span class="tag">Relatório</span>
-          <span class="tag">Comissionamento</span>
         </div>
       </div>
 
@@ -605,7 +611,7 @@ footer b{color:var(--gold)}
 
 <!-- ══ FOOTER ════════════════════════════════════════════════ -->
 <footer>
-  <b>ENERGY POWER — SERVIÇOS TÉCNICOS LTDA</b> · Simulador de Ensaios Dinâmicos — Sistema de Excitação<br>
+  <b>ENERGY POWER SOLUTIONS & ENGINEERING LTDA</b> · Simulador de Ensaios Dinâmicos — Sistema de Excitação<br>
   Desenvolvido por <b>Eng° Douglas Furtado</b> · 2026 · V0.09<br>
   IEEE 421.5 · IEEE 421.2 · ONS Submódulo 2.10 · IEC 60034-16 · ABNT NBR IEC 60034
 </footer>

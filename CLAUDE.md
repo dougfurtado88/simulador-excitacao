@@ -18,12 +18,58 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 "C:\Users\dougl\AppData\Local\Programs\Python\Python312\python.exe" "Simulador/server.py"
 # → Abre http://localhost:8080 automaticamente
 
+# Rodar auto-sync com GitHub (em segundo plano, manter aberto)
+"C:\Users\dougl\AppData\Local\Programs\Python\Python312\python.exe" auto_sync.py
+
 # Verificar versão atual do simulador
 grep "APP_VERSION" Simulador/Simulador_Excitacao.html | head -1
 
 # Verificar uso proibido de Math.spread (deve retornar 0)
 grep -c "Math\.\(max\|min\)(\.\.\.)" Simulador/Simulador_Excitacao.html
+
+# Push manual para GitHub
+git add -A && git commit -m "mensagem" && git push
 ```
+
+---
+
+## GitHub — Repositório e Auto-Sync
+
+**Repositório:** https://github.com/dougfurtado88/simulador-excitacao
+**Usuário:** dougfurtado88
+**Branch principal:** `main`
+
+### Auto-sync (`auto_sync.py`)
+
+Script Python que monitora alterações nos arquivos e faz commit + push automaticamente para o GitHub.
+
+**Como funciona:**
+1. Detecta qualquer arquivo modificado/criado/deletado na pasta do projeto
+2. Aguarda **8 segundos** sem novas alterações (debounce) antes de commitar
+3. Executa `git add -A → git commit → git push` automaticamente
+4. Mensagem de commit automática: `auto: arquivo1.html, arquivo2.js +N mais`
+
+**Para rodar o auto-sync:**
+```bash
+"C:\Users\dougl\AppData\Local\Programs\Python\Python312\python.exe" auto_sync.py
+```
+Deixar a janela aberta enquanto trabalha. Encerrar com `Ctrl + C`.
+
+**Dependência:** biblioteca `watchdog` (já instalada via pip).
+
+### Commits manuais (após cada sessão Claude Code)
+
+Após modificar o simulador, além do versionamento interno (`APP_VERSION`), fazer commit descritivo:
+```bash
+git add -A
+git commit -m "V0.10: descrição da mudança"
+git push
+```
+
+### Arquivos ignorados pelo git (`.gitignore`)
+- `.claude/` — configurações internas do Claude Code
+- `__pycache__/`, `*.pyc` — cache Python
+- Arquivos temporários do sistema (`~$*`, `*.tmp`, `Thumbs.db`)
 
 ---
 

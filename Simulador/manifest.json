@@ -1,0 +1,36 @@
+{
+  "name": "Simulador de Ensaios Dinâmicos — Sistema de Excitação",
+  "short_name": "SimExcitação",
+  "description": "Simulador de ensaios dinâmicos do sistema de excitação de geradores síncronos — IEEE 421.5 · ONS Sub. 2.10 · IEC 60034-16",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape-primary",
+  "background_color": "#003a5e",
+  "theme_color": "#003a5e",
+  "lang": "pt-BR",
+  "categories": ["utilities", "productivity"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Abrir Simulador AVR",
+      "short_name": "Simulador",
+      "description": "Abrir diretamente o simulador de ensaios dinâmicos",
+      "url": "./Simulador_Excitacao.html"
+    }
+  ],
+  "screenshots": []
+}

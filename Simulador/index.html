@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#003a5e">
+<meta name="description" content="Simulador de Ensaios Dinâmicos do Sistema de Excitação — IEEE 421.5 · ONS Sub. 2.10 · IEC 60034-16">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SimExcitação">
+<title>SimExcitação — Ensaios Dinâmicos de Excitação</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── PALETTE ──────────────────────────────────────────────
+   Navy   #003a5e    Blue   #005b92    Sky  #0b9bd3
+   Gold   #f3cb06    Light  #f0f7fb    Gray #cde3f0
+   Mid    #7a9ab8    Dark   #141413
+───────────────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#003a5e;--blue:#005b92;--sky:#0b9bd3;
+  --gold:#f3cb06;--light:#f0f7fb;--gray:#cde3f0;
+  --mid:#7a9ab8;--dark:#141413;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Lora',Georgia,serif;
+  background:var(--light);color:var(--dark);
+  min-height:100vh;display:flex;flex-direction:column;
+}
+
+/* ── HEADER ───────────────────────────────────────────── */
+header{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);
+  border-bottom:3px solid var(--gold);
+  padding:10px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 16px rgba(0,0,0,.35);
+}
+.logo-area{display:flex;align-items:center;gap:14px}
+.logo-area img{height:44px;filter:brightness(0) invert(1);opacity:.92}
+.logo-text h1{
+  font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;color:#fff;
+}
+.logo-text p{font-size:10px;color:rgba(255,255,255,.55);margin-top:2px}
+.header-right{display:flex;align-items:center;gap:10px}
+.badge-ver{
+  background:rgba(0,58,94,.7);border:1px solid rgba(243,203,6,.5);
+  color:var(--gold);padding:3px 10px;border-radius:12px;
+  font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;
+}
+#btn-install-header{
+  background:var(--gold);color:var(--navy);border:none;
+  padding:5px 14px;border-radius:6px;
+  font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;
+  cursor:pointer;display:none;align-items:center;gap:6px;
+  transition:opacity .15s;
+}
+#btn-install-header.visible{display:inline-flex}
+#btn-install-header:hover{opacity:.85}
+
+/* ── HERO ─────────────────────────────────────────────── */
+.hero{
+  background:linear-gradient(160deg,var(--navy) 0%,var(--blue) 55%,#0a4a72 100%);
+  padding:72px 28px 96px;text-align:center;color:#fff;
+  position:relative;overflow:hidden;
+}
+/* grade decorativa de fundo */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(11,155,211,.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(11,155,211,.07) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.hero-inner{position:relative;z-index:1}
+.hero-eyebrow{
+  font-family:'Poppins',sans-serif;font-size:11px;font-weight:600;
+  color:rgba(168,212,238,.75);letter-spacing:1.5px;
+  text-transform:uppercase;margin-bottom:16px;
+}
+.hero-title{
+  font-family:'Poppins',sans-serif;font-size:clamp(24px,4.5vw,42px);
+  font-weight:700;line-height:1.15;margin-bottom:8px;
+}
+.hero-title span{color:var(--gold)}
+.hero-subtitle{
+  font-size:clamp(12px,1.6vw,15px);color:rgba(240,247,251,.7);
+  line-height:1.7;margin-bottom:24px;
+}
+.norm-pills{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:40px}
+.pill{
+  background:rgba(11,155,211,.18);border:1px solid rgba(11,155,211,.4);
+  color:#a8d4ee;padding:4px 14px;border-radius:20px;
+  font-family:'Poppins',sans-serif;font-size:11px;font-weight:600;
+}
+.cta-group{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap}
+.btn-primary{
+  background:var(--gold);color:var(--navy);border:none;
+  padding:15px 40px;border-radius:10px;
+  font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;
+  cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:10px;
+  box-shadow:0 6px 24px rgba(243,203,6,.4);
+  transition:transform .15s,box-shadow .15s;
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(243,203,6,.5)}
+.btn-secondary{
+  background:rgba(255,255,255,.08);color:#f0f7fb;
+  border:1.5px solid rgba(255,255,255,.25);
+  padding:15px 28px;border-radius:10px;
+  font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;display:none;align-items:center;gap:8px;
+  transition:background .15s;
+}
+.btn-secondary:hover{background:rgba(255,255,255,.16)}
+.btn-secondary.visible{display:inline-flex}
+
+/* scroll hint */
+.scroll-hint{
+  margin-top:48px;color:rgba(255,255,255,.3);font-size:11px;
+  font-family:'Poppins',sans-serif;letter-spacing:.5px;
+  animation:bounce 2s infinite;
+}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* ── FEATURES ─────────────────────────────────────────── */
+.section{max-width:1140px;margin:0 auto;padding:0 24px}
+.features{padding:64px 0}
+.section-title{
+  font-family:'Poppins',sans-serif;font-size:20px;font-weight:700;
+  color:var(--navy);text-align:center;margin-bottom:8px;
+}
+.section-sub{
+  font-size:12px;color:var(--mid);text-align:center;margin-bottom:36px;line-height:1.6;
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.card{
+  background:#fff;border-radius:14px;padding:24px;
+  box-shadow:0 2px 14px rgba(0,0,0,.07);
+  border:1px solid var(--gray);border-top:3px solid var(--sky);
+  transition:transform .15s,box-shadow .15s;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,.11)}
+.card-icon{font-size:30px;margin-bottom:12px}
+.card-title{
+  font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;
+  color:var(--navy);margin-bottom:7px;
+}
+.card-desc{font-size:11px;color:var(--mid);line-height:1.75}
+.card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.tag{
+  background:var(--light);border:1px solid var(--gray);
+  color:var(--blue);padding:2px 8px;border-radius:8px;
+  font-family:'Poppins',sans-serif;font-size:9.5px;font-weight:600;
+}
+
+/* ── METRICS BAND ─────────────────────────────────────── */
+.metrics-band{
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+  padding:56px 0;
+}
+.metrics-band .section-title,.metrics-band .section-sub{color:#fff}
+.metrics-band .section-sub{color:rgba(240,247,251,.6)}
+.metrics-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;
+  margin-top:32px;
+}
+.metric-card{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;padding:18px 16px;text-align:center;
+}
+.metric-value{
+  font-family:'Poppins',sans-serif;font-size:28px;font-weight:700;
+  color:var(--gold);line-height:1;margin-bottom:4px;
+}
+.metric-label{font-size:11px;color:rgba(168,212,238,.8);line-height:1.4}
+.metric-norm{font-size:10px;color:rgba(255,255,255,.35);margin-top:4px;font-family:'Poppins',sans-serif}
+
+/* ── NORMAS ───────────────────────────────────────────── */
+.normas-section{padding:64px 0;background:#fff}
+.normas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:32px}
+.norma-group{background:var(--light);border-radius:10px;padding:18px;border:1px solid var(--gray)}
+.norma-group-title{
+  font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;
+  color:#fff;background:var(--navy);padding:4px 10px;border-radius:5px;
+  margin-bottom:12px;letter-spacing:.5px;display:inline-block;
+}
+.norma-item{display:flex;gap:8px;margin-bottom:9px;align-items:flex-start}
+.norma-ref{
+  font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;
+  color:var(--sky);min-width:90px;flex-shrink:0;padding-top:1px;
+}
+.norma-desc{font-size:10.5px;color:#2a4d6b;line-height:1.55}
+
+/* ── SPECS ────────────────────────────────────────────── */
+.specs-section{padding:64px 0}
+.specs-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:14px;margin-top:32px;
+}
+.spec-card{
+  background:#fff;border-radius:10px;padding:16px 18px;
+  border:1px solid var(--gray);
+  box-shadow:0 1px 6px rgba(0,0,0,.05);
+}
+.spec-label{
+  font-size:10px;color:var(--mid);
+  font-family:'Poppins',sans-serif;letter-spacing:.5px;text-transform:uppercase;
+  margin-bottom:5px;
+}
+.spec-value{font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;color:var(--navy)}
+.spec-sub{font-size:10px;color:var(--mid);margin-top:2px}
+
+/* ── LAUNCH CTA ───────────────────────────────────────── */
+.launch-cta{
+  background:linear-gradient(135deg,var(--navy),#012a44);
+  padding:72px 28px;text-align:center;
+  border-top:3px solid var(--gold);
+}
+.launch-cta h2{
+  font-family:'Poppins',sans-serif;font-size:clamp(20px,3vw,30px);
+  font-weight:700;color:#fff;margin-bottom:10px;
+}
+.launch-cta p{font-size:13px;color:rgba(240,247,251,.6);margin-bottom:32px;line-height:1.6}
+
+/* ── FOOTER ───────────────────────────────────────────── */
+footer{
+  background:#090d11;color:rgba(255,255,255,.35);
+  text-align:center;padding:18px 24px;font-size:10px;margin-top:auto;
+  line-height:1.8;
+}
+footer b{color:var(--gold)}
+
+/* ── INSTALL TOAST ────────────────────────────────────── */
+#install-toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--navy);border:1.5px solid var(--gold);
+  border-radius:12px;padding:16px 18px;
+  display:none;gap:14px;align-items:center;
+  box-shadow:0 12px 32px rgba(0,0,0,.5);z-index:9999;
+  max-width:360px;animation:slideUp .3s ease;
+}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+#install-toast.show{display:flex}
+#install-toast .toast-text p{font-size:12px;color:#f0f7fb;line-height:1.45}
+#install-toast .toast-text b{color:var(--gold);font-family:'Poppins',sans-serif}
+#btn-toast-ok{
+  background:var(--gold);color:var(--navy);border:none;
+  padding:7px 16px;border-radius:7px;
+  font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;white-space:nowrap;
+}
+#btn-toast-ok:hover{opacity:.85}
+#btn-toast-x{
+  background:transparent;border:none;color:rgba(255,255,255,.4);
+  cursor:pointer;font-size:18px;padding:0 2px;line-height:1;
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────── */
+@media(max-width:640px){
+  header{padding:10px 16px}
+  .logo-area img{height:32px}
+  .logo-text h1{font-size:11px}
+  .logo-text p{display:none}
+  .hero{padding:52px 16px 72px}
+  .section{padding:0 16px}
+  #install-toast{bottom:12px;right:12px;left:12px;max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════ -->
+<header>
+  <div class="logo-area">
+    <img src="Assinatura.svg" alt="EPSE">
+    <div class="logo-text">
+      <h1>ENERGY POWER — SERVIÇOS TÉCNICOS LTDA</h1>
+      <p>Engenharia de Sistemas de Excitação · Comissionamento · Ensaios Dinâmicos</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <button id="btn-install-header">⬇ Instalar App</button>
+    <span class="badge-ver">V0.09</span>
+  </div>
+</header>
+
+<!-- ══ HERO ═════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">EPSE · Engenharia Elétrica de Alta Tensão</div>
+    <div class="hero-title">
+      Simulador de <span>Ensaios Dinâmicos</span><br>Sistema de Excitação
+    </div>
+    <div class="hero-subtitle">
+      Simulação numérica por integração RK4 · Avaliação normativa automática<br>
+      Desenvolvido por <strong style="color:#f0f7fb">Eng° Douglas Furtado</strong>
+    </div>
+    <div class="norm-pills">
+      <span class="pill">IEEE 421.5</span>
+      <span class="pill">IEEE 421.2</span>
+      <span class="pill">ONS Sub. 2.10</span>
+      <span class="pill">IEC 60034-16</span>
+      <span class="pill">ABNT NBR 60034</span>
+    </div>
+    <div class="cta-group">
+      <a class="btn-primary" href="Simulador_Excitacao.html">▶ Abrir Simulador</a>
+      <button class="btn-secondary" id="btn-install-hero">⬇ Instalar App</button>
+    </div>
+    <div class="scroll-hint">▼ saiba mais</div>
+  </div>
+</section>
+
+<!-- ══ FUNCIONALIDADES ═══════════════════════════════════════ -->
+<div class="features">
+  <div class="section">
+    <div class="section-title">Funcionalidades</div>
+    <div class="section-sub">
+      Todos os modos de ensaio exigidos pelo ONS para aprovação de geradoras conectadas à REB
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <div class="card-title">Degrau Positivo — AVR</div>
+        <div class="card-desc">Aplica incremento de Vref (5% a 10% de Vn) com avaliação automática de sobressinal, tempo de acomodação, tempo de subida e erro estacionário conforme ONS Sub. 2.10.</div>
+        <div class="card-tags">
+          <span class="tag">OS ≤ 10%</span>
+          <span class="tag">Te ≤ 2 s</span>
+          <span class="tag">Ess ≤ 1%</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">📉</div>
+        <div class="card-title">Degrau Negativo — AVR</div>
+        <div class="card-desc">Redução controlada de Vref com análise do comportamento do AVR em regime de subexcitação. Mesmos critérios do degrau positivo aplicados simetricamente.</div>
+        <div class="card-tags">
+          <span class="tag">OS ≤ 10%</span>
+          <span class="tag">Te ≤ 2 s</span>
+          <span class="tag">Ess ≤ 1%</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Rejeição de Carga</div>
+        <div class="card-desc">Distúrbio de tensão simulado após abertura do disjuntor em carga plena. Avalia sobressinal de rejeição e tempo de retorno à banda ±5% (trees ≤ 2 s).</div>
+        <div class="card-tags">
+          <span class="tag">OS ≤ 10%</span>
+          <span class="tag">trees ≤ 2 s</span>
+          <span class="tag">ONS 2.10</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🎛️</div>
+        <div class="card-title">Regulador de Corrente de Campo (FCR)</div>
+        <div class="card-desc">Modo FCR com controlador PI para controle direto de If. Avaliação de OS, tempo de acomodação ±2%|ΔIf| e taxa de excitação (ERF ≥ 2 pu/s) conforme IEEE 421.2 Annex E.</div>
+        <div class="card-tags">
+          <span class="tag">OS ≤ 15%</span>
+          <span class="tag">ts ≤ 10 s</span>
+          <span class="tag">ERF ≥ 2 pu/s</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Gráficos Interativos em Tempo Real</div>
+        <div class="card-desc">4 gráficos simultâneos: Vt(t), If(t), Efd(t) e erro e(t). Marcadores automáticos de pico, tempos e banda de acomodação. Expansão em tela cheia por gráfico.</div>
+        <div class="card-tags">
+          <span class="tag">Chart.js</span>
+          <span class="tag">RK4 · Δt=5ms</span>
+          <span class="tag">~600 pontos</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">✅</div>
+        <div class="card-title">Avaliação Normativa Automática</div>
+        <div class="card-desc">Tabela consolidada com resultado APROVADO/REPROVADO por parâmetro e veredicto final. Referencia norma aplicável a cada critério com cálculo justificado.</div>
+        <div class="card-tags">
+          <span class="tag">IEEE 421.2</span>
+          <span class="tag">IEC 60034-16</span>
+          <span class="tag">ONS 2.10</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🏭</div>
+        <div class="card-title">5 Tipos de Máquinas Suportados</div>
+        <div class="card-desc">Hidráulico (Tdo'=8s), Turbo-Vapor (5s), Turbo-Gás (6s), Compensador Síncrono (7,5s) e Gerador Diesel (4,5s). Kag ajustado automaticamente por tipo.</div>
+        <div class="card-tags">
+          <span class="tag">Hidráulico</span>
+          <span class="tag">Vapor</span>
+          <span class="tag">Gás</span>
+          <span class="tag">Diesel</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">📋</div>
+        <div class="card-title">Sumário com Normas Referenciadas</div>
+        <div class="card-desc">Aba de sumário com tabela consolidada de todas as normas aplicadas, modelos de simulação implementados e método numérico, pronto para uso em relatórios técnicos.</div>
+        <div class="card-tags">
+          <span class="tag">Relatório</span>
+          <span class="tag">Comissionamento</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ CRITÉRIOS ═════════════════════════════════════════════ -->
+<div class="metrics-band">
+  <div class="section">
+    <div class="section-title">Critérios de Avaliação</div>
+    <div class="section-sub">Limites normativos verificados automaticamente após cada simulação</div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value">≤ 10%</div>
+        <div class="metric-label">Sobressinal máximo<br>Degrau ± / Rejeição</div>
+        <div class="metric-norm">ONS Sub. 2.10 · IEC 60034-16</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">≤ 2 s</div>
+        <div class="metric-label">Tempo de acomodação<br>Te ±5%|Δ| — Degrau AVR</div>
+        <div class="metric-norm">ONS Sub. 2.10</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">≤ 1%</div>
+        <div class="metric-label">Erro estacionário<br>Ess — Degrau AVR</div>
+        <div class="metric-norm">IEEE 421.2-2014</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">≤ 2 s</div>
+        <div class="metric-label">Retorno à banda ±5%<br>trees — Rejeição de Carga</div>
+        <div class="metric-norm">ONS Sub. 2.10</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">≤ 15%</div>
+        <div class="metric-label">Sobressinal FCR<br>Degrau de If</div>
+        <div class="metric-norm">IEEE 421.2-2014</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">≥ 2 pu/s</div>
+        <div class="metric-label">Taxa de excitação<br>ERF — FCR</div>
+        <div class="metric-norm">IEEE 421.2 Annex E</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">≤ VRmax</div>
+        <div class="metric-label">Pico tensão de campo<br>|Efd| máximo</div>
+        <div class="metric-norm">IEEE 421.5-2016</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">≥ 1,6×</div>
+        <div class="metric-label">Tensão de teto (ceiling)<br>Efd_teto ≥ 1,6 × Efd₀</div>
+        <div class="metric-norm">ONS Sub. 2.10 · IEEE 421.5</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NORMAS ═════════════════════════════════════════════════ -->
+<div class="normas-section">
+  <div class="section">
+    <div class="section-title">Normas Referenciadas</div>
+    <div class="section-sub">Base normativa completa implementada no simulador</div>
+    <div class="normas-grid">
+
+      <div class="norma-group">
+        <span class="norma-group-title">🇧🇷 ONS — Operador Nacional do Sistema</span>
+        <div class="norma-item">
+          <div class="norma-ref">Sub. 2.6</div>
+          <div class="norma-desc">Controle de tensão e potência reativa — requisitos de regulação</div>
+        </div>
+        <div class="norma-item">
+          <div class="norma-ref">Sub. 2.10</div>
+          <div class="norma-desc">Desempenho dinâmico de gerador síncrono — critérios OS, Te, Ess, trees</div>
+        </div>
+        <div class="norma-item">
+          <div class="norma-ref">Sub. 2.13</div>
+          <div class="norma-desc">Proteção de geradores síncronos — limites V/Hz</div>
+        </div>
+        <div class="norma-item">
+          <div class="norma-ref">Sub. 23.3</div>
+          <div class="norma-desc">Procedimentos de ensaios de campo — degrau e rejeição de carga</div>
+        </div>
+      </div>
+
+      <div class="norma-group">
+        <span class="norma-group-title">🔵 IEEE — Série 421</span>
+        <div class="norma-item">
+          <div class="norma-ref">421.1-2021</div>
+          <div class="norma-desc">Definições — AVR, FCR, VRmax, VRmin, Efd, ceiling voltage</div>
+        </div>
+        <div class="norma-item">
+          <div class="norma-ref">421.2-2014</div>
+          <div class="norma-desc">Metodologia de ensaio — cálculo de OS, Te, Ess, Ts e ERF (Annex E)</div>
+        </div>
+        <div class="norma-item">
+          <div class="norma-ref">421.5-2016</div>
+          <div class="norma-desc">Modelos AC, ST, DC — parâmetros KA, TA, VRmax, VRmin</div>
+        </div>
+        <div class="norma-item">
+          <div class="norma-ref">115-2019</div>
+          <div class="norma-desc">Ensaios de máquina síncrona — Tdo', Xd, curva de magnetização</div>
+        </div>
+      </div>
+
+      <div class="norma-group">
+        <span class="norma-group-title">🟢 IEC 60034 · ABNT NBR</span>
+        <div class="norma-item">
+          <div class="norma-ref">60034-1</div>
+          <div class="norma-desc">Dados nominais — Sn, Vn, fn, fp, base para Zn e In estator</div>
+        </div>
+        <div class="norma-item">
+          <div class="norma-ref">60034-16-1</div>
+          <div class="norma-desc">Terminologia de sistemas de excitação (versão ABNT em português)</div>
+        </div>
+        <div class="norma-item">
+          <div class="norma-ref">60034-16-3</div>
+          <div class="norma-desc">Critérios de desempenho dinâmico — base para laudos de campo</div>
+        </div>
+        <div class="norma-item">
+          <div class="norma-ref">60034-4-1</div>
+          <div class="norma-desc">Determinação de Xd, Xq, Tdo', Tqo' por ensaios</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ ESPECIFICAÇÕES ════════════════════════════════════════ -->
+<div class="specs-section">
+  <div class="section">
+    <div class="section-title">Especificações Técnicas</div>
+    <div class="section-sub">Detalhes do motor de simulação e da plataforma</div>
+    <div class="specs-grid">
+      <div class="spec-card">
+        <div class="spec-label">Método Numérico</div>
+        <div class="spec-value">Runge-Kutta 4ª Ordem</div>
+        <div class="spec-sub">Alta precisão para sistemas rígidos</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label">Passo de Integração</div>
+        <div class="spec-value">Δt = 5 ms</div>
+        <div class="spec-sub">200 Hz — adequado para τ_min ≈ 20 ms</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label">Pontos por Simulação</div>
+        <div class="spec-value">≈ 600 pontos</div>
+        <div class="spec-sub">Decimação automática para fluidez</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label">Modos de Controle</div>
+        <div class="spec-value">AVR · FCR</div>
+        <div class="spec-sub">PID + Lead-Lag · PI</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label">Tipos de Ensaio</div>
+        <div class="spec-value">3 modos</div>
+        <div class="spec-sub">Degrau + · Degrau − · Rejeição</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label">Gráficos</div>
+        <div class="spec-value">4 simultâneos</div>
+        <div class="spec-sub">Vt · If · Efd · Erro — expandíveis</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label">Plataforma</div>
+        <div class="spec-value">HTML5</div>
+        <div class="spec-sub">Navegador moderno · Sem instalação</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label">Offline (PWA)</div>
+        <div class="spec-value">Service Worker</div>
+        <div class="spec-sub">Cache local — funciona sem internet</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label">Versão</div>
+        <div class="spec-value">V0.09 · 2026</div>
+        <div class="spec-sub">Eng° Douglas Furtado</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LAUNCH CTA ════════════════════════════════════════════ -->
+<div class="launch-cta">
+  <h2>Pronto para simular?</h2>
+  <p>Abra o simulador, configure os parâmetros da máquina e execute os ensaios dinâmicos normalizados.</p>
+  <div class="cta-group">
+    <a class="btn-primary" href="Simulador_Excitacao.html">▶ Abrir Simulador</a>
+    <button class="btn-secondary" id="btn-install-cta">⬇ Instalar como App</button>
+  </div>
+</div>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════ -->
+<footer>
+  <b>ENERGY POWER — SERVIÇOS TÉCNICOS LTDA</b> · Simulador de Ensaios Dinâmicos — Sistema de Excitação<br>
+  Desenvolvido por <b>Eng° Douglas Furtado</b> · 2026 · V0.09<br>
+  IEEE 421.5 · IEEE 421.2 · ONS Submódulo 2.10 · IEC 60034-16 · ABNT NBR IEC 60034
+</footer>
+
+<!-- ══ INSTALL TOAST ══════════════════════════════════════════ -->
+<div id="install-toast">
+  <div class="toast-text">
+    <p><b>Instalar SimExcitação</b><br>Adicione à área de trabalho para acesso rápido, mesmo sem internet.</p>
+  </div>
+  <button id="btn-toast-ok">Instalar</button>
+  <button id="btn-toast-x">✕</button>
+</div>
+
+<script>
+// ── Service Worker ──────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[SW] Registrado:', reg.scope))
+      .catch(err => console.warn('[SW] Falha:', err));
+  });
+}
+
+// ── PWA Install Prompt ──────────────────────────────────────
+let deferredPrompt = null;
+const btnHeader = document.getElementById('btn-install-header');
+const btnHero   = document.getElementById('btn-install-hero');
+const btnCta    = document.getElementById('btn-install-cta');
+const toast     = document.getElementById('install-toast');
+const btnToastOk= document.getElementById('btn-toast-ok');
+const btnToastX = document.getElementById('btn-toast-x');
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Mostrar botões de instalação
+  [btnHeader, btnHero, btnCta].forEach(b => b.classList.add('visible'));
+  // Toast após 4 s
+  setTimeout(() => toast.classList.add('show'), 4000);
+});
+
+async function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log('[PWA] Resultado:', outcome);
+  deferredPrompt = null;
+  [btnHeader, btnHero, btnCta].forEach(b => b.classList.remove('visible'));
+  toast.classList.remove('show');
+}
+
+btnHeader.addEventListener('click', installApp);
+btnHero.addEventListener('click', installApp);
+btnCta.addEventListener('click', installApp);
+btnToastOk.addEventListener('click', installApp);
+btnToastX.addEventListener('click', () => toast.classList.remove('show'));
+
+window.addEventListener('appinstalled', () => {
+  [btnHeader, btnHero, btnCta].forEach(b => b.classList.remove('visible'));
+  toast.classList.remove('show');
+  console.log('[PWA] App instalado com sucesso!');
+});
+</script>
+</body>
+</html>

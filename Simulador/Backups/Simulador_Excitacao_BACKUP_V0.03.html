@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Simulador de Ensaios Dinâmicos — Sistema de Excitação</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8;color:#1e293b;font-size:12px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+/* HEADER */
+#hdr{background:linear-gradient(135deg,#1e3a5f,#2e75b6);color:#fff;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+#hdr h1{font-size:13px;font-weight:700}
+#hdr p{font-size:10px;opacity:.75;margin-top:2px}
+.hb{display:flex;gap:6px;align-items:center}
+.mb{padding:4px 14px;border-radius:5px;border:none;cursor:pointer;font-size:12px;font-weight:700;background:rgba(255,255,255,.2);color:#fff}
+.mb.on{background:#fff;color:#1e3a5f}
+/* Eval type buttons */
+.eb{padding:3px 10px;border-radius:4px;border:1px solid transparent;cursor:pointer;font-size:11px;font-weight:600;background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);transition:background .15s}
+.eb.on{background:rgba(255,255,255,.28);color:#fff;border-color:rgba(255,255,255,.45)}
+.eb:hover{background:rgba(255,255,255,.2)}
+#bsim{padding:4px 20px;border-radius:5px;border:none;cursor:pointer;font-size:12px;font-weight:700;background:#22c55e;color:#fff;margin-left:4px}
+#bsim:disabled{background:#64748b;cursor:not-allowed}
+#brst{padding:4px 10px;border-radius:5px;border:none;cursor:pointer;font-size:13px;background:rgba(255,255,255,.2);color:#fff}
+/* BODY */
+#body{display:flex;gap:8px;padding:8px;flex:1;min-height:0}
+/* PARAMS */
+#prm{width:260px;flex-shrink:0;overflow-y:auto;background:#fff;border-radius:9px;padding:9px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.sec{margin-bottom:8px;border-radius:6px;border:1px solid #e2e8f0;overflow:hidden}
+.sh{color:#fff;padding:5px 9px;font-size:11px;font-weight:700}
+.sb{padding:7px 9px;background:#f8fafc}
+.row{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.row:last-child{margin-bottom:0}
+.row label{font-size:11px;color:#475569;width:100px;flex-shrink:0}
+.row input[type=number]{width:70px;padding:3px 5px;font-size:11px;border:1px solid #cbd5e1;border-radius:4px;text-align:right;color:#1e3a5f;font-family:monospace;outline:none}
+.row input:focus{border-color:#2e75b6}
+.row select{flex:1;padding:3px 5px;font-size:11px;border:1px solid #cbd5e1;border-radius:4px;color:#1e3a5f}
+.row span{font-size:10px;color:#94a3b8;min-width:26px}
+.note{font-size:10px;color:#94a3b8;margin-top:3px;line-height:1.4}
+.noteb{font-size:10px;color:#1e3a5f;font-weight:700;margin-top:4px}
+.div{border-top:1px solid #e2e8f0;margin:6px 0 5px}
+.slbl{font-size:10px;color:#64748b;font-weight:700;margin-bottom:4px}
+.tf{background:#1e3a5f;border-radius:6px;padding:7px 9px;font-size:10px;color:#93c5fd;line-height:1.8;margin-top:6px}
+.tf b{color:#fff;display:block;margin-bottom:2px}
+/* RIGHT — 3 painéis */
+#right{flex:1;display:flex;flex-direction:column;gap:0;min-width:0}
+/* TABS */
+#tabbar{display:flex;gap:4px;flex-shrink:0;padding:0 0 0 0;position:relative;z-index:100}
+.tb{padding:5px 14px;border-radius:7px 7px 0 0;border:1px solid #dde3ed;border-bottom:none;cursor:pointer;font-size:11px;font-weight:600;background:#e8edf5;color:#64748b;transition:background .12s}
+.tb.on{background:#fff;color:#1e3a5f;font-weight:700;border-color:#dde3ed;box-shadow:0 -2px 0 #2e75b6 inset}
+.tb:hover:not(.on){background:#f1f5f9;color:#334155}
+.tab-badge{font-size:10px;margin-left:5px;vertical-align:middle}
+/* PAINÉIS */
+#legpanel,#simpanel,#avalpanel,#sumpanel{flex:1;min-height:0;border-radius:0 9px 9px 9px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+#legpanel{background:#fff;overflow-y:auto;padding:14px 16px;display:none}
+#simpanel{display:flex;flex-direction:column;gap:7px;padding:7px;background:#f0f4f8;border:1px solid #dde3ed;border-top:none}
+#avalpanel{display:none;flex-direction:column;gap:0;overflow-y:auto;background:#f0f4f8;border:1px solid #dde3ed;border-top:none;padding:7px;gap:7px}
+#sumpanel{background:#fff;overflow-y:auto;padding:14px 16px;display:none}
+/* GRÁFICO — 2×2 grid dentro do simpanel */
+#grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:7px;min-height:0}
+.cb{background:#fff;border-radius:8px;padding:10px 10px 6px;box-shadow:0 1px 3px rgba(0,0,0,.08);flex-direction:column;min-height:0;overflow:hidden;border:1px solid #e8edf5;display:flex;flex:1}
+.ct{font-size:12px;font-weight:700;color:#1e3a5f;margin-bottom:4px;flex-shrink:0;padding-bottom:4px;border-bottom:1px solid #f1f5f9}
+.cw{flex:1;position:relative;min-height:0}
+.cw canvas{position:absolute;top:0;left:0;width:100%!important;height:100%!important}
+/* PLACEHOLDER dentro do simpanel */
+#ph{flex:1;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:9px;flex-direction:column;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid #e8edf5}
+#ph .e{font-size:46px}
+#ph .m{font-size:13px;color:#475569}
+#ph .s{font-size:11px;color:#c8d3e0;text-align:center;line-height:1.9}
+/* METRICS — dentro do avalpanel */
+#mbar{background:#fff;border-radius:8px;padding:8px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);display:flex;align-items:stretch;border:1px solid #e8edf5}
+#mlbl{font-size:11px;font-weight:700;color:#1e3a5f;width:140px;flex-shrink:0;padding-right:12px;border-right:2px solid #e2e8f0;display:flex;flex-direction:column;justify-content:center;gap:3px}
+#mlbl .s1{font-size:9px;color:#94a3b8;font-weight:400}
+#mlbl .s2{font-size:9px;color:#64748b}
+.mcs{display:flex;flex:1;flex-wrap:wrap}
+.mc{flex:1;min-width:80px;text-align:center;padding:4px 6px;border-right:1px solid #f1f5f9}
+.mc:last-child{border-right:none}
+.mc .a{font-size:9px;color:#64748b;white-space:nowrap;margin-bottom:2px}
+.mc .v{font-size:14px;font-weight:700;font-family:monospace}
+.mc .c{font-size:9px;color:#94a3b8}
+.mc .i{font-size:12px;margin-top:2px}
+/* PLACEHOLDER avalpanel */
+#ava-ph{flex:1;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:8px;flex-direction:column;gap:8px;box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid #e8edf5;min-height:200px}
+#ava-ph .e{font-size:40px}
+#ava-ph p{font-size:12px;color:#94a3b8;text-align:center}
+/* LEGENDA */
+.lsec{margin-bottom:18px}
+.lsec h3{font-size:12px;font-weight:700;color:#1e3a5f;border-bottom:2px solid #e2e8f0;padding-bottom:4px;margin-bottom:10px}
+.ltbl{width:100%;border-collapse:collapse;font-size:11px}
+.ltbl th{background:#1e3a5f;color:#fff;padding:5px 8px;text-align:left;font-size:10px;font-weight:700}
+.ltbl td{padding:4px 8px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+.ltbl tr:nth-child(even) td{background:#f8fafc}
+.ltbl .sym{font-family:monospace;font-weight:700;color:#2563eb}
+.ltbl .crit{font-weight:700}
+.crit-ok{color:#16a34a}.crit-val{color:#7c3aed}
+.leg-note{font-size:10px;color:#64748b;margin-top:6px;line-height:1.5;background:#f8fafc;border-left:3px solid #2e75b6;padding:5px 8px;border-radius:0 4px 4px 0}
+/* PROCEDIMENTOS / FÓRMULAS / CRITÉRIOS */
+.lscope{background:#eff6ff;border-left:4px solid #2563eb;padding:9px 12px;border-radius:0 6px 6px 0;margin-bottom:10px;font-size:11px;color:#1e3a5f;line-height:1.75}
+.lscope b{display:block;font-size:12px;margin-bottom:4px;color:#1e40af}
+.lproc{margin:8px 0 10px 14px;padding:0}
+.lproc li{font-size:11px;color:#334155;line-height:1.75;margin-bottom:2px}
+.lproc li b{color:#1e3a5f}
+.lcond{background:#fefce8;border-left:4px solid #ca8a04;padding:8px 12px;border-radius:0 5px 5px 0;margin-bottom:8px;font-size:11px;color:#713f12;line-height:1.7}
+.lcond b{display:block;font-size:10px;font-weight:700;color:#92400e;margin-bottom:3px;letter-spacing:.3px}
+.lfml{background:#0f172a;border-radius:7px;padding:10px 14px;margin:8px 0;line-height:2;overflow-x:auto}
+.lfml .flbl{color:#94a3b8;font-size:10px;display:block;margin-bottom:5px;font-family:Arial,sans-serif;font-weight:700;letter-spacing:.4px}
+.lfml code{display:block;font-family:'Courier New',monospace;font-size:11px;color:#e2e8f0}
+.lfml code .fv{color:#38bdf8}.lfml code .fo{color:#f97316}.lfml code .fc{color:#4ade80;font-weight:700}
+.lcrit{background:#f0fdf4;border:1.5px solid #86efac;border-radius:6px;padding:9px 12px;margin:8px 0}
+.lcrit .ch{font-size:11px;font-weight:700;color:#15803d;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.lcrit .ci{font-size:11px;color:#166534;margin-bottom:3px;display:flex;align-items:flex-start;gap:7px;line-height:1.5}
+.lcrit .ci .cn{font-size:9px;color:#94a3b8;margin-left:auto;flex-shrink:0}
+.l2col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
+@media(max-width:700px){.l2col{grid-template-columns:1fr}}
+/* TABELA AVALIATIVA */
+#evaltbl{background:#fff;border-radius:7px;box-shadow:0 1px 4px rgba(0,0,0,.1);display:none;flex-shrink:0;overflow:hidden}
+.ethead{background:linear-gradient(135deg,#1e3a5f 60%,#2e75b6);color:#fff;padding:6px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ethead .et1{font-size:11px;font-weight:700;white-space:nowrap}
+.ethead .et2{font-size:9px;opacity:.78;text-align:right}
+#etverdict{padding:5px 12px;font-size:11px;font-weight:700;text-align:center;letter-spacing:.3px}
+#etverdict.ok{background:#dcfce7;color:#15803d;border-top:1px solid #bbf7d0}
+#etverdict.nok{background:#fee2e2;color:#dc2626;border-top:1px solid #fecaca}
+.ettbl{width:100%;border-collapse:collapse;font-size:11px}
+.ettbl thead th{background:#334155;color:#e2e8f0;padding:5px 8px;text-align:center;font-size:10px;font-weight:700;border-right:1px solid rgba(255,255,255,.1);white-space:nowrap}
+.ettbl thead th:last-child{border-right:none}
+.ettbl thead th.etl{text-align:left}
+.ettbl td{padding:4px 8px;border-bottom:1px solid #f1f5f9;border-right:1px solid #f1f5f9;vertical-align:middle}
+.ettbl td:last-child{border-right:none}
+.ettbl tr:nth-child(even) td{background:#f8fafc}
+.etn{width:26px;text-align:center;color:#94a3b8;font-size:10px}
+.etpar{font-size:11px;color:#1e293b}
+.etsym{font-family:monospace;font-weight:700;color:#2563eb;text-align:center;white-space:nowrap}
+.etval{font-family:monospace;font-weight:700;font-size:12px;text-align:right;white-space:nowrap}
+.etlim{font-size:10px;color:#475569;text-align:center;white-space:nowrap}
+.etnorm{font-size:10px;color:#64748b;text-align:center;white-space:nowrap}
+.etre{text-align:center;font-size:11px;font-weight:700;white-space:nowrap}
+.et-ok{color:#15803d}.et-nok{color:#dc2626}.et-ref{color:#94a3b8}
+/* SUMÁRIO — Summary panel tables */
+.stbl{width:100%;border-collapse:collapse;font-size:11px;margin:8px 0}
+.stbl th{background:#1e3a5f;color:#fff;padding:6px 10px;text-align:left;font-size:10px;font-weight:700;border:1px solid #0f172a}
+.stbl td{padding:5px 10px;border:1px solid #e2e8f0;vertical-align:top}
+.stbl tr:nth-child(even) td{background:#f8fafc}
+.stbl tr:hover td{background:#eff6ff}
+.stbl-sec{margin:12px 0;padding:10px;background:#f8fafc;border-radius:6px;border-left:3px solid #2e75b6}
+.stbl-sec h4{font-size:12px;font-weight:700;color:#1e3a5f;margin-bottom:8px}
+.ref-card{background:#fff;padding:10px;border-radius:6px;border:1px solid #e2e8f0;margin:6px 0}
+.ref-card p{font-size:10px;color:#475569;line-height:1.6;margin:3px 0}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="hdr">
+  <div style="display:flex;align-items:center;gap:14px">
+    <!-- LOGO -->
+    <img src="Assinatura.svg" alt="Logo" style="height:44px;flex-shrink:0;filter:brightness(0) invert(1);opacity:.92">
+    <!-- Title -->
+    <div>
+      <h1>SIMULADOR DE ENSAIOS DINÂMICOS — SISTEMA DE EXCITAÇÃO</h1>
+      <p>IEEE 421.5 &nbsp;·&nbsp; IEC 60034-16 &nbsp;·&nbsp; ONS Submódulo 2.6 &nbsp;|&nbsp; Integração RK4 · Δt = 5 ms</p>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:5px">
+        <span style="font-size:9.5px;opacity:.55;letter-spacing:.3px">Desenvolvimento:</span>
+        <span style="font-size:9.5px;font-weight:700;color:#93c5fd;letter-spacing:.3px">Eng° Douglas Furtado</span>
+        <span style="opacity:.3;font-size:9px">|</span>
+        <span style="font-size:9px;background:rgba(46,117,182,.45);border:1px solid rgba(147,197,253,.35);color:#e0f2fe;padding:1px 7px;border-radius:10px;font-weight:700;letter-spacing:.5px" id="verBadge"></span>
+        <span style="opacity:.3;font-size:9px">|</span>
+        <span style="font-size:9px;opacity:.6" id="anoBadge"></span>
+      </div>
+    </div>
+  </div>
+  <!-- Controles direita -->
+  <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+    <!-- Linha 1: Modo de controle -->
+    <div class="hb">
+      <span style="font-size:10px;opacity:.65;margin-right:2px">Controle:</span>
+      <button class="mb on" id="bavr" onclick="setMode('AVR')">AVR</button>
+      <button class="mb"    id="bfcr" onclick="setMode('FCR')">FCR</button>
+      <button id="bsim" onclick="runSim()">▶ SIMULAR</button>
+      <button id="brst" onclick="resetSim()">↺</button>
+    </div>
+    <!-- Linha 2: Tipo de ensaio (somente AVR) -->
+    <div id="evalrow" style="display:flex;gap:5px;align-items:center">
+      <span style="font-size:10px;opacity:.65;margin-right:2px">Ensaio:</span>
+      <button class="eb on" id="edpos" onclick="setEval('DPOS')">📈 Degrau +</button>
+      <button class="eb"    id="edneg" onclick="setEval('DNEG')">📉 Degrau −</button>
+      <button class="eb"    id="ereje" onclick="setEval('REJE')">⚡ Rejeição de Carga</button>
+    </div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div id="body">
+
+  <!-- PARÂMETROS -->
+  <div id="prm">
+
+    <div class="sec" id="sec-equip">
+      <div class="sh" style="background:#0f4c75">🏭 EQUIPAMENTO &amp; MÁQUINA</div>
+      <div class="sb">
+        <div class="row"><label>Fabricante</label><input type="text" id="fab" placeholder="Ex: WEG, ABB, GE..."><span></span></div>
+        <div class="row"><label>Tipo de máquina</label>
+          <select id="maq" onchange="onMaqChange()">
+            <option value="hidraulico">Hidráulico</option>
+            <option value="vapor">Turbo-Vapor</option>
+            <option value="gas">Turbo-Gás</option>
+            <option value="compensador">Comp. Síncrono</option>
+            <option value="diesel">Gerador Diesel</option>
+          </select>
+        </div>
+        <div class="note" id="maq-desc">Tdo' = 8 s &nbsp;|&nbsp; Kag = 1.05</div>
+        <div class="row"><label>Tipo do rotor</label>
+          <select id="tRot">
+            <option value="">—</option>
+            <option value="salientes">Pólos salientes</option>
+            <option value="lisos">Lisos (cilíndrico)</option>
+          </select>
+        </div>
+        <div class="row"><label>Tipo da excitatriz</label>
+          <select id="tExc">
+            <option value="">—</option>
+            <option value="tiristores">Estática (tiristores)</option>
+            <option value="sem-escovas">Rotativa sem escovas</option>
+            <option value="com-escovas">Rotativa com escovas</option>
+            <option value="composta">Composta</option>
+            <option value="decs">Digital (DECS)</option>
+          </select>
+        </div>
+        <div class="div"></div>
+        <div class="row"><label>Sn nominal</label><input type="number" id="Sn"  value="100"  step="1"   oninput="calcEquip()"><span>MVA</span></div>
+        <div class="row"><label>Pn ativa</label>   <input type="number" id="Pn"  value="" placeholder="calc" readonly style="background:#f1f5f9;color:#374151"><span>MW</span></div>
+        <div class="row"><label>Qn reativa</label> <input type="number" id="Qn"  value="" placeholder="calc" readonly style="background:#f1f5f9;color:#374151"><span>Mvar</span></div>
+        <div class="row"><label>fp nominal</label> <input type="number" id="fp"  value="0.85" step="0.01" min="0.1" max="1" oninput="calcEquip()"><span></span></div>
+        <div class="row"><label>Vn terminal</label><input type="number" id="Vn"  value="13.8" step="0.1"  oninput="calcEquip()"><span>kV</span></div>
+        <div class="row"><label>In estator</label> <input type="number" id="In"  value="" placeholder="calc" readonly style="background:#f1f5f9;color:#374151"><span>kA</span></div>
+        <div class="row"><label>Zn estator</label> <input type="number" id="Zn"  value="" placeholder="calc" readonly style="background:#f1f5f9;color:#374151"><span>Ω</span></div>
+        <div class="row"><label>Frequência</label> <input type="number" id="fn"  value="60"   step="1"   oninput="calcEquip()"><span>Hz</span></div>
+        <div class="row"><label>Velocidade</label> <input type="number" id="RPM" value="1800" step="60"  oninput="calcEquip()"><span>rpm</span></div>
+        <div class="row"><label>Nº de polos</label><input type="number" id="nPol" value="" placeholder="auto" readonly style="background:#f1f5f9;color:#374151"><span>polos</span></div>
+        <div class="note">Pn = Sn·fp &nbsp;·&nbsp; Qn = Sn·√(1−fp²) &nbsp;·&nbsp; In = Sn/(√3·Vn) &nbsp;·&nbsp; Zn = Vn²/Sn &nbsp;·&nbsp; nPolos = 120·fn/RPM</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sh" style="background:#375623">📍 PONTO DE OPERAÇÃO</div>
+      <div class="sb">
+        <div class="row"><label>Vt0 inicial</label><input type="number" id="Vt0" value="1.0" step="0.01" oninput="onMaqChange()"><span>pu</span></div>
+        <div class="row"><label>If0 inicial</label><input type="number" id="If0" value="1.0" step="0.01"><span>pu</span></div>
+        <div class="note" id="efd0n">Efd0 ≈ 0.952 pu &nbsp;|&nbsp; Kag = 1.05</div>
+      </div>
+    </div>
+
+    <!-- Dados Medidos do Ensaio -->
+    <div class="sec">
+      <div class="sh" style="background:#7c3aed">📏 DADOS DO ENSAIO (MEDIDOS)</div>
+      <div class="sb">
+        <div class="slbl">Condição inicial — valores medidos</div>
+        <div class="row">
+          <label>If₀ medido</label>
+          <input type="number" id="If0m" value="" placeholder="—" step="0.001" min="0" oninput="onMedChange()">
+          <span>pu</span>
+        </div>
+        <div class="row">
+          <label>Efd₀ medido</label>
+          <input type="number" id="Efd0m" value="" placeholder="—" step="0.001" min="0" oninput="onMedChange()">
+          <span>pu</span>
+        </div>
+        <div class="noteb" id="kag-calc" style="font-size:10px">Kag real: —</div>
+        <div class="div"></div>
+        <div class="slbl">Sinal de controle (setpoint medido)</div>
+        <div id="savr-med">
+          <div class="row">
+            <label>Vref₀ (AVR)</label>
+            <input type="number" id="Vref0m" value="" placeholder="= Vt₀" step="0.001" min="0" oninput="onMedChange()">
+            <span>pu</span>
+          </div>
+        </div>
+        <div id="sfcr-med" style="display:none">
+          <div class="row">
+            <label>Iref₀ (FCR)</label>
+            <input type="number" id="Iref0m" value="" placeholder="= If₀" step="0.001" min="0" oninput="onMedChange()">
+            <span>pu</span>
+          </div>
+        </div>
+        <div class="note">Se preenchidos, substituem estimativas teóricas na simulação. Kag = Vt₀/If₀_med.</div>
+      </div>
+    </div>
+
+    <!-- AVR PID -->
+    <div class="sec" id="savr">
+      <div class="sh" style="background:#2e75b6">🎛️ CONTROLADOR AVR — PID</div>
+      <div class="sb">
+        <div class="row"><label>KP (proporcional)</label><input type="number" id="KPa" value="5.0"  step="0.1"  ></div>
+        <div class="row"><label>KI (integral)</label>    <input type="number" id="KIa" value="20.0" step="0.5"  ></div>
+        <div class="row"><label>KD (derivativo)</label>  <input type="number" id="KDa" value="0.1"  step="0.01" ></div>
+        <div class="row"><label>Tfd (filtro D)</label>   <input type="number" id="Tfd" value="0.01" step="0.001"><span>s</span></div>
+        <div class="div"></div>
+        <div class="slbl">Lead-Lag &nbsp;(1 + TC·s) / (1 + TB·s)</div>
+        <div class="row"><label>TC (zero)</label><input type="number" id="TC" value="0.10" step="0.01"><span>s</span></div>
+        <div class="row"><label>TB (polo)</label><input type="number" id="TB" value="0.50" step="0.01"><span>s</span></div>
+      </div>
+    </div>
+
+    <!-- FCR PI -->
+    <div class="sec" id="sfcr" style="display:none">
+      <div class="sh" style="background:#7030a0">🎛️ CONTROLADOR FCR — PI</div>
+      <div class="sb">
+        <div class="row"><label>KP (proporcional)</label><input type="number" id="KPf" value="2.0" step="0.1"></div>
+        <div class="row"><label>KI (integral)</label>    <input type="number" id="KIf" value="5.0" step="0.5"></div>
+        <div class="note">Controla If diretamente — sem realimentação de Vt</div>
+      </div>
+    </div>
+
+    <!-- Excitador -->
+    <div class="sec">
+      <div class="sh" style="background:#c55a11">⚡ EXCITADOR / AMPLIFICADOR</div>
+      <div class="sb">
+        <div class="row"><label>KA (ganho)</label>    <input type="number" id="KA"    value="200"  step="10"  ></div>
+        <div class="row"><label>TA (constante τ)</label><input type="number" id="TA"  value="0.02" step="0.001"><span>s</span></div>
+        <div class="row"><label>VR max</label>        <input type="number" id="VRmax" value="6.0"  step="0.5" ></div>
+        <div class="row"><label>VR min</label>        <input type="number" id="VRmin" value="-6.0" step="0.5" ></div>
+        <div class="note">G<sub>exc</sub>(s) = KA/(1+s·TA) &nbsp;|&nbsp; saída limitada em [VRmin, VRmax]</div>
+      </div>
+    </div>
+
+    <!-- Ensaio + Tempo -->
+    <div class="sec">
+      <div class="sh" id="stepsh" style="background:#b91c1c">📈 DEGRAU POSITIVO — TEMPO DE SIMULAÇÃO</div>
+      <div class="sb">
+        <!-- AVR Degrau + -->
+        <div class="row" id="rdvr">
+          <label id="ldvr">Δ Vref</label>
+          <input type="number" id="dVref" value="0.05" step="0.01" oninput="onStepChange()">
+          <span>pu</span>
+        </div>
+        <!-- FCR Degrau -->
+        <div class="row" id="rdif" style="display:none">
+          <label>Δ If</label>
+          <input type="number" id="dIf" value="0.05" step="0.01" oninput="onStepChange()">
+          <span>pu</span>
+        </div>
+        <!-- Rejeição distúrbio -->
+        <div class="row" id="rrej" style="display:none">
+          <label>ΔV rejeição</label>
+          <input type="number" id="dVrej" value="0.10" step="0.01" min="0.01" oninput="onStepChange()">
+          <span>pu</span>
+        </div>
+        <div class="div"></div>
+        <div class="slbl">Controle de Tempo</div>
+        <div class="row">
+          <label id="ltstep">t degrau</label>
+          <input type="number" id="Tstep" value="0.02" step="0.01" min="0.005" oninput="onStepChange()">
+          <span>s</span>
+        </div>
+        <div class="row">
+          <label>t simulação</label>
+          <input type="number" id="Tsim"  value="1" step="0.1" min="0.1" oninput="onStepChange()">
+          <span>s</span>
+        </div>
+        <div class="noteb" id="stepn">Novo Vref: 1.050 pu &nbsp;(+5.0%)</div>
+        <div class="note"  id="tn">Degrau em t=0.02s · Obs. até t=1s · ~200 passos</div>
+      </div>
+    </div>
+
+    <!-- TF box -->
+    <div class="tf" id="tfbox">
+      <b>Cadeia de controle AVR:</b>
+      G<sub>PID</sub>(s) = KP + KI/s + KD·s/(1+Tfd·s)<br>
+      G<sub>LL</sub>(s) = (1+TC·s) / (1+TB·s)<br>
+      G<sub>exc</sub>(s) = KA / (1+TA·s)<br>
+      G<sub>gen</sub>(s) = Kag / (1+Tdo'·s)
+    </div>
+  </div><!-- /prm -->
+
+  <!-- DIREITA -->
+  <div id="right">
+    <!-- Barra de abas -->
+    <div id="tabbar">
+      <button class="tb"    id="tbsum" onclick="showTab('sum')">📋 Sumário</button>
+      <button class="tb"    id="tbleg" onclick="showTab('leg')">📘 Normas e Legendas</button>
+      <button class="tb on" id="tbsim" onclick="showTab('sim')">📊 Simulação</button>
+      <button class="tb"    id="tbava" onclick="showTab('ava')">📋 Avaliação <span id="ava-badge" class="tab-badge"></span></button>
+    </div>
+
+    <!-- Painel Legenda -->
+    <div id="legpanel">
+
+      <!-- ══ SEÇÃO 1: ESCOPO ONS Sub. 2.10 ══ -->
+      <div class="lsec">
+        <h3>📜 ONS Submódulo 2.10 — Requisitos Técnicos Mínimos para Conexão de Geradores</h3>
+        <div class="lscope">
+          <b>Escopo e Aplicação</b>
+          O Submódulo 2.10 do ONS (Procedimentos de Rede) define os Requisitos Técnicos Mínimos para a Conexão de Centrais Geradoras à Rede Elétrica Básica (REB). No que se refere ao sistema de excitação e ao regulador automático de tensão (AVR), estabelece critérios de desempenho dinâmico que devem ser verificados em campo antes da entrada em operação comercial, após modernizações e em manutenções programadas.
+        </div>
+        <table class="ltbl">
+          <tr><th>Aspecto</th><th>Requisito</th><th>Referência</th></tr>
+          <tr><td>Geradoras sujeitas</td><td>Centrais com P ≥ 5 MVA conectadas à REB</td><td>ONS Sub. 2.10, item 3.1</td></tr>
+          <tr><td>Modo de controle</td><td>AVR obrigatório em operação normal</td><td>ONS Sub. 2.10, item 5.2</td></tr>
+          <tr><td>Ensaios exigidos</td><td>Degrau de tensão (± em vazio) e Rejeição de Carga</td><td>ONS Sub. 2.10 / Apêndice A</td></tr>
+          <tr><td>Documentação</td><td>Relatório com oscilografias, parâmetros e laudo</td><td>ONS Sub. 2.10, item 7</td></tr>
+          <tr><td>Normas complementares</td><td>IEEE 421.5 (modelos), IEEE 421.2 (critérios), IEC 60034-16</td><td>Referências normativas</td></tr>
+        </table>
+      </div>
+
+      <!-- ══ SEÇÃO 2: DEGRAU POSITIVO ══ -->
+      <div class="lsec">
+        <h3>📈 Ensaio de Degrau Positivo — Procedimento e Critérios (ONS Sub. 2.10)</h3>
+
+        <div class="lcond">
+          <b>CONDIÇÕES DO ENSAIO</b>
+          Máquina em vazio (disjuntor de máquina aberto) &nbsp;·&nbsp; Tensão terminal = Vn ± 5% &nbsp;·&nbsp; AVR em controle automático &nbsp;·&nbsp; Sistema estabilizado por ≥ 30 s antes do degrau &nbsp;·&nbsp; Registrar: Vt(t), If(t), Efd(t), sinal de controle (Vref / saída do AVR)
+        </div>
+
+        <b style="font-size:11px;color:#1e3a5f;display:block;margin-bottom:4px">Procedimento de Execução:</b>
+        <ol class="lproc">
+          <li>Ajustar a tensão terminal ao valor nominal de referência (Vref = Vt0) e aguardar estabilização.</li>
+          <li>Iniciar a aquisição de dados de todos os canais (Vt, If, Efd, Vref).</li>
+          <li>Aplicar degrau positivo: <b>ΔVref = + (5% a 10%) de Vn</b> — incremento do setpoint do AVR.</li>
+          <li>Manter o degrau e registrar a resposta por no mínimo <b>5 s</b> após a aplicação.</li>
+          <li>Anotar: tp (instante do degrau), valores de pico, tempo de estabilização, valor final.</li>
+          <li>Calcular OS, Ts, Te, Ess e comparar com os limites normativos.</li>
+        </ol>
+
+        <h3 style="font-size:11px;margin:10px 0 6px">📈 Diagrama de Referência — Degrau Positivo (Tensão em Vazio)</h3>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 210" style="width:100%;max-width:600px;background:#0f172a;border-radius:8px;display:block">
+          <!-- Grid lines -->
+          <line x1="52" y1="10" x2="52" y2="185" stroke="#1e3a5f" stroke-width="1"/>
+          <line x1="52" y1="185" x2="470" y2="185" stroke="#1e3a5f" stroke-width="1"/>
+          <!-- Horizontal reference lines -->
+          <!-- y0 initial = 165 -->
+          <line x1="52" y1="165" x2="470" y2="165" stroke="#334155" stroke-width="0.8"/>
+          <!-- yf final = 78 -->
+          <line x1="52" y1="78" x2="470" y2="78" stroke="#6366f1" stroke-width="1" stroke-dasharray="6,3"/>
+          <!-- Mp peak = 48 -->
+          <line x1="52" y1="48" x2="350" y2="48" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,3"/>
+          <!-- yf+5% = 70 -->
+          <line x1="52" y1="70" x2="470" y2="70" stroke="#fbbf24" stroke-width="0.8" stroke-dasharray="4,3"/>
+          <!-- yf-5% = 86 -->
+          <line x1="52" y1="86" x2="470" y2="86" stroke="#fbbf24" stroke-width="0.8" stroke-dasharray="4,3"/>
+          <!-- 90% level = 91 (y0 - 90%×Δ = 165-80*.9=93)-->
+          <line x1="52" y1="93" x2="220" y2="93" stroke="#10b981" stroke-width="0.8" stroke-dasharray="3,3"/>
+          <!-- 10% level = 157 -->
+          <line x1="52" y1="157" x2="130" y2="157" stroke="#a78bfa" stroke-width="0.8" stroke-dasharray="3,3"/>
+          <!-- Vertical markers -->
+          <!-- tp = 68 -->
+          <line x1="68" y1="10" x2="68" y2="185" stroke="#64748b" stroke-width="1" stroke-dasharray="4,2"/>
+          <!-- t10 = 108 -->
+          <line x1="108" y1="10" x2="108" y2="185" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,2"/>
+          <!-- t90 = 215 -->
+          <line x1="215" y1="10" x2="215" y2="185" stroke="#10b981" stroke-width="1" stroke-dasharray="4,2"/>
+          <!-- tf = 335 -->
+          <line x1="335" y1="10" x2="335" y2="185" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,2"/>
+          <!-- Step response curve -->
+          <path d="M52,165 H68 C73,165 102,158 108,157 C120,150 195,96 215,93 C230,88 248,50 275,49 C295,48 315,62 335,77 C345,79 380,78 470,78"
+            fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- Setpoint / Vref step -->
+          <path d="M52,165 H68 H68 V78 H470" fill="none" stroke="#facc15" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <!-- Labels - left axis -->
+          <text x="46" y="170" font-family="Arial" font-size="9" fill="#94a3b8" text-anchor="end">y₀</text>
+          <text x="46" y="82" font-family="Arial" font-size="9" fill="#6366f1" text-anchor="end">yf</text>
+          <text x="46" y="52" font-family="Arial" font-size="9" fill="#ef4444" text-anchor="end">Mp</text>
+          <text x="46" y="74" font-family="Arial" font-size="8" fill="#fbbf24" text-anchor="end">+5%</text>
+          <text x="46" y="90" font-family="Arial" font-size="8" fill="#fbbf24" text-anchor="end">-5%</text>
+          <text x="46" y="97" font-family="Arial" font-size="8" fill="#10b981" text-anchor="end">90%</text>
+          <text x="46" y="161" font-family="Arial" font-size="8" fill="#a78bfa" text-anchor="end">10%</text>
+          <!-- Labels - bottom axis -->
+          <text x="68"  y="198" font-family="Arial" font-size="9" fill="#64748b"  text-anchor="middle">tp</text>
+          <text x="108" y="198" font-family="Arial" font-size="9" fill="#a78bfa"  text-anchor="middle">t10</text>
+          <text x="215" y="198" font-family="Arial" font-size="9" fill="#10b981"  text-anchor="middle">t90</text>
+          <text x="335" y="198" font-family="Arial" font-size="9" fill="#fbbf24"  text-anchor="middle">tf</text>
+          <!-- Arrows and annotations -->
+          <!-- Degrau arrow -->
+          <line x1="450" y1="165" x2="450" y2="78" stroke="#ffffff" stroke-width="1.2" marker-end="url(#arr)"/>
+          <line x1="450" y1="165" x2="450" y2="165" stroke="#ffffff" stroke-width="1.2" marker-start="url(#arr)"/>
+          <path d="M450,78 L450,165" fill="none" stroke="#ffffff" stroke-width="1" marker-start="url(#arrd)" marker-end="url(#arru)"/>
+          <text x="457" y="125" font-family="Arial" font-size="9" fill="#ffffff" font-weight="700">Δ</text>
+          <!-- Ts annotation (t90-t10) -->
+          <line x1="108" y1="175" x2="215" y2="175" stroke="#10b981" stroke-width="1" marker-start="url(#arrl)" marker-end="url(#arrr)"/>
+          <text x="161" y="183" font-family="Arial" font-size="8.5" fill="#10b981" text-anchor="middle" font-weight="700">Ts (subida)</text>
+          <!-- Te annotation (tp to tf) -->
+          <line x1="68" y1="192" x2="335" y2="192" stroke="#fbbf24" stroke-width="1"/>
+          <text x="200" y="208" font-family="Arial" font-size="8.5" fill="#fbbf24" text-anchor="middle" font-weight="700">Te (acomodação)</text>
+          <!-- Legend key -->
+          <line x1="56" y1="20" x2="75" y2="20" stroke="#38bdf8" stroke-width="2.5"/>
+          <text x="78" y="24" font-family="Arial" font-size="9" fill="#38bdf8">Vt (tensão terminal)</text>
+          <line x1="56" y1="33" x2="75" y2="33" stroke="#facc15" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="78" y="37" font-family="Arial" font-size="9" fill="#facc15">Setpoint / Vref</text>
+          <!-- Arrow markers definition -->
+          <defs>
+            <marker id="arrd" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="270"><path d="M0,0 L6,3 L0,6 L2,3 Z" fill="#fff"/></marker>
+            <marker id="arru" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="90"><path d="M0,0 L6,3 L0,6 L2,3 Z" fill="#fff"/></marker>
+            <marker id="arrl" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="180"><path d="M0,0 L6,3 L0,6 L2,3 Z" fill="#10b981"/></marker>
+            <marker id="arrr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="0"><path d="M0,0 L6,3 L0,6 L2,3 Z" fill="#10b981"/></marker>
+          </defs>
+        </svg>
+
+        <div class="l2col">
+          <div>
+            <div class="lfml">
+              <span class="flbl">FÓRMULAS — PARÂMETROS DO DEGRAU</span>
+              <code><span class="fv">Δ</span>  <span class="fo">=</span> Vref_novo − Vref_ant  <span style="color:#64748b">[degrau aplicado]</span></code>
+              <code><span class="fv">y₀</span> <span class="fo">=</span> Vt antes de tp  <span style="color:#64748b">[tensão inicial]</span></code>
+              <code><span class="fv">yf</span> <span class="fo">=</span> média(Vt) nos últimos 20% do registro</code>
+              <code><span class="fv">Mp</span> <span class="fo">=</span> max(Vt)  para  t ≥ tp  <span style="color:#64748b">[degrau+]</span></code>
+              <code><span class="fv">Mp</span> <span class="fo">=</span> min(Vt)  para  t ≥ tp  <span style="color:#64748b">[degrau−]</span></code>
+              <code><span class="fv">t10</span> <span class="fo">=</span> t | Vt <span class="fo">=</span> y₀ <span class="fo">+</span> 10%·Δ  <span style="color:#a78bfa">→ 10% do degrau</span></code>
+              <code><span class="fv">t90</span> <span class="fo">=</span> t | Vt <span class="fo">=</span> y₀ <span class="fo">+</span> 90%·Δ  <span style="color:#10b981">→ 90% do degrau</span></code>
+              <code><span class="fv">tf</span>  <span class="fo">=</span> último t | |Vt − yf| <span class="fo">></span> 5%·|Δ|</code>
+            </div>
+            <div class="lfml">
+              <span class="flbl">FÓRMULAS — INDICADORES DE DESEMPENHO</span>
+              <code><span class="fc">OS</span>  <span class="fo">=</span> (Mp − yf) / |Δ| × 100  [%]</code>
+              <code><span class="fc">Ts</span>  <span class="fo">=</span> t90 − t10  [s]  <span style="color:#64748b">(rise time)</span></code>
+              <code><span class="fc">Te</span>  <span class="fo">=</span> tf − tp  [s]  <span style="color:#64748b">(settling time ±5%|Δ|)</span></code>
+              <code><span class="fc">Ess</span> <span class="fo">=</span> |Vref_fin − yf| / |Δ| × 100  [%]</code>
+            </div>
+          </div>
+          <div>
+            <div class="lcrit">
+              <div class="ch">✅ Critérios de Aprovação — Degrau Positivo / Negativo</div>
+              <div class="ci">✔ <b>OS ≤ 10 %</b> — Sobressinal máximo <span class="cn">ONS Sub. 2.10</span></div>
+              <div class="ci">✔ <b>Te ≤ 2 s</b> — Acomodação na banda ±5%|Δ| <span class="cn">ONS Sub. 2.10</span></div>
+              <div class="ci">✔ <b>Ess ≤ 1 %</b> — Erro em regime permanente <span class="cn">IEEE 421.2</span></div>
+              <div class="ci">✔ <b>|Efd| ≤ VRmax</b> — Tensão de campo não excede teto <span class="cn">IEEE 421.5</span></div>
+              <div class="ci" style="margin-top:6px;color:#64748b">ℹ Ts = referência informativa (IEEE 421.2)</div>
+            </div>
+            <table class="ltbl" style="margin-top:8px">
+              <tr><th>Símbolo</th><th>Definição</th><th>Norma</th></tr>
+              <tr><td class="sym">tp</td><td>Instante do degrau</td><td>—</td></tr>
+              <tr><td class="sym">t10 / t90</td><td>Cruzamento 10% / 90% do degrau</td><td>IEEE 421.2</td></tr>
+              <tr><td class="sym">tf</td><td>Entrada definitiva na banda ±5%|Δ|</td><td>ONS 2.10</td></tr>
+              <tr><td class="sym">yf</td><td>Tensão final em regime</td><td>ONS 2.10</td></tr>
+              <tr><td class="sym" style="color:#ef4444">Mp</td><td>Pico de tensão (sobressinal)</td><td>ONS 2.10</td></tr>
+              <tr><td class="sym" style="color:#10b981">Ts</td><td>Tempo de subida (t90 − t10)</td><td>Ref. IEEE 421.2</td></tr>
+              <tr><td class="sym" style="color:#fbbf24">Te</td><td>Tempo de acomodação (tf − tp)</td><td>ONS 2.10 ≤ 2 s</td></tr>
+              <tr><td class="sym" style="color:#16a34a">OS</td><td>(Mp − yf)/|Δ| × 100 %</td><td>ONS 2.10 ≤ 10%</td></tr>
+              <tr><td class="sym" style="color:#7c3aed">Ess</td><td>|Vref−yf|/|Δ| × 100 %</td><td>IEEE 421.2 ≤ 1%</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SEÇÃO 3: DEGRAU NEGATIVO ══ -->
+      <div class="lsec">
+        <h3>📉 Ensaio de Degrau Negativo — Procedimento e Critérios (ONS Sub. 2.10)</h3>
+        <div class="lcond">
+          <b>CONDIÇÕES DO ENSAIO</b>
+          Idênticas ao Degrau Positivo — Máquina em vazio, AVR automático, sistema estabilizado.
+        </div>
+        <ol class="lproc">
+          <li>Estabilizar a tensão em Vt0 (mesmo procedimento do degrau positivo).</li>
+          <li>Aplicar degrau negativo: <b>ΔVref = − (5% a 10%) de Vn</b> — redução do setpoint.</li>
+          <li>Registrar por no mínimo <b>5 s</b> após a perturbação.</li>
+          <li>Para degrau negativo: <b>Mp = mínimo de Vt</b> (undershoot); t10, t90 são calculados no sentido decrescente; OS é positivo se houver pico negativo além de yf.</li>
+          <li>Calcular OS, Ts, Te, Ess com as mesmas fórmulas — os sinais se invertem automaticamente.</li>
+        </ol>
+        <div class="lcrit">
+          <div class="ch">✅ Critérios — mesmos do Degrau Positivo (ONS Sub. 2.10)</div>
+          <div class="ci">✔ <b>OS ≤ 10 %</b> &nbsp;·&nbsp; <b>Te ≤ 2 s</b> &nbsp;·&nbsp; <b>Ess ≤ 1 %</b> &nbsp;·&nbsp; <b>|Efd| ≤ VRmax</b></div>
+          <div class="ci" style="color:#64748b;margin-top:4px">ℹ No simulador: inserir magnitude positiva em |ΔVref|; sinal negativo é aplicado internamente.</div>
+        </div>
+      </div>
+
+      <!-- ══ SEÇÃO 4: REJEIÇÃO DE CARGA ══ -->
+      <div class="lsec">
+        <h3>⚡ Ensaio de Rejeição de Carga — Procedimento e Critérios (ONS Sub. 2.10)</h3>
+
+        <div class="lcond">
+          <b>CONDIÇÕES DO ENSAIO</b>
+          Máquina sincronizada à rede com carga plena (preferencialmente 100% de Sn) &nbsp;·&nbsp; AVR em controle automático &nbsp;·&nbsp; PSS desligado ou em modo standby &nbsp;·&nbsp; Registrar: Vt(t), If(t), Efd(t), velocidade N(t), P(t), Q(t)
+        </div>
+
+        <ol class="lproc">
+          <li>Confirmar operação em carga plena (ou carregamento máximo disponível). Registrar Vt0, If0, Efd0, P, Q antes da rejeição.</li>
+          <li>Iniciar aquisição sincronizada em todos os canais com taxa mínima de <b>1 kHz</b>.</li>
+          <li><b>Abrir o disjuntor de máquina</b> (rejeição total de carga). Anotar o instante trej.</li>
+          <li>Manter registro por no mínimo <b>5 s</b> após a rejeição para capturar o retorno ao regime.</li>
+          <li>Identificar Vpico (máximo de Vt após trej) e trees (retorno abaixo de Vt0 × 1,05).</li>
+          <li>Calcular OS e trees−trej. Verificar que Efd_min ≥ VRmin (sem limitação por piso).</li>
+        </ol>
+
+        <h3 style="font-size:11px;margin:10px 0 6px">⚡ Diagrama de Referência — Rejeição de Carga</h3>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 200" style="width:100%;max-width:600px;background:#0f172a;border-radius:8px;display:block">
+          <!-- Grid lines -->
+          <line x1="52" y1="10" x2="52" y2="180" stroke="#1e3a5f" stroke-width="1"/>
+          <line x1="52" y1="180" x2="470" y2="180" stroke="#1e3a5f" stroke-width="1"/>
+          <!-- Vt0 reference = 150 -->
+          <line x1="52" y1="150" x2="470" y2="150" stroke="#6366f1" stroke-width="1" stroke-dasharray="5,3"/>
+          <!-- Vpico = 62 -->
+          <line x1="52" y1="62" x2="300" y2="62" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,3"/>
+          <!-- Vt0+5% = 135 -->
+          <line x1="52" y1="135" x2="470" y2="135" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,3"/>
+          <!-- Vt0-5% = 165 -->
+          <line x1="52" y1="165" x2="470" y2="165" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,3"/>
+          <!-- Vertical: trej = 80 -->
+          <line x1="80" y1="10" x2="80" y2="180" stroke="#64748b" stroke-width="1" stroke-dasharray="4,2"/>
+          <!-- Vertical: trees = 280 -->
+          <line x1="280" y1="10" x2="280" y2="180" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,2"/>
+          <!-- Rejeição response curve: starts flat at Vt0, spikes, decays back -->
+          <path d="M52,150 H80 C82,150 83,105 90,75 C100,55 130,60 160,63 C200,67 240,100 280,142 C295,148 350,150 470,150"
+            fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- Setpoint (reference stays flat) -->
+          <line x1="52" y1="150" x2="470" y2="150" stroke="#facc15" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7"/>
+          <!-- Labels -->
+          <text x="46" y="154" font-family="Arial" font-size="9" fill="#6366f1" text-anchor="end">Vt₀</text>
+          <text x="46" y="66" font-family="Arial" font-size="9" fill="#ef4444" text-anchor="end">Vpico</text>
+          <text x="46" y="139" font-family="Arial" font-size="8" fill="#fbbf24" text-anchor="end">+5%</text>
+          <text x="46" y="169" font-family="Arial" font-size="8" fill="#fbbf24" text-anchor="end">-5%</text>
+          <text x="80"  y="193" font-family="Arial" font-size="9" fill="#64748b"  text-anchor="middle">trej</text>
+          <text x="280" y="193" font-family="Arial" font-size="9" fill="#fbbf24"  text-anchor="middle">trees</text>
+          <!-- OS arrow -->
+          <line x1="390" y1="62"  x2="390" y2="150" stroke="#ef4444" stroke-width="1"/>
+          <text x="397" y="110" font-family="Arial" font-size="9" fill="#ef4444" font-weight="700">OS</text>
+          <!-- trees interval -->
+          <line x1="80" y1="170" x2="280" y2="170" stroke="#fbbf24" stroke-width="1"/>
+          <text x="180" y="181" font-family="Arial" font-size="8.5" fill="#fbbf24" text-anchor="middle" font-weight="700">trees (acomodação)</text>
+          <!-- Legend -->
+          <line x1="56" y1="20" x2="75" y2="20" stroke="#38bdf8" stroke-width="2.5"/>
+          <text x="78" y="24" font-family="Arial" font-size="9" fill="#38bdf8">Vt (tensão terminal)</text>
+          <line x1="56" y1="33" x2="75" y2="33" stroke="#facc15" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7"/>
+          <text x="78" y="37" font-family="Arial" font-size="9" fill="#facc15" opacity="0.9">Setpoint / Vref (fixo)</text>
+        </svg>
+
+        <div class="l2col">
+          <div>
+            <div class="lfml">
+              <span class="flbl">FÓRMULAS — REJEIÇÃO DE CARGA</span>
+              <code><span class="fv">Vt₀</span>  <span class="fo">=</span> tensão terminal antes de trej</code>
+              <code><span class="fv">Vpico</span> <span class="fo">=</span> max(Vt) para t ≥ trej</code>
+              <code><span class="fv">trees</span> <span class="fo">=</span> primeiro t | Vt ≤ Vt₀ × 1,05  (após pico)</code>
+              <code><span class="fc">OS</span>    <span class="fo">=</span> (Vpico − Vt₀) / Vt₀ × 100  [%]</code>
+              <code><span class="fc">Δt_ac</span> <span class="fo">=</span> trees − trej  [s]  <span style="color:#64748b">(acomodação)</span></code>
+              <code><span class="fv">Efd_min</span><span class="fo">=</span> min(Efd) para t ≥ trej  <span style="color:#64748b">(piso)</span></code>
+            </div>
+          </div>
+          <div>
+            <div class="lcrit">
+              <div class="ch">✅ Critérios de Aprovação — Rejeição de Carga</div>
+              <div class="ci">✔ <b>OS ≤ 10 %</b> — Sobressinal de tensão após rejeição <span class="cn">ONS Sub. 2.10</span></div>
+              <div class="ci">✔ <b>trees−trej ≤ 2 s</b> — Retorno à banda ±5% de Vt0 <span class="cn">ONS Sub. 2.10</span></div>
+              <div class="ci">✔ <b>Efd_min ≥ VRmin</b> — Excitação não atinge o piso <span class="cn">IEEE 421.5</span></div>
+              <div class="ci">✔ <b>Efd_max ≤ VRmax</b> — Tensão de teto não ultrapassada <span class="cn">IEEE 421.5</span></div>
+            </div>
+            <table class="ltbl" style="margin-top:8px">
+              <tr><th>Símbolo</th><th>Definição</th><th>Norma / Limite</th></tr>
+              <tr><td class="sym">trej</td><td>Instante da abertura do disjuntor</td><td>—</td></tr>
+              <tr><td class="sym">Vt₀</td><td>Tensão terminal pré-rejeição</td><td>Referência AVR</td></tr>
+              <tr><td class="sym" style="color:#ef4444">Vpico</td><td>Tensão máxima após rejeição</td><td>Vt₀ × 1,05 → limite</td></tr>
+              <tr><td class="sym">+5% / −5%</td><td>Banda de acomodação</td><td>Vt₀ × 1,05 / 0,95</td></tr>
+              <tr><td class="sym" style="color:#fbbf24">trees</td><td>Retorno abaixo de Vt₀ × 1,05</td><td>ONS 2.10 ≤ 2 s</td></tr>
+              <tr><td class="sym" style="color:#16a34a">OS</td><td>(Vpico−Vt₀)/Vt₀ × 100%</td><td>ONS 2.10 ≤ 10%</td></tr>
+              <tr><td class="sym">Efd_min</td><td>Piso de tensão de campo</td><td>IEEE 421.5 ≥ VRmin</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="leg-note">Na rejeição de carga, o AVR mantém Vref = Vt₀ (referência fixa). O modelo simula o distúrbio ΔVt injetado na medição de Vt — equivalente à eliminação da queda de tensão de armadura com a abertura do circuito de carga. O regulador responde reduzindo a excitação (campo) para retornar Vt ao valor de referência.</div>
+      </div><!-- /lsec rejeição -->
+
+      <!-- ══ SEÇÃO 5: FCR ══ -->
+      <div class="lsec">
+        <h3>🎛️ Controle FCR — Regulador de Corrente de Campo (IEEE 421.2)</h3>
+        <div class="lcond">
+          <b>MODO FCR (Field Current Regulator)</b>
+          O FCR mantém a corrente de campo (If) em um valor de referência fixo (Iref). Utilizado durante comissionamento ou quando o AVR não está disponível. O ensaio de degrau em FCR avalia a rapidez e precisão do controle de corrente.
+        </div>
+        <div class="l2col">
+          <div class="lfml">
+            <span class="flbl">CRITÉRIOS FCR (IEEE 421.2)</span>
+            <code><span class="fc">OS</span>   <span class="fo">≤ 15 %</span>  <span style="color:#64748b">(sobressinal)</span></code>
+            <code><span class="fc">ts</span>   <span class="fo">≤ 10 s</span>  <span style="color:#64748b">(acomodação ±2%|ΔIf|)</span></code>
+            <code><span class="fc">Ess</span>  <span class="fo">≤ 1 %</span>   <span style="color:#64748b">(erro estacionário)</span></code>
+            <code><span class="fc">ERF</span>  <span class="fo">≥ 2 pu/s</span> <span style="color:#64748b">(taxa de excitação 0,5 s)</span></code>
+          </div>
+          <div class="lcrit">
+            <div class="ch">ℹ ERF — Excitation Response Factor (IEEE 421.2 Annex E)</div>
+            <div class="ci" style="color:#374151">ERF = ΔEfd / Δt avaliado em t = 0,5 s após o degrau. Mede a agilidade do sistema de excitação. Requisito mínimo: <b>2 pu/s</b> para máquinas conectadas à REB.</div>
+          </div>
+        </div>
+      </div><!-- /lsec FCR -->
+
+      <!-- ══ SEÇÃO 6: TABELA CONSOLIDADA ══ -->
+      <div class="lsec">
+        <h3>📋 Tabela Consolidada de Critérios — ONS Sub. 2.10 / IEEE 421 / IEC 60034-16</h3>
+        <table class="ltbl">
+          <tr><th>Ensaio</th><th>Parâmetro</th><th>Símbolo</th><th>Limite</th><th>Norma</th></tr>
+          <tr><td>Degrau ± (em vazio)</td><td>Sobressinal máximo</td><td class="sym crit-ok">OS</td><td class="crit-ok crit">≤ 10 %</td><td>ONS Sub. 2.10 / IEC 60034-16</td></tr>
+          <tr><td>Degrau ± (em vazio)</td><td>Tempo de acomodação ±5%|Δ|</td><td class="sym crit-ok">Te</td><td class="crit-ok crit">≤ 2 s</td><td>ONS Sub. 2.10</td></tr>
+          <tr><td>Degrau ± (em vazio)</td><td>Erro estacionário</td><td class="sym crit-val">Ess</td><td class="crit-ok crit">≤ 1 %</td><td>IEEE 421.2</td></tr>
+          <tr><td>Degrau ± (em vazio)</td><td>Tempo de subida (informativo)</td><td class="sym">Ts</td><td>Referência</td><td>IEEE 421.2</td></tr>
+          <tr><td>Rejeição de Carga</td><td>Sobressinal de rejeição</td><td class="sym crit-ok">OS</td><td class="crit-ok crit">≤ 10 %</td><td>ONS Sub. 2.10</td></tr>
+          <tr><td>Rejeição de Carga</td><td>Retorno à banda ±5%</td><td class="sym crit-ok">trees−trej</td><td class="crit-ok crit">≤ 2 s</td><td>ONS Sub. 2.10</td></tr>
+          <tr><td>FCR — Degrau If</td><td>Sobressinal</td><td class="sym crit-ok">OS</td><td class="crit-ok crit">≤ 15 %</td><td>IEEE 421.2</td></tr>
+          <tr><td>FCR — Degrau If</td><td>Acomodação ±2%|ΔIf|</td><td class="sym crit-ok">ts</td><td class="crit-ok crit">≤ 10 s</td><td>IEEE 421.2</td></tr>
+          <tr><td>FCR — Degrau If</td><td>Taxa de excitação</td><td class="sym crit-ok">ERF</td><td class="crit-ok crit">≥ 2 pu/s</td><td>IEEE 421.2 Annex E</td></tr>
+          <tr><td>Todos os ensaios</td><td>Pico da tensão de campo</td><td class="sym">Efd_max</td><td class="crit-ok crit">≤ VRmax</td><td>IEEE 421.5</td></tr>
+          <tr><td>Todos os ensaios</td><td>Piso da tensão de campo</td><td class="sym">Efd_min</td><td class="crit-ok crit">≥ VRmin</td><td>IEEE 421.5</td></tr>
+          <tr><td>Todos os ensaios</td><td>Tensão de teto (ceiling)</td><td class="sym">Vefd_teto</td><td class="crit-ok crit">≥ 1,6 × Efd₀</td><td>ONS Sub. 2.10 / IEEE 421.5</td></tr>
+        </table>
+        <div class="leg-note"><b>Referências normativas aplicáveis:</b> ONS Submódulo 2.10 (Requisitos Técnicos para Conexão — vigente) &nbsp;·&nbsp; IEEE Std 421.2-2014 (Guide for Identification, Testing, and Evaluation of the Dynamic Performance of Excitation Control Systems) &nbsp;·&nbsp; IEEE Std 421.5-2016 (Recommended Practice for Excitation System Models for Power System Stability Studies) &nbsp;·&nbsp; IEC 60034-16 (Rotating Electrical Machines — Excitation Systems)</div>
+      </div>
+
+    </div><!-- /legpanel -->
+
+    <div id="simpanel">
+      <div id="ph">
+        <div class="e">⚡</div>
+        <div class="m">Configure os parâmetros e clique em <strong>▶ SIMULAR</strong></div>
+        <div class="s" id="phsub">Modo AVR · Ensaio: Degrau + &nbsp;·&nbsp; Máquina: Hidráulico (Tdo'=8s)<br>Degrau em t=2s · Integração RK4 @200Hz</div>
+      </div>
+      <div id="grid" style="display:none">
+        <div class="cb"><div class="ct">📈 Tensão Terminal &nbsp; Vt [pu]</div><div class="cw"><canvas id="cVt"></canvas></div></div>
+        <div class="cb"><div class="ct">🔋 Corrente de Campo &nbsp; If [pu]</div><div class="cw"><canvas id="cIf"></canvas></div></div>
+        <div class="cb"><div class="ct">⚡ Tensão de Campo &nbsp; Efd [pu]</div><div class="cw"><canvas id="cEfd"></canvas></div></div>
+        <div class="cb"><div class="ct">🎯 Erro de Controle &nbsp; e(t) [%]</div><div class="cw"><canvas id="cErr"></canvas></div></div>
+      </div>
+    </div>
+
+    <div id="avalpanel">
+      <div id="ava-ph">
+        <div class="e">📋</div>
+        <p>Execute uma simulação para ver o laudo formal de avaliação.</p>
+      </div>
+      <!-- Metrics bar (content filled dynamically) -->
+      <div id="mbar" style="display:none">
+        <div id="mlbl">
+          <div>📊 MÉTRICAS</div>
+          <div class="s1" id="mnorm">IEEE 421.2 / ONS Sub. 2.10</div>
+          <div class="s2" id="minfo">Modo: AVR</div>
+        </div>
+        <div class="mcs" id="mcs"></div>
+      </div>
+      <!-- Tabela avaliativa por norma (laudo formal) -->
+      <div id="evaltbl">
+        <div class="ethead">
+          <div class="et1">📋 LAUDO DE AVALIAÇÃO — SISTEMA DE EXCITAÇÃO</div>
+          <div class="et2" id="etinfo"></div>
+        </div>
+        <div id="etverdict" class="ok">✅ APROVADO</div>
+        <table class="ettbl">
+          <thead>
+            <tr>
+              <th class="etn">N°</th>
+              <th class="etl">Parâmetro avaliado</th>
+              <th>Símbolo</th>
+              <th>Valor medido</th>
+              <th>Limite normativo</th>
+              <th>Norma</th>
+              <th>Resultado</th>
+            </tr>
+          </thead>
+          <tbody id="etbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="sumpanel">
+      <!-- Cabeçalho de identificação do software -->
+      <div style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(90deg,#0f4c75,#1e3a5f);border-radius:6px;padding:10px 16px;margin-bottom:12px">
+        <div>
+          <div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:.5px">SIMULADOR DE ENSAIOS DINÂMICOS — SISTEMA DE EXCITAÇÃO</div>
+          <div style="font-size:10px;color:#93c5fd;margin-top:3px">IEEE 421.5 · IEC 60034-16 · ONS Sub. 2.10 · Integração RK4 @ 200 Hz</div>
+        </div>
+        <div style="text-align:right">
+          <div style="display:flex;gap:14px;align-items:center">
+            <div style="text-align:center">
+              <div style="font-size:8.5px;color:#93c5fd;opacity:.7;text-transform:uppercase;letter-spacing:.5px">Desenvolvimento</div>
+              <div style="font-size:10.5px;font-weight:700;color:#e0f2fe">Eng° Douglas Furtado</div>
+            </div>
+            <div style="width:1px;height:28px;background:rgba(255,255,255,.2)"></div>
+            <div style="text-align:center">
+              <div style="font-size:8.5px;color:#93c5fd;opacity:.7;text-transform:uppercase;letter-spacing:.5px">Versão</div>
+              <div style="font-size:12px;font-weight:800;color:#38bdf8" id="sumVer"></div>
+            </div>
+            <div style="width:1px;height:28px;background:rgba(255,255,255,.2)"></div>
+            <div style="text-align:center">
+              <div style="font-size:8.5px;color:#93c5fd;opacity:.7;text-transform:uppercase;letter-spacing:.5px">Ano</div>
+              <div style="font-size:10.5px;font-weight:700;color:#e0f2fe" id="sumAno"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO A — Normas e Documentos -->
+      <div class="stbl-sec">
+        <h4>📋 Normas e Documentos Referenciados</h4>
+
+        <!-- ONS — Operador Nacional do Sistema -->
+        <div style="margin:10px 0 4px;font-size:11px;font-weight:700;color:#fff;background:#0f4c75;padding:4px 10px;border-radius:4px;letter-spacing:.5px">🇧🇷 ONS — Operador Nacional do Sistema Elétrico</div>
+        <table class="stbl">
+          <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
+          <tbody>
+            <tr><td><b>ONS Sub. 2.6</b></td><td>Requisitos Técnicos Mínimos para a Conexão ao Sistema de Transmissão — Controle de Tensão e Potência Reativa</td><td>Requisitos de regulação de tensão, faixa de operação Q, fator de potência nominal</td></tr>
+            <tr><td><b>ONS Sub. 2.10</b></td><td>Requisitos Técnicos Mínimos para a Conexão ao Sistema de Transmissão — Desempenho Dinâmico de Gerador Síncrono</td><td>Critérios de desempenho dinâmico: OS ≤ 10%, Te ≤ 2 s, Ess ≤ 1%, trees ≤ 2 s</td></tr>
+            <tr><td><b>ONS Sub. 2.13</b></td><td>Requisitos de Proteção de Geradores Síncronos Conectados ao Sistema de Transmissão</td><td>Interação entre proteções e sistema de excitação, limites de V/Hz</td></tr>
+            <tr><td><b>ONS Sub. 23.3</b></td><td>Procedimentos de Teste de Desempenho Dinâmico de Unidades Geradoras — Ensaios de Campo</td><td>Protocolo de realização dos ensaios de degrau e rejeição de carga</td></tr>
+          </tbody>
+        </table>
+
+        <!-- IEEE — Institute of Electrical and Electronics Engineers -->
+        <div style="margin:12px 0 4px;font-size:11px;font-weight:700;color:#fff;background:#1e3a5f;padding:4px 10px;border-radius:4px;letter-spacing:.5px">🔵 IEEE — Institute of Electrical and Electronics Engineers</div>
+        <table class="stbl">
+          <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
+          <tbody>
+            <tr><td><b>IEEE 421.1-2021</b></td><td>IEEE Standard Definitions for Excitation Systems for Synchronous Machines</td><td>Terminologia e definições: AVR, FCR, VRmax, VRmin, ERF, ceiling voltage, Efd</td></tr>
+            <tr><td><b>IEEE 421.2-2014</b></td><td>IEEE Guide for Identification, Testing, and Evaluation of the Dynamic Performance of Excitation Control Systems</td><td>Metodologia de ensaio de degrau, cálculo de OS/Te/Ess/Ts, definição do ERF (Annex E), critério ±5%|Δ|</td></tr>
+            <tr><td><b>IEEE 421.3-2016</b></td><td>IEEE Standard for High-Potential Test Requirements for Excitation Systems for Synchronous Machines</td><td>Requisitos dielétricos e de isolamento do sistema de excitação</td></tr>
+            <tr><td><b>IEEE 421.4-2014</b></td><td>IEEE Guide for the Preparation of Excitation System Specifications</td><td>Base para especificação técnica de AVR/excitadores em editais e contratos</td></tr>
+            <tr><td><b>IEEE 421.5-2016</b></td><td>IEEE Recommended Practice for Excitation System Models for Power System Stability Studies</td><td>Modelos AC1A–AC8B, ST1A–ST4B, DC1A–DC3A; parâmetros KA, TA, VRmax, VRmin para o modelo de amplificador</td></tr>
+            <tr><td><b>IEEE 421.6-2022</b></td><td>IEEE Recommended Practice for the Specification and Design of Field Discharge Equipment for Synchronous Machines</td><td>Requisitos do circuito de descarga de campo — impacta VRmin e proteção do excitador</td></tr>
+            <tr><td><b>IEEE 115-2019</b></td><td>IEEE Guide for Test Procedures for Synchronous Machines Including Acceptance and Performance Testing</td><td>Ensaios de caracterização da máquina síncrona: curva de magnetização, Tdo', Xd, Xq</td></tr>
+            <tr><td><b>IEEE C37.102-2006</b></td><td>IEEE Guide for AC Generator Protection</td><td>Coordenação entre proteção de sobretensão (59), subtensão (27) e o AVR</td></tr>
+          </tbody>
+        </table>
+
+        <!-- IEC — International Electrotechnical Commission -->
+        <div style="margin:12px 0 4px;font-size:11px;font-weight:700;color:#fff;background:#375623;padding:4px 10px;border-radius:4px;letter-spacing:.5px">🟢 IEC — International Electrotechnical Commission</div>
+        <table class="stbl">
+          <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
+          <tbody>
+            <tr><td><b>IEC 60034-1</b></td><td>Rotating Electrical Machines — Part 1: Rating and Performance</td><td>Dados nominais do gerador: Sn, Vn, fn, fp, In — base para cálculo de Zn e In estator</td></tr>
+            <tr><td><b>IEC 60034-3</b></td><td>Rotating Electrical Machines — Part 3: Specific Requirements for Synchronous Generators Driven by Steam Turbines or Combustion Gas Turbines</td><td>Requisitos de máquinas de polos lisos (turbo-geradores): Tdo', Xd, limites térmicos</td></tr>
+            <tr><td><b>IEC 60034-16-1</b></td><td>Rotating Electrical Machines — Excitation Systems — Part 1: Definitions</td><td>Terminologia IEC: regulador de tensão, regulador de corrente de campo, estabilizador, limitadores de sub/sobre-excitação</td></tr>
+            <tr><td><b>IEC 60034-16-2</b></td><td>Rotating Electrical Machines — Excitation Systems — Part 2: Models for Power System Studies</td><td>Modelos de excitação para estudos de estabilidade; compatibilidade com IEEE 421.5</td></tr>
+            <tr><td><b>IEC 60034-16-3</b></td><td>Rotating Electrical Machines — Excitation Systems — Part 3: Dynamic Performance Criteria and Testing</td><td>Critérios de desempenho dinâmico: OS ≤ 10%, Te — base normativa para ensaios de campo</td></tr>
+            <tr><td><b>IEC 60034-4-1</b></td><td>Rotating Electrical Machines — Methods for Determining Synchronous Machine Quantities from Tests</td><td>Determinação de Xd, Xq, Tdo', Tqo' por ensaios — parâmetros de entrada do modelo de gerador</td></tr>
+          </tbody>
+        </table>
+
+        <!-- ABNT — Associação Brasileira de Normas Técnicas -->
+        <div style="margin:12px 0 4px;font-size:11px;font-weight:700;color:#fff;background:#7c3aed;padding:4px 10px;border-radius:4px;letter-spacing:.5px">🟣 ABNT — Associação Brasileira de Normas Técnicas</div>
+        <table class="stbl">
+          <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
+          <tbody>
+            <tr><td><b>ABNT NBR IEC 60034-1</b></td><td>Máquinas Elétricas Girantes — Parte 1: Dados de placa e desempenho</td><td>Versão brasileira da IEC 60034-1 — dados de placa do gerador</td></tr>
+            <tr><td><b>ABNT NBR IEC 60034-16-1</b></td><td>Máquinas Elétricas Girantes — Sistemas de Excitação — Parte 1: Definições</td><td>Versão brasileira da IEC 60034-16-1 — terminologia em português</td></tr>
+            <tr><td><b>ABNT NBR IEC 60034-16-3</b></td><td>Máquinas Elétricas Girantes — Sistemas de Excitação — Parte 3: Critérios de Desempenho Dinâmico e Ensaios</td><td>Critérios de aprovação em ensaios de campo — referência para laudos e relatórios de comissionamento</td></tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top:10px;padding:8px 12px;background:#f0f4f8;border-left:3px solid #2e75b6;border-radius:0 4px 4px 0;font-size:10px;color:#374151">
+          <b>Nota:</b> Os critérios de avaliação implementados neste simulador tomam como referência primária a <b>ONS Sub. 2.10</b> e a <b>IEEE 421.2-2014</b>. Os modelos matemáticos seguem a <b>IEEE 421.5-2016</b>. Os dados de placa do equipamento obedecem à <b>IEC 60034-1 / ABNT NBR IEC 60034-1</b>.
+        </div>
+      </div>
+
+      <!-- SEÇÃO B — Modelos de Simulação -->
+      <div class="stbl-sec">
+        <h4>🔄 Modelos de Simulação Implementados</h4>
+        <div class="l2col">
+          <div class="ref-card">
+            <p><b>AVR — Regulador Automático de Tensão</b><br>
+            PID + Lead-Lag + Amplificador + Gerador<br>
+            Integração: RK4 @ 200 Hz (Δt = 5 ms)<br>
+            Estados: xI, xD, xLL, xA, xIf</p>
+          </div>
+          <div class="ref-card">
+            <p><b>FCR — Regulador de Corrente de Campo</b><br>
+            PI + Amplificador + Gerador<br>
+            Integração: RK4 @ 200 Hz (Δt = 5 ms)<br>
+            Estados: xI, xA, xIf</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO C — Tabela Consolidada de Critérios -->
+      <div class="stbl-sec">
+        <h4>✅ Tabela Consolidada de Critérios de Avaliação</h4>
+        <table class="stbl">
+          <thead>
+            <tr><th style="width:20%">Ensaio</th><th style="width:25%">Parâmetro</th><th style="width:10%">Símbolo</th><th style="width:15%">Limite</th><th style="width:30%">Norma</th></tr>
+          </thead>
+          <tbody>
+            <tr><td rowspan="4"><b>Degrau ± (em vazio)</b></td><td>Sobressinal máximo</td><td>OS</td><td>≤ 10 %</td><td>ONS Sub. 2.10 / IEC 60034-16</td></tr>
+            <tr><td>Tempo de acomodação ±5%|Δ|</td><td>Te</td><td>≤ 2 s</td><td>ONS Sub. 2.10</td></tr>
+            <tr><td>Erro estacionário</td><td>Ess</td><td>≤ 1 %</td><td>IEEE 421.2</td></tr>
+            <tr><td>Tempo de subida (informativo)</td><td>Ts</td><td>Referência</td><td>IEEE 421.2</td></tr>
+            <tr><td rowspan="2"><b>Rejeição de Carga</b></td><td>Sobressinal de rejeição</td><td>OS</td><td>≤ 10 %</td><td>ONS Sub. 2.10</td></tr>
+            <tr><td>Retorno à banda ±5%</td><td>trees</td><td>≤ 2 s</td><td>ONS Sub. 2.10</td></tr>
+            <tr><td rowspan="3"><b>FCR — Degrau If</b></td><td>Sobressinal</td><td>OS</td><td>≤ 15 %</td><td>IEEE 421.2</td></tr>
+            <tr><td>Acomodação ±2%|ΔIf|</td><td>ts</td><td>≤ 10 s</td><td>IEEE 421.2</td></tr>
+            <tr><td>Taxa de excitação</td><td>ERF</td><td>≥ 2 pu/s</td><td>IEEE 421.2 Annex E</td></tr>
+            <tr><td rowspan="3"><b>Todos os ensaios</b></td><td>Pico da tensão de campo</td><td>Efd_max</td><td>≤ VRmax</td><td>IEEE 421.5</td></tr>
+            <tr><td>Piso da tensão de campo</td><td>Efd_min</td><td>≥ VRmin</td><td>IEEE 421.5</td></tr>
+            <tr><td>Tensão de teto (ceiling)</td><td>Vefd_teto</td><td>≥ 1,6 × Efd₀</td><td>ONS Sub. 2.10 / IEEE 421.5</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SEÇÃO D — Integrador Numérico -->
+      <div class="stbl-sec">
+        <h4>⚙️ Método de Integração Numérica</h4>
+        <div class="ref-card">
+          <p><b>Runge-Kutta 4ª Ordem (RK4)</b><br>
+          Passo de integração: Δt = 5 ms (200 Hz)<br>
+          Precisão: adequada para dinâmica de excitação (τ_min ≈ 20 ms)<br>
+          Decimação: 1 ponto salvo a cada ~3 passos (para ~200 pontos/segundo de simulação)</p>
+        </div>
+      </div>
+    </div>
+  </div><!-- /right -->
+
+</div><!-- /body -->
+
+<script>
+// ═══════════════════════════════════════════════
+// VERSÃO DO SOFTWARE
+// ═══════════════════════════════════════════════
+const APP_VERSION = 'V0.03';
+const APP_YEAR    = '2026';
+const APP_DEV     = 'Eng° Douglas Furtado';
+
+// ═══════════════════════════════════════════════
+// CONSTANTES E ESTADO
+// ═══════════════════════════════════════════════
+const MAQ={
+  hidraulico: {Tdo:8.0, Kag:1.05, lbl:'Hidráulico'},
+  vapor:      {Tdo:5.0, Kag:1.00, lbl:'Turbo-Vapor'},
+  gas:        {Tdo:6.0, Kag:1.02, lbl:'Turbo-Gás'},
+  compensador:{Tdo:7.5, Kag:1.00, lbl:'Comp. Síncrono'},
+  diesel:     {Tdo:4.5, Kag:0.98, lbl:'Gerador Diesel'},
+};
+const DT=0.005;
+let MODE='AVR', EVAL_TYPE='DPOS', CH={};
+
+const $  = id=>document.getElementById(id);
+const gv = id=>parseFloat($(id).value)||0;
+const cl = (v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+const sf = (v,e=1e-6)=>Math.abs(v)<e?e:v;
+
+function rk4(f,t,x,dt){
+  const k1=f(t,x),
+        k2=f(t+dt/2, x.map((v,i)=>v+dt/2*k1[i])),
+        k3=f(t+dt/2, x.map((v,i)=>v+dt/2*k2[i])),
+        k4=f(t+dt,   x.map((v,i)=>v+dt   *k3[i]));
+  return x.map((v,i)=>v+dt/6*(k1[i]+2*k2[i]+2*k3[i]+k4[i]));
+}
+
+// ═══════════════════════════════════════════════
+// SIM AVR — Degrau +/- em Vref
+// estados: [xI, xD, xLL, xA, xIf]
+// ═══════════════════════════════════════════════
+function simAVR(p){
+  const{KP,KI,KD,Tfd,TC,TB,KA,TA,VRmax,VRmin,Tdo,Kag,Vt0,dVref,TSIM,TSTEP}=p;
+  const TAs=sf(TA,1e-4), TBs=sf(TB,1e-4), Tfds=sf(Tfd,1e-4), useLL=TB>1e-3;
+  const N=Math.round(TSIM/DT), DEC=Math.max(1,Math.round(N/600));
+  const E0=Vt0/Kag, xI0=Math.abs(KI)>1e-6?E0/(KA*sf(KI)):0;
+  let x=[xI0,0,E0/KA,E0,E0], out=[];
+  for(let k=0;k<N;k++){
+    const t=k*DT, Vr=Vt0+(t>=TSTEP?dVref:0);
+    if(k%DEC===0){
+      const Vt=Kag*x[4], Ef=cl(x[3],VRmin,VRmax);
+      out.push({t:+t.toFixed(3),Vt:+Vt.toFixed(5),If:+x[4].toFixed(5),
+        Efd:+Ef.toFixed(5),Vref:+Vr.toFixed(4),e:+((Vr-Vt)*100).toFixed(4)});
+    }
+    const D=(_t,s)=>{
+      const[xi,xd,xll,xa,xif]=s, Vt=Kag*xif, e=Vr-Vt,
+            uD=KD*(e-xd)/Tfds, uP=KP*e+KI*xi+uD,
+            uL=useLL?(TC/TBs)*uP+(1-TC/TBs)*xll:uP, Ef=cl(xa,VRmin,VRmax);
+      return[e,(e-xd)/Tfds, useLL?(uP-xll)/TBs:0, (KA*uL-xa)/TAs, (Ef-xif)/Tdo];
+    };
+    x=rk4(D,t,x,DT);
+  }
+  return out;
+}
+
+// ═══════════════════════════════════════════════
+// SIM AVR — Rejeição de Carga
+// Distúrbio ΔVt injetado na medição de Vt em t=TSTEP
+// estados: [xI, xD, xLL, xA, xIf]
+// ═══════════════════════════════════════════════
+function simAVR_rej(p){
+  const{KP,KI,KD,Tfd,TC,TB,KA,TA,VRmax,VRmin,Tdo,Kag,Vt0,dVrej,TSIM,TSTEP}=p;
+  const TAs=sf(TA,1e-4), TBs=sf(TB,1e-4), Tfds=sf(Tfd,1e-4), useLL=TB>1e-3;
+  const N=Math.round(TSIM/DT), DEC=Math.max(1,Math.round(N/600));
+  const Vr=Vt0; // referência não muda — AVR retorna ao ponto inicial
+  const E0=Vt0/Kag, xI0=Math.abs(KI)>1e-6?E0/(KA*sf(KI)):0;
+  let x=[xI0,0,E0/KA,E0,E0], out=[];
+  for(let k=0;k<N;k++){
+    const t=k*DT;
+    const dist=t>=TSTEP?dVrej:0; // distúrbio de carga = tensão sobe após rejeição
+    if(k%DEC===0){
+      const Vt=Kag*x[4]+dist, Ef=cl(x[3],VRmin,VRmax);
+      out.push({t:+t.toFixed(3),Vt:+Vt.toFixed(5),If:+x[4].toFixed(5),
+        Efd:+Ef.toFixed(5),Vref:+Vr.toFixed(4),e:+((Vr-Vt)*100).toFixed(4)});
+    }
+    const D=(_t,s)=>{
+      const[xi,xd,xll,xa,xif]=s;
+      const Vt_m=Kag*xif+(t>=TSTEP?dVrej:0); // medição inclui distúrbio
+      const e=Vr-Vt_m,
+            uD=KD*(e-xd)/Tfds, uP=KP*e+KI*xi+uD,
+            uL=useLL?(TC/TBs)*uP+(1-TC/TBs)*xll:uP, Ef=cl(xa,VRmin,VRmax);
+      return[e,(e-xd)/Tfds, useLL?(uP-xll)/TBs:0, (KA*uL-xa)/TAs, (Ef-xif)/Tdo];
+    };
+    x=rk4(D,t,x,DT);
+  }
+  return out;
+}
+
+// ═══════════════════════════════════════════════
+// SIM FCR — estados: [xI, xA, xIf]
+// ═══════════════════════════════════════════════
+function simFCR(p){
+  const{KP,KI,TA,VRmax,VRmin,Tdo,Kag,If0,dIf,TSIM,TSTEP}=p;
+  const TAs=sf(TA,1e-4), N=Math.round(TSIM/DT), DEC=Math.max(1,Math.round(N/600));
+  let x=[0,If0,If0], out=[];
+  for(let k=0;k<N;k++){
+    const t=k*DT, Ir=If0+(t>=TSTEP?dIf:0);
+    if(k%DEC===0){
+      const Ef=cl(x[1],VRmin,VRmax);
+      out.push({t:+t.toFixed(3),If:+x[2].toFixed(5),Vt:+(Kag*x[2]).toFixed(5),
+        Efd:+Ef.toFixed(5),Vref:+Ir.toFixed(4),e:+((Ir-x[2])*100).toFixed(4)});
+    }
+    const D=(_t,s)=>{
+      const[xi,xa,xif]=s, e=Ir-xif;
+      return[e,(KP*e+KI*xi-xa)/TAs,(cl(xa,VRmin,VRmax)-xif)/Tdo];
+    };
+    x=rk4(D,t,x,DT);
+  }
+  return out;
+}
+
+// ═══════════════════════════════════════════════
+// MÉTRICAS — Degrau +/- (compatível com planilha "Tensão em Vazio")
+// Banda de acomodação: ±5% do degrau aplicado
+// ═══════════════════════════════════════════════
+function calcM_degrau(data, key, y0, delta, TSTEP){
+  const post=data.filter(d=>d.t>=TSTEP);
+  const n=post.length;
+  if(!n||!delta) return{OS:'—',Ts:'—',Te:'—',Ess:'—',pk:'—'};
+  const sg=delta>0?1:-1;
+
+  // Valor final yf = média dos últimos 20%
+  const yf_arr=post.slice(Math.floor(n*0.8));
+  const yf=yf_arr.reduce((s,d)=>s+d[key],0)/yf_arr.length;
+
+  // Mp = pico (máx para degrau+, mín para degrau-)
+  const Mp=sg>0?Math.max(...post.map(d=>d[key])):Math.min(...post.map(d=>d[key]));
+  const OS=((Mp-yf)/Math.abs(delta)*100*sg);
+
+  // Tempo de subida: t10 → t90
+  const lo=y0+0.1*delta, hi=y0+0.9*delta;
+  let t10=null, t90=null;
+  for(const d of post){
+    if(!t10&&sg*d[key]>=sg*lo) t10=d.t;
+    if(!t90&&sg*d[key]>=sg*hi) t90=d.t;
+    if(t10&&t90) break;
+  }
+  const Ts=t10&&t90?(t90-t10).toFixed(2):'—';
+
+  // Tempo de acomodação tf: quando sinal entra e permanece em yf ±5%|Δ|
+  const band5=0.05*Math.abs(delta);
+  let tf=null;
+  for(let i=post.length-1;i>=0;i--){
+    if(Math.abs(post[i][key]-yf)>band5){ tf=post[Math.min(i+1,post.length-1)].t; break; }
+  }
+  const Te=tf?(tf-TSTEP).toFixed(2):'0.00';
+
+  // Erro estacionário
+  const ref=y0+delta;
+  const Ess=Math.abs((ref-yf)/Math.abs(delta)*100);
+
+  // Pico Efd
+  const pk=Math.max(...data.map(d=>Math.abs(d.Efd)));
+  // raw values for chart markers
+  return{OS:OS.toFixed(1),Ts,Te,Ess:Ess.toFixed(2),pk:pk.toFixed(3),Mp:Mp.toFixed(4),yf:yf.toFixed(4),
+    _yf:yf,_Mp:Mp,_lo:lo,_hi:hi,_band5:band5,_t10:t10,_t90:t90,_tf:tf};
+}
+
+// ═══════════════════════════════════════════════
+// MÉTRICAS — Rejeição de Carga (compatível com planilha "Rejeição de Carga")
+// OS = (Vpico - Vt0)/Vt0 × 100
+// trees = tempo para retornar abaixo de Vt0×1.05 após pico
+// ═══════════════════════════════════════════════
+function calcM_rej(data, Vt0, TSTEP){
+  const post=data.filter(d=>d.t>=TSTEP);
+  if(!post.length) return{OS:'—',trees:'—',Efd_floor:'—',Efd_peak:'—'};
+
+  const Vpeak=Math.max(...post.map(d=>d.Vt));
+  const OS=(Vpeak-Vt0)/Vt0*100;
+
+  // trees: primeiro ponto após o pico em que Vt ≤ Vt0×1.05
+  const Vupper=Vt0*1.05;
+  let trees=null, pastPeak=false;
+  for(const d of post){
+    if(!pastPeak&&d.Vt>=Vpeak*0.995) pastPeak=true;
+    if(pastPeak&&d.Vt<=Vupper){ trees=d.t; break; }
+  }
+  const treesRel=trees?(trees-TSTEP).toFixed(3):('>'+(data[data.length-1].t-TSTEP).toFixed(0));
+
+  // Efd mínimo (piso de excitação após rejeição)
+  const Efd_floor=Math.min(...post.map(d=>d.Efd));
+  // Efd pico (máximo absoluto durante o ensaio)
+  const Efd_peak=Math.max(...data.map(d=>Math.abs(d.Efd)));
+
+  return{OS:OS.toFixed(1),trees:treesRel,Vpeak:Vpeak.toFixed(4),
+    Efd_floor:Efd_floor.toFixed(3),Efd_peak:Efd_peak.toFixed(3),
+    _Vpeak:Vpeak,_Vupper:Vt0*1.05,_Vlower:Vt0*0.95,_trees_abs:trees};
+}
+
+// ═══════════════════════════════════════════════
+// MÉTRICAS — FCR (IEEE 421.2 padrão)
+// ═══════════════════════════════════════════════
+function calcM_std(data, key, r0, delta, TSTEP){
+  const post=data.filter(d=>d.t>=TSTEP), fin=r0+delta, sg=delta>0?1:-1, bd=0.02*Math.abs(delta);
+  if(!post.length||!delta) return{OS:'—',tr:'—',ts:'—',Ess:'—',pk:'—',ERF:'—'};
+  const ext=post.reduce((a,d)=>sg>0?Math.max(a,d[key]):Math.min(a,d[key]),post[0][key]);
+  const OS=((ext-fin)/Math.abs(delta))*100*sg;
+  const lo=r0+.1*delta, hi=r0+.9*delta; let t10=null,t90=null;
+  for(const d of post){if(!t10&&sg*d[key]>=sg*lo)t10=d.t;if(!t90&&sg*d[key]>=sg*hi)t90=d.t;if(t10&&t90)break;}
+  let ts=0;
+  for(let i=post.length-1;i>=0;i--){if(Math.abs(post[i][key]-fin)>bd){ts=post[Math.min(i+1,post.length-1)].t-TSTEP;break;}}
+  const Ess=((fin-post[post.length-1][key])/Math.abs(delta))*100;
+  const pk=Math.max(...data.map(d=>Math.abs(d.Efd)));
+  const e0=data.find(d=>d.t>=TSTEP)?.Efd||0, e5=data.find(d=>d.t>=TSTEP+.5)?.Efd||0;
+  return{OS:OS.toFixed(1),tr:t10&&t90?(t90-t10).toFixed(2):'—',ts:ts.toFixed(1),
+    Ess:Math.abs(Ess).toFixed(2),pk:pk.toFixed(3),ERF:(Math.abs(e5-e0)/.5).toFixed(2)};
+}
+
+// ═══════════════════════════════════════════════
+// BADGE helper
+// ═══════════════════════════════════════════════
+function badge(val, crit){
+  if(val==='—') return '—';
+  if(typeof val==='string'&&val.startsWith('>')) return '<span style="color:#dc2626">❌</span>';
+  const v=parseFloat(val);
+  if(isNaN(v)) return '—';
+  return crit(v)?'<span style="color:#16a34a">✅</span>':'<span style="color:#dc2626">❌</span>';
+}
+function col(val, crit){
+  if(val==='—'||isNaN(parseFloat(val))) return '#374151';
+  return crit(parseFloat(val))?'#16a34a':'#dc2626';
+}
+
+// ═══════════════════════════════════════════════
+// RENDER MÉTRICAS — Degrau +/-
+// ═══════════════════════════════════════════════
+function renderMetrics_degrau(M, VRmax, etype){
+  const sign=etype==='DNEG'?'−':'+';
+  $('minfo').innerHTML=`AVR · <b>Degrau ${sign}</b> &nbsp;|&nbsp; Δ=${etype==='DNEG'?'-':''}${Math.abs(gv('dVref')).toFixed(3)} pu`;
+  $('mnorm').textContent='ONS Sub. 2.10 / IEC 60034-16';
+  $('mcs').innerHTML=`
+    <div class="mc">
+      <div class="a">OS máx sobressinal</div>
+      <div class="v" style="color:${col(M.OS,v=>v<=10)}">${M.OS}%</div>
+      <div class="c">≤ 10 %</div>
+      <div class="i">${badge(M.OS,v=>v<=10)}</div>
+    </div>
+    <div class="mc">
+      <div class="a">Ts subida 10→90%</div>
+      <div class="v">${M.Ts}s</div>
+      <div class="c">referência</div>
+      <div class="i">ℹ️</div>
+    </div>
+    <div class="mc">
+      <div class="a">Te acomod. ±5%|Δ|</div>
+      <div class="v" style="color:${col(M.Te,v=>v<=2)}">${M.Te}s</div>
+      <div class="c">≤ 2 s</div>
+      <div class="i">${badge(M.Te,v=>v<=2)}</div>
+    </div>
+    <div class="mc">
+      <div class="a">Ess erro estac.</div>
+      <div class="v" style="color:${col(M.Ess,v=>v<=1)}">${M.Ess}%</div>
+      <div class="c">≤ 1 %</div>
+      <div class="i">${badge(M.Ess,v=>v<=1)}</div>
+    </div>
+    <div class="mc">
+      <div class="a">yf valor final</div>
+      <div class="v">${M.yf} pu</div>
+      <div class="c">Mp = ${M.Mp} pu</div>
+      <div class="i">ℹ️</div>
+    </div>
+    <div class="mc">
+      <div class="a">Pico |Efd|</div>
+      <div class="v" style="color:${col(M.pk,v=>v<=VRmax)}">${M.pk} pu</div>
+      <div class="c">≤ ${VRmax} pu</div>
+      <div class="i">${badge(M.pk,v=>v<=VRmax)}</div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+// RENDER MÉTRICAS — Rejeição de Carga
+// ═══════════════════════════════════════════════
+function renderMetrics_rej(M, VRmax, VRmin, Vt0){
+  $('minfo').innerHTML=`AVR · <b>Rejeição de Carga</b> &nbsp;|&nbsp; ΔVt=+${gv('dVrej').toFixed(3)} pu`;
+  $('mnorm').textContent='ONS Sub. 2.10 / IEEE 421.2';
+  $('mcs').innerHTML=`
+    <div class="mc">
+      <div class="a">OS máx rejeição</div>
+      <div class="v" style="color:${col(M.OS,v=>v<=10)}">${M.OS}%</div>
+      <div class="c">≤ 10 %</div>
+      <div class="i">${badge(M.OS,v=>v<=10)}</div>
+    </div>
+    <div class="mc">
+      <div class="a">trees retorno ±5%</div>
+      <div class="v" style="color:${col(M.trees,v=>v<=2)}">${M.trees}s</div>
+      <div class="c">≤ 2 s</div>
+      <div class="i">${badge(M.trees,v=>v<=2)}</div>
+    </div>
+    <div class="mc">
+      <div class="a">Vt pico</div>
+      <div class="v">${M.Vpeak} pu</div>
+      <div class="c">ref = ${Vt0.toFixed(3)}×1.05 = ${(Vt0*1.05).toFixed(3)}</div>
+      <div class="i">ℹ️</div>
+    </div>
+    <div class="mc">
+      <div class="a">Efd piso (mín)</div>
+      <div class="v" style="color:${col(M.Efd_floor,v=>v>=VRmin)}">${M.Efd_floor} pu</div>
+      <div class="c">≥ ${VRmin} pu</div>
+      <div class="i">${badge(M.Efd_floor,v=>v>=VRmin)}</div>
+    </div>
+    <div class="mc">
+      <div class="a">Efd pico (máx)</div>
+      <div class="v" style="color:${col(M.Efd_peak,v=>v<=VRmax)}">${M.Efd_peak} pu</div>
+      <div class="c">≤ ${VRmax} pu</div>
+      <div class="i">${badge(M.Efd_peak,v=>v<=VRmax)}</div>
+    </div>
+    <div class="mc">
+      <div class="a">Norma</div>
+      <div class="v" style="font-size:9px;line-height:1.4">Rej.<br>Carga</div>
+      <div class="c">IEEE 421.2</div>
+      <div class="i">📋</div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+// RENDER MÉTRICAS — FCR (padrão IEEE 421.2)
+// ═══════════════════════════════════════════════
+function renderMetrics_std(M, VRmax){
+  $('minfo').innerHTML=`Modo: <b>FCR</b> &nbsp;|&nbsp; ΔIf=${gv('dIf').toFixed(3)} pu`;
+  $('mnorm').textContent='IEEE 421.2 / ONS Sub. 2.10';
+  $('mcs').innerHTML=`
+    <div class="mc">
+      <div class="a">Sobressinal OS</div>
+      <div class="v" style="color:${col(M.OS,v=>v<=15)}">${M.OS}%</div>
+      <div class="c">≤ 15 %</div>
+      <div class="i">${badge(M.OS,v=>v<=15)}</div>
+    </div>
+    <div class="mc">
+      <div class="a">Tempo subida tr</div>
+      <div class="v">${M.tr}s</div>
+      <div class="c">≤ 2 s</div>
+      <div class="i">${M.tr!=='—'?badge(M.tr,v=>v<=2):'—'}</div>
+    </div>
+    <div class="mc">
+      <div class="a">Acomodação ts</div>
+      <div class="v" style="color:${col(M.ts,v=>v<=10)}">${M.ts}s</div>
+      <div class="c">≤ 10 s</div>
+      <div class="i">${badge(M.ts,v=>v<=10)}</div>
+    </div>
+    <div class="mc">
+      <div class="a">Erro est. Ess</div>
+      <div class="v" style="color:${col(M.Ess,v=>v<=1)}">${M.Ess}%</div>
+      <div class="c">≤ 1 %</div>
+      <div class="i">${badge(M.Ess,v=>v<=1)}</div>
+    </div>
+    <div class="mc">
+      <div class="a">Pico Efd</div>
+      <div class="v" style="color:${col(M.pk,v=>v<=VRmax)}">${M.pk} pu</div>
+      <div class="c">≤ ${VRmax} pu</div>
+      <div class="i">${badge(M.pk,v=>v<=VRmax)}</div>
+    </div>
+    <div class="mc">
+      <div class="a">ERF IEEE 421.2</div>
+      <div class="v" style="color:${col(M.ERF,v=>v>=2)}">${M.ERF} pu/s</div>
+      <div class="c">≥ 2 pu/s</div>
+      <div class="i">${badge(M.ERF,v=>v>=2)}</div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+// CHARTS
+// ═══════════════════════════════════════════════
+const BOPT={
+  animation:false,responsive:true,maintainAspectRatio:false,
+  interaction:{mode:'index',intersect:false},
+  plugins:{legend:{labels:{font:{size:10},boxWidth:12,padding:6}}},
+  scales:{
+    x:{type:'linear',ticks:{font:{size:9},maxTicksLimit:7},
+       title:{display:true,text:'t (s)',font:{size:9}}},
+    y:{ticks:{font:{size:9},maxTicksLimit:6}}
+  }
+};
+const ds=(lbl,data,key,col,dsh=[],bw=2)=>({
+  label:lbl,data:data.map(d=>({x:d.t,y:d[key]})),
+  borderColor:col,borderWidth:bw,borderDash:dsh,pointRadius:0,parsing:false,showLine:true,tension:0
+});
+const hL=(y,col,lbl,tsim)=>({
+  label:lbl,data:[{x:0,y},{x:tsim,y}],
+  borderColor:col,borderWidth:1,borderDash:[4,3],pointRadius:0,parsing:false,showLine:true
+});
+const vL=(x,ylo,yhi,col='#94a3b8',lbl='')=>({
+  label:lbl,data:[{x,y:ylo},{x,y:yhi}],
+  borderColor:col,borderWidth:1,borderDash:[4,2],pointRadius:0,parsing:false,showLine:true
+});
+function mkC(id,datasets,ymin,ymax,tsim){
+  if(CH[id])CH[id].destroy();
+  // Formatação dinâmica do eixo X conforme duração da simulação
+  const fmt = !tsim||tsim>=5 ? v=>v.toFixed(1)+'s'
+            : tsim>=1        ? v=>v.toFixed(2)+'s'
+            : tsim>=0.1      ? v=>(v*1000).toFixed(0)+'ms'
+            : v=>(v*1000).toFixed(1)+'ms';
+  CH[id]=new Chart($(id),{type:'scatter',data:{datasets},
+    options:{...BOPT,scales:{
+      ...BOPT.scales,
+      x:{...BOPT.scales.x,ticks:{font:{size:9},maxTicksLimit:10,callback:fmt}},
+      y:{...BOPT.scales.y,min:ymin,max:ymax}
+    }}});
+}
+
+// ═══════════════════════════════════════════════
+// SIMULAR
+// ═══════════════════════════════════════════════
+function runSim(){
+  const btn=$('bsim'); btn.textContent='⏳ Calculando…'; btn.disabled=true;
+  setTimeout(()=>{
+    try{
+      const mq=MAQ[$('maq').value];
+      const VRmax=gv('VRmax'), VRmin=gv('VRmin');
+      const TSIM=Math.max(0.1,gv('Tsim')), TSTEP=Math.min(gv('Tstep'),TSIM-0.05);
+      // Dados medidos — Kag calibrado se If0_medido preenchido
+      const med=getMedParams();
+      const Kag_eff = med.If0m>0.01 ? (gv('Vt0')/med.If0m) : mq.Kag;
+      let data, key, r0, delta, Mraw={};
+
+      // ── Simulação ──────────────────────────────
+      if(MODE==='FCR'){
+        const If0=med.Iref0m>0.01?med.Iref0m:gv('If0'), dIf=gv('dIf');
+        data=simFCR({KP:gv('KPf'),KI:gv('KIf'),TA:gv('TA'),
+          VRmax,VRmin,Tdo:mq.Tdo,Kag:Kag_eff,If0,dIf,TSIM,TSTEP});
+        Mraw=calcM_std(data,'If',If0,dIf,TSTEP);
+        renderMetrics_std(Mraw,VRmax);
+        renderEvalTable_std(Mraw,VRmax,VRmin,If0,dIf);
+        key='If'; r0=If0; delta=dIf;
+
+      } else if(EVAL_TYPE==='REJE'){
+        const Vt0=med.Vref0m>0.01?med.Vref0m:gv('Vt0'), dVrej=Math.abs(gv('dVrej'));
+        data=simAVR_rej({KP:gv('KPa'),KI:gv('KIa'),KD:gv('KDa'),Tfd:gv('Tfd'),
+          TC:gv('TC'),TB:gv('TB'),KA:gv('KA'),TA:gv('TA'),
+          VRmax,VRmin,Tdo:mq.Tdo,Kag:Kag_eff,Vt0,dVrej,TSIM,TSTEP});
+        Mraw=calcM_rej(data,Vt0,TSTEP);
+        renderMetrics_rej(Mraw,VRmax,VRmin,Vt0);
+        renderEvalTable_rej(Mraw,VRmax,VRmin,Vt0);
+        key='Vt'; r0=Vt0; delta=dVrej;
+
+      } else {
+        // DPOS ou DNEG
+        const Vt0=med.Vref0m>0.01?med.Vref0m:gv('Vt0');
+        const dVref=EVAL_TYPE==='DNEG'?-Math.abs(gv('dVref')):Math.abs(gv('dVref'));
+        data=simAVR({KP:gv('KPa'),KI:gv('KIa'),KD:gv('KDa'),Tfd:gv('Tfd'),
+          TC:gv('TC'),TB:gv('TB'),KA:gv('KA'),TA:gv('TA'),
+          VRmax,VRmin,Tdo:mq.Tdo,Kag:Kag_eff,Vt0,dVref,TSIM,TSTEP});
+        Mraw=calcM_degrau(data,'Vt',Vt0,dVref,TSTEP);
+        renderMetrics_degrau(Mraw,VRmax,EVAL_TYPE);
+        renderEvalTable_degrau(Mraw,VRmax,VRmin,Vt0,dVref,EVAL_TYPE);
+        key='Vt'; r0=Vt0; delta=dVref;
+      }
+
+      // ── Domínios ───────────────────────────────
+      const vtA=data.map(d=>d.Vt), ifA=data.map(d=>d.If),
+            efA=data.map(d=>d.Efd), erA=data.map(d=>d.e);
+      const rng=(a,p=0.005)=>{const mn=Math.min(...a),mx=Math.max(...a),sp=Math.max((mx-mn)*p,.002);return[mn-sp,mx+sp];};
+      const[vtL,vtH]=rng(vtA), [ifL,ifH]=rng(ifA);
+      const efL=Math.min(VRmin,Math.min(...efA))-.4, efH=Math.max(VRmax,Math.max(...efA))+.4;
+      const erS=Math.max(5,Math.max(Math.abs(Math.min(...erA)),Math.abs(Math.max(...erA)))*1.3);
+
+      // ── Chart Vt — com sinal de controle e marcadores ──
+      // Sinal de controle (Vref/Setpoint) é a linha de referência do AVR
+      const vtDs=[
+        vL(TSTEP,vtL,vtH,'#64748b','tp'),                          // marco vertical tp
+        ds('Setpoint/Vref',data,'Vref','#facc15',[5,2],1.5),       // sinal de controle/setpoint
+        ds('Vt',data,'Vt','#38bdf8',[], 2.5)                       // tensão terminal
+      ];
+      if(EVAL_TYPE==='REJE'&&MODE==='AVR'){
+        const Vt0=gv('Vt0');
+        vtDs.push(hL(Mraw._Vpeak||Vt0*1.1,'#ef4444',`Vpico=${(Mraw._Vpeak||0).toFixed(3)}`,TSIM));
+        vtDs.push(hL(Mraw._Vupper||Vt0*1.05,'#fbbf24',`+5% = ${(Mraw._Vupper||Vt0*1.05).toFixed(3)}`,TSIM));
+        vtDs.push(hL(Mraw._Vlower||Vt0*0.95,'#fbbf24',`-5% = ${(Mraw._Vlower||Vt0*0.95).toFixed(3)}`,TSIM));
+        if(Mraw._trees_abs) vtDs.push(vL(Mraw._trees_abs,vtL,vtH,'#fbbf24','trees'));
+      } else if(MODE==='AVR'&&(EVAL_TYPE==='DPOS'||EVAL_TYPE==='DNEG')){
+        const yf=Mraw._yf!=null?Mraw._yf:r0+delta;
+        const Mp=Mraw._Mp!=null?Mraw._Mp:yf;
+        const lo=Mraw._lo!=null?Mraw._lo:r0+0.1*delta;
+        const hi=Mraw._hi!=null?Mraw._hi:r0+0.9*delta;
+        const b5=Mraw._band5!=null?Mraw._band5:0.05*Math.abs(delta);
+        // Linhas horizontais de referência
+        vtDs.push(hL(Mp,'#ef4444',`Mp=${Mp.toFixed(4)}`,TSIM));
+        vtDs.push(hL(yf+b5,'#fbbf24',`yf+5% = ${(yf+b5).toFixed(4)}`,TSIM));
+        vtDs.push(hL(yf-b5,'#fbbf24',`yf-5% = ${(yf-b5).toFixed(4)}`,TSIM));
+        vtDs.push(hL(hi,  '#10b981',`90% = ${hi.toFixed(4)}`,TSIM));
+        vtDs.push(hL(lo,  '#a78bfa',`10% = ${lo.toFixed(4)}`,TSIM));
+        // Linhas verticais dos instantes de tempo
+        if(Mraw._t10) vtDs.push(vL(Mraw._t10,vtL,vtH,'#a78bfa','t10'));
+        if(Mraw._t90) vtDs.push(vL(Mraw._t90,vtL,vtH,'#10b981','t90'));
+        if(Mraw._tf)  vtDs.push(vL(Mraw._tf, vtL,vtH,'#fbbf24','tf'));
+      }
+      mkC('cVt',vtDs,vtL,vtH,TSIM);
+
+      // ── Chart If ──────────────────────────────
+      const ifDs=[vL(TSTEP,ifL,ifH), ds('If',data,'If','#16a34a')];
+      if(MODE==='FCR') ifDs.push(ds('If_ref',data,'Vref','#94a3b8',[6,3],1));
+      mkC('cIf',ifDs,ifL,ifH,TSIM);
+
+      // ── Chart Efd ─────────────────────────────
+      mkC('cEfd',[vL(TSTEP,efL,efH),
+        hL(VRmax,'#dc2626',`VRmax=${VRmax}`,TSIM),
+        hL(VRmin,'#2563eb',`VRmin=${VRmin}`,TSIM),
+        ds('Efd',data,'Efd','#dc2626')],efL,efH,TSIM);
+
+      // ── Chart Erro ────────────────────────────
+      mkC('cErr',[vL(TSTEP,-erS,erS),
+        hL(0,'#374151','',TSIM),
+        hL(2,'#fbbf24','±2%',TSIM), hL(-2,'#fbbf24','',TSIM),
+        ds('Erro(%)',data,'e','#f97316')],-erS,erS,TSIM);
+
+      $('ph').style.display='none';
+      $('grid').style.display='grid';
+      $('mbar').style.display='flex';
+      $('ava-ph').style.display='none';
+      showTab('sim');
+
+    }catch(e){console.error(e);alert('Erro na simulação: '+e.message);}
+    btn.textContent='▶ SIMULAR'; btn.disabled=false;
+  },20);
+}
+
+// ═══════════════════════════════════════════════
+// UI — Modo de Controle (AVR / FCR)
+// ═══════════════════════════════════════════════
+function setMode(m){
+  MODE=m;
+  $('bavr').className='mb'+(m==='AVR'?' on':'');
+  $('bfcr').className='mb'+(m==='FCR'?' on':'');
+  $('savr').style.display=m==='AVR'?'':'none';
+  $('sfcr').style.display=m==='FCR'?'':'none';
+  // Mostrar linha de ensaio apenas no AVR
+  $('evalrow').style.display=m==='AVR'?'flex':'none';
+  // Dados medidos: toggle AVR/FCR setpoint fields
+  $('savr-med').style.display=m==='AVR'?'block':'none';
+  $('sfcr-med').style.display=m==='FCR'?'block':'none';
+  onMedChange();
+  // Ajustar campos de degrau
+  $('rdvr').style.display=m==='AVR'&&EVAL_TYPE!=='REJE'?'flex':'none';
+  $('rdif').style.display=m==='FCR'?'flex':'none';
+  $('rrej').style.display=m==='AVR'&&EVAL_TYPE==='REJE'?'flex':'none';
+  $('tfbox').innerHTML=m==='AVR'
+    ?'<b>Cadeia de controle AVR:</b>G<sub>PID</sub> = KP + KI/s + KD·s/(1+Tfd·s)<br>G<sub>LL</sub> = (1+TC·s)/(1+TB·s)<br>G<sub>exc</sub> = KA/(1+TA·s)<br>G<sub>gen</sub> = Kag/(1+Tdo\'·s)'
+    :'<b>Cadeia de controle FCR:</b>G<sub>PI</sub> = KP + KI/s<br>G<sub>exc</sub> = 1/(1+TA·s)<br>G<sub>fld</sub> = 1/(1+Tdo\'·s)';
+  resetSim();
+}
+
+// ═══════════════════════════════════════════════
+// UI — Tipo de Ensaio
+// ═══════════════════════════════════════════════
+function setEval(type){
+  EVAL_TYPE=type;
+  ['edpos','edneg','ereje'].forEach(id=>$(id).className='eb');
+  $({DPOS:'edpos',DNEG:'edneg',REJE:'ereje'}[type]).className='eb on';
+  // Campos de entrada
+  $('rdvr').style.display=type!=='REJE'?'flex':'none';
+  $('rrej').style.display=type==='REJE'?'flex':'none';
+  // Rótulos
+  $('ldvr').textContent=type==='DNEG'?'|Δ Vref| (mag.)':'Δ Vref';
+  $('ltstep').textContent=type==='REJE'?'t rejeição':'t degrau';
+  // Cabeçalho da seção
+  const icons={DPOS:'📈',DNEG:'📉',REJE:'⚡'};
+  const lbts={DPOS:'DEGRAU POSITIVO',DNEG:'DEGRAU NEGATIVO',REJE:'REJEIÇÃO DE CARGA'};
+  $('stepsh').textContent=icons[type]+' '+lbts[type]+' — TEMPO DE SIMULAÇÃO';
+  $('stepsh').style.background={DPOS:'#b91c1c',DNEG:'#1d4ed8',REJE:'#7c3aed'}[type];
+  resetSim();
+  onStepChange();
+}
+
+// ═══════════════════════════════════════════════
+// UI — Atualizar displays
+// ═══════════════════════════════════════════════
+function onMaqChange(){
+  const m=MAQ[$('maq').value], Vt0=gv('Vt0');
+  $('maq-desc').textContent=`Tdo' = ${m.Tdo} s \u00a0|\u00a0 Kag = ${m.Kag}`;
+  $('efd0n').textContent=`Efd0 ≈ ${(Vt0/m.Kag).toFixed(3)} pu \u00a0|\u00a0 Kag = ${m.Kag}`;
+  const lbl={DPOS:'Degrau +',DNEG:'Degrau −',REJE:'Rejeição de Carga'}[EVAL_TYPE];
+  $('phsub').innerHTML=`AVR · ${lbl} &nbsp;·&nbsp; ${m.lbl} (Tdo'=${m.Tdo}s)<br>t ensaio=${gv('Tstep')}s · Integração RK4 @${1/DT}Hz`;
+}
+function onStepChange(){
+  const Vt0=gv('Vt0'), dV=gv('dVref'), If0=gv('If0'), dI=gv('dIf'),
+        dVr=gv('dVrej'), Ts=gv('Tstep'), Tsim=gv('Tsim');
+  if(MODE==='FCR'){
+    $('stepn').textContent=`Novo If_ref: ${(If0+dI).toFixed(3)} pu (${dI>=0?'+':''}${(dI*100).toFixed(1)}%)`;
+  } else if(EVAL_TYPE==='REJE'){
+    $('stepn').textContent=`Distúrbio ΔVt: +${Math.abs(dVr).toFixed(3)} pu (+${(Math.abs(dVr)/Vt0*100).toFixed(1)}% de Vt0)`;
+  } else if(EVAL_TYPE==='DNEG'){
+    const delta=-Math.abs(dV);
+    $('stepn').textContent=`Novo Vref: ${(Vt0+delta).toFixed(3)} pu (${(delta*100).toFixed(1)}%)`;
+  } else {
+    $('stepn').textContent=`Novo Vref: ${(Vt0+dV).toFixed(3)} pu (+${(dV*100).toFixed(1)}%)`;
+  }
+  const n=Math.round(Tsim/DT);
+  const tlabel={DPOS:'Degrau',DNEG:'Degrau',REJE:'Rejeição'}[EVAL_TYPE]||'Evento';
+  $('tn').textContent=`${tlabel} em t=${Ts}s · Obs. até t=${Tsim}s · ~${n.toLocaleString()} passos`;
+}
+function resetSim(){
+  Object.values(CH).forEach(c=>c.destroy()); CH={};
+  $('ph').style.display='flex';
+  $('grid').style.display='none';
+  $('mbar').style.display='none';
+  $('evaltbl').style.display='none';
+  $('ava-ph').style.display='flex';
+  updateAvaBadge(null);
+  showTab('sim');
+  onMaqChange(); onStepChange();
+}
+
+// ═══════════════════════════════════════════════
+// DADOS MEDIDOS — calibração do modelo
+// ═══════════════════════════════════════════════
+function onMedChange(){
+  const Vt0=gv('Vt0'), If0m=gv('If0m'), Efd0m=gv('Efd0m');
+  const kd=$('kag-calc');
+  if(If0m>0.01){
+    const Kag_real=(Vt0/If0m).toFixed(4);
+    const mq=MAQ[$('maq').value];
+    kd.textContent=`Kag real: ${Kag_real} pu  (teórico: ${mq.Kag})`;
+    kd.style.color=Math.abs(Vt0/If0m - mq.Kag)>0.05?'#dc2626':'#16a34a';
+  } else {
+    kd.textContent='Kag real: — (preencher If₀ medido)';
+    kd.style.color='#64748b';
+  }
+}
+function getMedParams(){
+  // Retorna parâmetros medidos para sobrescrever teóricos na simulação
+  const If0m=gv('If0m'), Efd0m=gv('Efd0m');
+  const Vref0m=gv('Vref0m'), Iref0m=gv('Iref0m');
+  return{If0m,Efd0m,Vref0m,Iref0m};
+}
+
+// ═══════════════════════════════════════════════
+// CÁLCULOS AUTOMÁTICOS — Equipamento
+// ═══════════════════════════════════════════════
+function calcEquip(){
+  const Sn=gv('Sn')||100, Vn=gv('Vn')||13.8, fp=Math.min(Math.max(gv('fp')||0.85,0.01),1.0);
+  const fn=gv('fn')||60, RPM=gv('RPM')||1800;
+  // Pn = Sn × fp  [MW]
+  const Pn = Sn * fp;
+  // Qn = Sn × sin(arccos(fp))  [Mvar]
+  const Qn = Sn * Math.sqrt(1 - fp * fp);
+  // In = Sn / (√3 × Vn)  [kA]
+  const In = Sn / (Math.sqrt(3) * Vn);
+  // Zn = Vn² / Sn  [Ω] — impedância de base
+  const Zn = (Vn * Vn) / Sn;
+  // nPol = 120 × fn / RPM
+  const nPol = Math.round(120 * fn / RPM);
+  $('Pn').value  = Pn.toFixed(2);
+  $('Qn').value  = Qn.toFixed(2);
+  $('In').value  = In.toFixed(4);
+  $('Zn').value  = Zn.toFixed(4);
+  $('nPol').value = nPol;
+}
+
+// ═══════════════════════════════════════════════
+// TABELA AVALIATIVA — Laudo formal por norma
+// ═══════════════════════════════════════════════
+function renderEvalTable(rows, info){
+  const fails=rows.filter(r=>r.ok===false).length;
+  $('etinfo').textContent=info;
+  const vd=$('etverdict');
+  if(fails===0){
+    vd.className='ok';
+    vd.innerHTML='✅ &nbsp;APROVADO &mdash; Todos os critérios normativos atendidos';
+  } else {
+    vd.className='nok';
+    vd.innerHTML=`❌ &nbsp;REPROVADO &mdash; ${fails} critério${fails>1?'s':''} não atendido${fails>1?'s':''}`;
+  }
+  $('etbody').innerHTML=rows.map((r,i)=>{
+    const ok=r.ok;
+    const rIcon=ok===null
+      ?'<span class="et-ref">—</span>'
+      :ok?'<span class="et-ok">✅ APROVADO</span>'
+         :'<span class="et-nok">❌ REPROVADO</span>';
+    const vc=ok===null?'#374151':ok?'#15803d':'#dc2626';
+    return`<tr>
+      <td class="etn">${i+1}</td>
+      <td class="etpar">${r.par}</td>
+      <td class="etsym">${r.sym}</td>
+      <td class="etval" style="color:${vc}">${r.val}</td>
+      <td class="etlim">${r.lim}</td>
+      <td class="etnorm">${r.norm}</td>
+      <td class="etre">${rIcon}</td>
+    </tr>`;
+  }).join('');
+  $('evaltbl').style.display='block';
+  updateAvaBadge(fails===0);
+}
+
+function renderEvalTable_degrau(M, VRmax, VRmin, Vt0, dVref, etype){
+  const sign=etype==='DNEG'?'−':'+';
+  const maq=MAQ[$('maq').value];
+  const info=`AVR · Degrau ${sign} · ΔVref = ${Math.abs(dVref).toFixed(3)} pu · Vt0 = ${Vt0.toFixed(3)} pu · ${maq.lbl} · ${new Date().toLocaleString('pt-BR')}`;
+  const vfin=(Vt0+Math.abs(dVref)).toFixed(3);
+  const OS_v=parseFloat(M.OS), Te_v=parseFloat(M.Te), Ess_v=parseFloat(M.Ess), pk_v=parseFloat(M.pk);
+  const rows=[
+    {par:'Sobressinal máximo após degrau',     sym:'OS',      val:M.OS+' %',    lim:'≤ 10 %',          norm:'ONS Sub. 2.10 / IEC 60034-16', ok:!isNaN(OS_v)&&OS_v<=10},
+    {par:'Tempo de acomodação ±5%|Δ| (Te)',   sym:'Te',      val:M.Te+(M.Te!=='—'?' s':''),lim:'≤ 2 s',norm:'ONS Sub. 2.10', ok:M.Te!=='—'&&parseFloat(M.Te)<=2},
+    {par:'Erro estacionário em regime',         sym:'Ess',     val:M.Ess+' %',   lim:'≤ 1 %',           norm:'IEEE 421.2',  ok:!isNaN(Ess_v)&&Ess_v<=1},
+    {par:'Tensão de campo — pico absoluto',    sym:'|Efd|',   val:M.pk+' pu',   lim:`≤ ${VRmax} pu`,   norm:'IEEE 421.5',  ok:!isNaN(pk_v)&&pk_v<=VRmax},
+    {par:'Tensão de campo — piso',             sym:'Efd_min', val:M.pk+' pu',   lim:`≥ ${VRmin} pu`,   norm:'IEEE 421.5',  ok:null},
+    {par:'Tempo de subida 10 → 90 % (Ts)',     sym:'Ts',      val:M.Ts+(M.Ts!=='—'?' s':''),lim:'Informativo',norm:'IEEE 421.2',ok:null},
+    {par:'Valor final de tensão terminal',      sym:'yf',      val:M.yf+' pu',   lim:`Vref = ${vfin} pu`, norm:'Referência', ok:null},
+    {par:'Tensão de campo — pico (Mp)',         sym:'Mp',      val:M.Mp+' pu',   lim:'Informativo',     norm:'Referência',  ok:null},
+  ];
+  renderEvalTable(rows, info);
+}
+
+function renderEvalTable_rej(M, VRmax, VRmin, Vt0){
+  const maq=MAQ[$('maq').value];
+  const info=`AVR · Rejeição de Carga · ΔVt = +${gv('dVrej').toFixed(3)} pu · Vt0 = ${Vt0.toFixed(3)} pu · ${maq.lbl} · ${new Date().toLocaleString('pt-BR')}`;
+  const OS_v=parseFloat(M.OS);
+  const tr_v=M.trees.startsWith?.('>') ? Infinity : parseFloat(M.trees);
+  const ef_v=parseFloat(M.Efd_floor), ep_v=parseFloat(M.Efd_peak);
+  const vp_v=parseFloat(M.Vpeak);
+  const rows=[
+    {par:'Sobressinal de rejeição de carga',   sym:'OS',       val:M.OS+' %',          lim:'≤ 10 %',          norm:'ONS Sub. 2.10',  ok:!isNaN(OS_v)&&OS_v<=10},
+    {par:'Retorno à banda ±5% (trees)',        sym:'trees',    val:M.trees+(typeof M.trees==='string'&&!M.trees.includes('>')?' s':''), lim:'≤ 2 s', norm:'ONS Sub. 2.10', ok:isFinite(tr_v)&&tr_v<=2},
+    {par:'Tensão terminal — pico após rejeição',sym:'Vpico',   val:M.Vpeak+' pu',      lim:`≤ ${(Vt0*1.05).toFixed(3)} pu (+5%)`, norm:'ONS Sub. 2.10', ok:!isNaN(vp_v)&&vp_v<=(Vt0*1.055)},
+    {par:'Tensão de campo — piso (min Efd)',   sym:'Efd_min',  val:M.Efd_floor+' pu',  lim:`≥ ${VRmin} pu`,   norm:'IEEE 421.5',    ok:!isNaN(ef_v)&&ef_v>=VRmin},
+    {par:'Tensão de campo — pico (max |Efd|)', sym:'Efd_max',  val:M.Efd_peak+' pu',   lim:`≤ ${VRmax} pu`,   norm:'IEEE 421.5',    ok:!isNaN(ep_v)&&ep_v<=VRmax},
+  ];
+  renderEvalTable(rows, info);
+}
+
+function renderEvalTable_std(M, VRmax, VRmin, If0, dIf){
+  const maq=MAQ[$('maq').value];
+  const info=`FCR · Degrau · ΔIf = ${dIf.toFixed(3)} pu · If0 = ${If0.toFixed(3)} pu · ${maq.lbl} · ${new Date().toLocaleString('pt-BR')}`;
+  const OS_v=parseFloat(M.OS), ts_v=parseFloat(M.ts), Ess_v=parseFloat(M.Ess);
+  const ERF_v=parseFloat(M.ERF), pk_v=parseFloat(M.pk);
+  const rows=[
+    {par:'Sobressinal máximo',                 sym:'OS',   val:M.OS+' %',        lim:'≤ 15 %',        norm:'IEEE 421.2', ok:!isNaN(OS_v)&&OS_v<=15},
+    {par:'Tempo de acomodação ±2%|Δ| (ts)',   sym:'ts',   val:M.ts+' s',        lim:'≤ 10 s',        norm:'IEEE 421.2', ok:!isNaN(ts_v)&&ts_v<=10},
+    {par:'Erro estacionário em regime',         sym:'Ess',  val:M.Ess+' %',       lim:'≤ 1 %',         norm:'IEEE 421.2', ok:!isNaN(Ess_v)&&Ess_v<=1},
+    {par:'Taxa de excitação em 0,5 s (ERF)',   sym:'ERF',  val:M.ERF+' pu/s',    lim:'≥ 2 pu/s',      norm:'IEEE 421.2', ok:!isNaN(ERF_v)&&ERF_v>=2},
+    {par:'Tensão de campo — pico absoluto',    sym:'|Efd|',val:M.pk+' pu',       lim:`≤ ${VRmax} pu`, norm:'IEEE 421.5', ok:!isNaN(pk_v)&&pk_v<=VRmax},
+    {par:'Tempo de subida 10 → 90 % (tr)',     sym:'tr',   val:M.tr+(M.tr!=='—'?' s':''), lim:'Informativo', norm:'IEEE 421.2', ok:null},
+  ];
+  renderEvalTable(rows, info);
+}
+
+// ═══════════════════════════════════════════════
+// UI — Abas (Simulação / Legenda & Normas)
+// ═══════════════════════════════════════════════
+function showTab(t){
+  ['leg','sim','ava','sum'].forEach(x=>{
+    $('tb'+x).className='tb'+(t===x?' on':'');
+    const p=$(''+x+'panel'); if(p) p.style.display='none';
+  });
+  const panels={leg:'block',sim:'flex',ava:'flex',sum:'block'};
+  $(''+t+'panel').style.display = panels[t];
+}
+function updateAvaBadge(ok){
+  const b=$('ava-badge');
+  if(ok===null){ b.textContent=''; return; }
+  b.textContent = ok ? '✅' : '❌';
+}
+
+// ═══ INIT ═══
+onMaqChange(); onStepChange(); onMedChange(); calcEquip();
+// Preenche badges de versão — header e sumário
+(function(){
+  ['verBadge','sumVer'].forEach(id=>{ const el=$( id); if(el) el.textContent=APP_VERSION; });
+  ['anoBadge','sumAno'].forEach(id=>{ const el=$(id);  if(el) el.textContent=APP_YEAR;    });
+})();
+</script>
+</body>
+</html>

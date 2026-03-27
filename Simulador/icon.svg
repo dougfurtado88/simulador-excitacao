@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#003a5e" rx="96"/>
+  <!-- Círculo externo (gerador) -->
+  <circle cx="256" cy="256" r="188" fill="none" stroke="#0b9bd3" stroke-width="18" opacity="0.6"/>
+  <!-- Círculo interno -->
+  <circle cx="256" cy="256" r="140" fill="none" stroke="#0b9bd3" stroke-width="10" opacity="0.3"/>
+  <!-- Raio / bolt de excitação -->
+  <path d="M290 80 L200 256 L248 256 L222 432 L320 240 L272 240 Z" fill="#f3cb06"/>
+  <!-- Linha de fundo (barra coletora) -->
+  <rect x="80" y="430" width="352" height="16" fill="#005b92" rx="8" opacity="0.8"/>
+</svg>

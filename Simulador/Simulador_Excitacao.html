@@ -88,8 +88,10 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
 .fcard-head h3{font-size:13px;font-weight:700;font-family:'Poppins',Arial,sans-serif;color:#141413;margin:0}
 .fcard-head .fnorm{font-size:10px;color:#7a9ab8;margin-left:auto;font-family:'Poppins',Arial,sans-serif}
 .fcard p{font-size:11px;color:#2a4d6b;line-height:1.7;margin-bottom:6px}
-/* GRÁFICO 2×2 */
-#grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:7px;min-height:0}
+/* GRÁFICO 2×2 + P-Q */
+#grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 280px;gap:7px;min-height:0}
+#cPQ-wrap{grid-column:1/-1}
+#cPQ-wrap .cw canvas{position:absolute;top:0;left:0;width:100%!important;height:100%!important}
 .cb{background:#fff;border-radius:8px;padding:10px 10px 6px;box-shadow:0 1px 3px rgba(0,0,0,.06);flex-direction:column;min-height:0;overflow:hidden;border:1px solid #cde3f0;display:flex;flex:1}
 .ct{font-size:12px;font-weight:700;font-family:'Poppins',Arial,sans-serif;color:#141413;margin-bottom:4px;flex-shrink:0;padding-bottom:4px;border-bottom:1px solid #cde3f0}
 .cw{flex:1;position:relative;min-height:0}
@@ -368,6 +370,31 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
         <div class="row"><label>VR max</label>        <input type="number" id="VRmax" value="6.0"  step="0.5" ></div>
         <div class="row"><label>VR min</label>        <input type="number" id="VRmin" value="-6.0" step="0.5" ></div>
         <div class="note">G<sub>exc</sub>(s) = KA/(1+s·TA) &nbsp;|&nbsp; saída limitada em [VRmin, VRmax]</div>
+      </div>
+    </div>
+
+    <!-- Parâmetros da Máquina -->
+    <div class="sec">
+      <div class="sh" style="background:#005b92">⚙️ PARÂMETROS DA MÁQUINA</div>
+      <div class="sb">
+        <div class="row"><label>Xd síncrona</label><input type="number" id="Xd"    value="1.10" step="0.01" min="0.1"><span>pu</span></div>
+        <div class="row"><label>Xd' transitória</label><input type="number" id="Xdp" value="0.30" step="0.01" min="0.01"><span>pu</span></div>
+        <div class="row"><label>Xq síncrona</label><input type="number" id="Xq"    value="0.70" step="0.01" min="0.1"><span>pu</span></div>
+        <div class="div"></div>
+        <div class="row"><label>If máxima</label>   <input type="number" id="Ifmax" value="1.05" step="0.01" min="0.5" max="3"><span>pu</span></div>
+        <div class="row"><label>If mínima</label>   <input type="number" id="Ifmin" value="0.10" step="0.01" min="0" max="1"><span>pu</span></div>
+        <div class="row"><label>Xs sistema</label>  <input type="number" id="Xs"    value="0.30" step="0.01" min="0.01"><span>pu</span></div>
+        <div class="note" id="maq-react">Xd auto-preenchido pelo tipo de máquina. Xs = reatância do SEP.</div>
+      </div>
+    </div>
+
+    <!-- Limitadores UEL / OEL -->
+    <div class="sec">
+      <div class="sh" style="background:#0b9bd3">🔒 LIMITADORES UEL / OEL</div>
+      <div class="sb">
+        <div class="row"><label>FP mínimo (UEL)</label><input type="number" id="fp_uel"    value="0.85" step="0.01" min="0.1" max="1"><span></span></div>
+        <div class="row"><label>Margem OEL (%)</label> <input type="number" id="marg_oel"  value="5"    step="1"    min="0"   max="20"><span>%</span></div>
+        <div class="note">UEL = linha de FP mínimo no plano P-Q. OEL = arco do rotor com margem interna.</div>
       </div>
     </div>
 
@@ -844,6 +871,39 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
         <div class="leg-note"><b>Referências normativas aplicáveis:</b> ONS Submódulo 2.10 (Requisitos Técnicos para Conexão — vigente) &nbsp;·&nbsp; IEEE Std 421.2-2014 (Guide for Identification, Testing, and Evaluation of the Dynamic Performance of Excitation Control Systems) &nbsp;·&nbsp; IEEE Std 421.5-2016 (Recommended Practice for Excitation System Models for Power System Stability Studies) &nbsp;·&nbsp; IEC 60034-16 (Rotating Electrical Machines — Excitation Systems)</div>
       </div>
 
+      <!-- ══ SEÇÃO 7: DIAGRAMA DE CAPABILIDADE ══ -->
+      <div class="lsec">
+        <h3>⚡ Diagrama de Capabilidade — Limites Operativos do Gerador</h3>
+        <div class="lscope">
+          <b>O que é o Diagrama de Capabilidade (GCC)</b>
+          O Diagrama de Capabilidade (Generator Capability Curve — GCC) representa graficamente todos os pontos de operação segura de um gerador síncrono no plano P-Q (potência ativa × reativa). É essencial para o operador verificar se o ponto de operação está dentro dos limites operativos e para coordenar os limitadores de excitação (UEL, OEL) com a proteção de perda de campo (LOF). O sistema de excitação (AVR) atua diretamente sobre esses limites.
+        </div>
+        <table class="ltbl">
+          <tr><th>Limite</th><th>Definição</th><th>Equação (pu)</th><th>Norma / Referência</th></tr>
+          <tr><td><b style="color:#0b9bd3">Térmico do Estator</b></td><td>Corrente de armadura nominal constante</td><td class="sym">P² + Q² = 1</td><td>SEPOPE 2006 §3.1</td></tr>
+          <tr><td><b style="color:#dc2626">Térmico do Rotor</b></td><td>Corrente de campo máxima (sobreexcitação)</td><td class="sym">Arco: centro (-Vt²/Xd, 0)</td><td>SEPOPE 2006 §3.2</td></tr>
+          <tr><td><b style="color:#f97316">OEL</b></td><td>Limitador de sobreexcitação (margem interna ao rotor)</td><td class="sym">Arco Ifmax × (1 − m%)</td><td>IEEE 421.5 / SEL 2019</td></tr>
+          <tr><td><b style="color:#6b7280">Turbina</b></td><td>Potência mecânica máxima da turbina</td><td class="sym">P = fp (linha horiz.)</td><td>Fabricante / IEEE 115</td></tr>
+          <tr><td><b style="color:#f3cb06">SSSL</b></td><td>Limite de estabilidade em estado permanente (AVR manual)</td><td class="sym">Círculo: Qc = −Vt²(Xd+Xs)/(2XdXs)</td><td>SEL 2019 §III / SEPOPE §3.5</td></tr>
+          <tr><td><b style="color:#7c3aed">Mín. Excitação</b></td><td>Corrente de campo mínima (sub-excitação)</td><td class="sym">Arco: Ifmin</td><td>SEPOPE 2006 §3.4</td></tr>
+          <tr><td><b style="color:#10b981">UEL</b></td><td>Limitador de sub-excitação (linha de FP mínimo)</td><td class="sym">Q/P = −tan(arccos(fp_uel))</td><td>SEL 2019 §IV / IEEE 421.5</td></tr>
+        </table>
+        <div class="l2col" style="margin-top:10px">
+          <div class="lcond">
+            <b>COORDENAÇÃO UEL / LOF (SEL 2019)</b>
+            O UEL deve ser ajustado de acordo com o limite mais restritivo entre SSSL e SECHL (limite de aquecimento da extremidade do núcleo do estator), com margem de 5–10% da capacidade nominal. O elemento de proteção LOF (perda de campo) deve ser coordenado com o UEL para que o UEL atue antes do disparo da proteção.
+          </div>
+          <div class="lcrit">
+            <div class="ch">ℹ Influência da tensão terminal (SEPOPE §3.7)</div>
+            <div class="ci" style="color:#003a5e">A capacidade de absorção de reativo (região sub-excitada) geralmente <b>diminui</b> com o aumento de Vt para geradores de rotor liso. A capacidade de geração de reativo (região sobreexcitada) pode diminuir ou aumentar dependendo do tipo de máquina e saturação.</div>
+          </div>
+        </div>
+        <div class="leg-note"><b>Referências bibliográficas (V0.12):</b><br>
+        • Alla, M.; Guzmán, A.; Finney, D.; Fischer, N. — <i>Proteção de Geradores Baseada na Curva de Capabilidade Para Minimizar Estresse e Manter Estabilidade do Sistema de Potência</i> — Schweitzer Engineering Laboratories, RVP-AI 2019.<br>
+        • Guimarães, C.H.C.; Rangel, R.D. — <i>Diagramas Operacionais de Unidades Geradoras</i> — X SEPOPE, Florianópolis, 2006.<br>
+        • Nota: SSSL calculado com aproximação de rotor cilíndrico (Xd = Xq). Para pólos salientes, o limite teórico de estabilidade é levemente conservador.</div>
+      </div><!-- /lsec capabilidade -->
+
     </div><!-- /legpanel -->
 
     <div id="simpanel">
@@ -857,6 +917,7 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
         <div class="cb"><div class="ct">🔋 Corrente de Campo &nbsp; If [pu]</div><button class="cx-btn" onclick="expandChart('cIf','🔋 Corrente de Campo — If [pu]')" title="Expandir gráfico">⤢</button><div class="cw"><canvas id="cIf"></canvas></div></div>
         <div class="cb"><div class="ct">⚡ Tensão de Campo &nbsp; Efd [pu]</div><button class="cx-btn" onclick="expandChart('cEfd','⚡ Tensão de Campo — Efd [pu]')" title="Expandir gráfico">⤢</button><div class="cw"><canvas id="cEfd"></canvas></div></div>
         <div class="cb"><div class="ct">🎯 Erro de Controle &nbsp; e(t) [%]</div><button class="cx-btn" onclick="expandChart('cErr','🎯 Erro de Controle — e(t) [%]')" title="Expandir gráfico">⤢</button><div class="cw"><canvas id="cErr"></canvas></div></div>
+        <div class="cb" id="cPQ-wrap"><div class="ct">⚡ Diagrama de Capabilidade &nbsp; P-Q [pu]</div><button class="cx-btn" onclick="expandChart('cPQ','⚡ Diagrama de Capabilidade — P-Q [pu]')" title="Expandir gráfico">⤢</button><div class="cw"><canvas id="cPQ"></canvas></div></div>
       </div>
     </div>
 
@@ -1325,7 +1386,7 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
 // ═══════════════════════════════════════════════
 // VERSÃO DO SOFTWARE
 // ═══════════════════════════════════════════════
-const APP_VERSION = 'V0.11';
+const APP_VERSION = 'V0.12';
 const APP_YEAR    = '2026';
 const APP_DEV     = 'Eng° Douglas Furtado';
 
@@ -1333,11 +1394,11 @@ const APP_DEV     = 'Eng° Douglas Furtado';
 // CONSTANTES E ESTADO
 // ═══════════════════════════════════════════════
 const MAQ={
-  hidraulico: {Tdo:8.0, Kag:1.05, lbl:'Hidráulico'},
-  vapor:      {Tdo:5.0, Kag:1.00, lbl:'Turbo-Vapor'},
-  gas:        {Tdo:6.0, Kag:1.02, lbl:'Turbo-Gás'},
-  compensador:{Tdo:7.5, Kag:1.00, lbl:'Comp. Síncrono'},
-  diesel:     {Tdo:4.5, Kag:0.98, lbl:'Gerador Diesel'},
+  hidraulico: {Tdo:8.0, Kag:1.05, lbl:'Hidráulico',   Xd:1.10, Xdp:0.30, Xq:0.70},
+  vapor:      {Tdo:5.0, Kag:1.00, lbl:'Turbo-Vapor',  Xd:1.80, Xdp:0.25, Xq:1.70},
+  gas:        {Tdo:6.0, Kag:1.02, lbl:'Turbo-Gás',    Xd:1.50, Xdp:0.22, Xq:1.40},
+  compensador:{Tdo:7.5, Kag:1.00, lbl:'Comp. Síncrono',Xd:1.40,Xdp:0.28, Xq:1.00},
+  diesel:     {Tdo:4.5, Kag:0.98, lbl:'Gerador Diesel',Xd:1.10,Xdp:0.25, Xq:0.70},
 };
 const DT=0.005;
 let MODE='AVR', EVAL_TYPE='DPOS', CH={};
@@ -1694,6 +1755,115 @@ function renderMetrics_std(M, VRmax){
 }
 
 // ═══════════════════════════════════════════════
+// DIAGRAMA DE CAPABILIDADE P-Q
+// Convenção: X = Q [pu] (+ = sobreexcitado), Y = P [pu] (+ = gerando)
+// Baseado em: SEPOPE 2006 (Guimarães & Rangel) e SEL 2019 (Alla et al.)
+// ═══════════════════════════════════════════════
+function buildCapabilityCurve(p){
+  const Vt=p.Vt0||1, Xd=Math.max(p.Xd||1.1,0.1), Xs=Math.max(p.Xs||0.3,0.05);
+  const Ifmax=p.Ifmax||1.05, Ifmin=p.Ifmin||0.10;
+  const fp=Math.min(Math.max(p.fp||0.85,0.01),1), marg=Math.max(0,Math.min(p.marg_oel||5,20))/100;
+  const fp_uel=Math.min(Math.max(p.fp_uel||0.85,0.1),0.999);
+  const a=Vt*Vt/Xd;  // deslocamento do centro dos arcos de If constante
+  const N=200;
+
+  // ── 1. Limite térmico do estator (semicírculo raio=1 pu) ──
+  const stator=[];
+  for(let i=0;i<=N;i++){
+    const ang=-Math.PI/2+(Math.PI/N)*i;
+    stator.push({x:Math.sin(ang),y:Math.cos(ang)});
+  }
+
+  // ── Helper: arco de campo constante (centro em Q=-a, P=0, raio=Vt*If) ──
+  function fieldArc(If_val,d0,d1){
+    const r=Vt*If_val; const pts=[];
+    for(let i=0;i<=N;i++){
+      const d=d0+(d1-d0)*i/N;
+      const P=r*Math.sin(d), Q=r*Math.cos(d)-a;
+      if(P>=-0.05) pts.push({x:Q,y:P});
+    }
+    return pts;
+  }
+
+  // ── 2. Limite térmico do rotor (If = Ifmax) ──
+  const rotor=fieldArc(Ifmax,0,Math.PI/2);
+
+  // ── 3. OEL — arco com margem interna ──
+  const oel=fieldArc(Ifmax*(1-marg),0,Math.PI/2);
+
+  // ── 4. Limite de mínima excitação (If = Ifmin) ──
+  const minExc=fieldArc(Ifmin,-Math.PI/6,Math.PI/2);
+
+  // ── 5. Limite da turbina (potência mecânica = fp×Sn → fp pu) ──
+  const P_turb=fp;
+  const turb=[{x:-1.2,y:P_turb},{x:1.2,y:P_turb}];
+
+  // ── 6. SSSL — aproximação rotor cilíndrico ──
+  // Centro: Qc = −Vt²(Xd+Xs)/(2·Xd·Xs) , Raio: r = Vt²|Xd−Xs|/(2·Xd·Xs)
+  const Qc_s=-(Vt*Vt*(Xd+Xs))/(2*Xd*Xs);
+  const r_s=Math.abs(Vt*Vt*(Xd-Xs))/(2*Xd*Xs);
+  const sssl=[];
+  for(let i=0;i<=N;i++){
+    const ang=-Math.PI/2+Math.PI*i/N;
+    const Q=Qc_s+r_s*Math.cos(ang), P=r_s*Math.sin(ang);
+    if(P>=-0.05&&Q<=0.05) sssl.push({x:Q,y:P});
+  }
+
+  // ── 7. UEL — reta de FP mínimo (região sub-excitada) ──
+  const phi_uel=Math.acos(fp_uel);
+  const Q_uel_top=-P_turb*Math.tan(phi_uel);
+  const uel=[{x:0,y:0},{x:Q_uel_top,y:P_turb}];
+
+  // ── 8. Ponto de operação nominal ──
+  const Q0=Math.sqrt(Math.max(0,1-fp*fp)); // sobreexcitado por padrão
+  const opPoint=[{x:Q0,y:fp}];
+
+  return{stator,rotor,oel,minExc,turb,sssl,uel,opPoint,P_turb};
+}
+
+function renderPQ(p){
+  const cv=buildCapabilityCurve(p);
+  if(CH['cPQ']){CH['cPQ'].destroy();}
+  const LS=(dsh)=>({showLine:true,pointRadius:0,borderWidth:2,borderDash:dsh?[6,4]:[]});
+  const marg_lbl=`OEL (−${p.marg_oel||5}%)`;
+  const uel_lbl=`UEL (FP≥${(p.fp_uel||0.85).toFixed(2)})`;
+  const datasets=[
+    {label:'Térmico Estator', data:cv.stator,  borderColor:'#0b9bd3',...LS(false)},
+    {label:'Térmico Rotor',   data:cv.rotor,   borderColor:'#dc2626',...LS(false)},
+    {label:marg_lbl,          data:cv.oel,     borderColor:'#f97316',...LS(true)},
+    {label:'Mín. Excitação',  data:cv.minExc,  borderColor:'#7c3aed',...LS(false)},
+    {label:'Turbina',         data:cv.turb,    borderColor:'#6b7280',...LS(true)},
+    {label:'SSSL',            data:cv.sssl,    borderColor:'#f3cb06',...LS(false)},
+    {label:uel_lbl,           data:cv.uel,     borderColor:'#10b981',...LS(true)},
+    {label:'Ponto de Operação',data:cv.opPoint,borderColor:'#ffffff',
+      backgroundColor:'#f3cb06',pointRadius:8,pointHoverRadius:11,showLine:false},
+  ];
+  // Ajusta limites dos eixos
+  const allQ=datasets.slice(0,7).flatMap(d=>d.data.map(p=>p.x));
+  const allP=datasets.slice(0,7).flatMap(d=>d.data.map(p=>p.y));
+  const Qmin=allQ.reduce((m,v)=>v<m?v:m,allQ[0])-0.05;
+  const Qmax=allQ.reduce((m,v)=>v>m?v:m,allQ[0])+0.05;
+  const Pmin=Math.min(-0.1, allP.reduce((m,v)=>v<m?v:m,allP[0])-0.05);
+  const Pmax=allP.reduce((m,v)=>v>m?v:m,allP[0])+0.1;
+  CH['cPQ']=new Chart($('cPQ'),{type:'scatter',data:{datasets},
+    options:{animation:false,responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'nearest',intersect:false},
+      plugins:{legend:{labels:{font:{size:9},boxWidth:10,padding:5}}},
+      scales:{
+        x:{type:'linear',min:Qmin,max:Qmax,
+           title:{display:true,text:'Q [pu]   ◀ Sub-excitado | Sobreexcitado ▶',font:{size:9}},
+           ticks:{font:{size:9},maxTicksLimit:8},
+           grid:{color:'rgba(0,0,0,.06)'}},
+        y:{type:'linear',min:Pmin,max:Pmax,
+           title:{display:true,text:'P [pu]',font:{size:9}},
+           ticks:{font:{size:9},maxTicksLimit:6},
+           grid:{color:'rgba(0,0,0,.06)'}}
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════
 // CHARTS
 // ═══════════════════════════════════════════════
 const BOPT={
@@ -1841,6 +2011,11 @@ function runSim(){
         hL(2,'#fbbf24','±2%',TSIM), hL(-2,'#fbbf24','',TSIM),
         ds('Erro(%)',data,'e','#f97316')],-erS,erS,TSIM);
 
+      // ── Diagrama de Capabilidade P-Q ──────────────
+      renderPQ({Vt0:gv('Vt0'),Xd:gv('Xd'),Xdp:gv('Xdp'),Xq:gv('Xq'),
+        Ifmax:gv('Ifmax'),Ifmin:gv('Ifmin'),Xs:gv('Xs'),
+        fp:gv('fp'),marg_oel:gv('marg_oel'),fp_uel:gv('fp_uel')});
+
       $('ph').style.display='none';
       $('grid').style.display='grid';
       $('mbar').style.display='flex';
@@ -1906,9 +2081,17 @@ function onMaqChange(){
   const m=MAQ[$('maq').value], Vt0=gv('Vt0');
   $('maq-desc').textContent=`Tdo' = ${m.Tdo} s \u00a0|\u00a0 Kag = ${m.Kag}`;
   $('efd0n').textContent=`Efd0 ≈ ${(Vt0/m.Kag).toFixed(3)} pu \u00a0|\u00a0 Kag = ${m.Kag}`;
+  // Auto-preenche reatâncias pelo tipo de máquina (só se o usuário não alterou manualmente)
+  const setIfDefault=(id,val)=>{ const el=$(id); if(el&&!el._edited) el.value=val.toFixed(2); };
+  setIfDefault('Xd', m.Xd); setIfDefault('Xdp', m.Xdp); setIfDefault('Xq', m.Xq);
+  if($('maq-react')) $('maq-react').textContent=`Xd=${m.Xd} pu | Xd'=${m.Xdp} pu | Xq=${m.Xq} pu (${m.lbl})`;
   const lbl={DPOS:'Degrau +',DNEG:'Degrau −',REJE:'Rejeição de Carga'}[EVAL_TYPE];
   $('phsub').innerHTML=`AVR · ${lbl} &nbsp;·&nbsp; ${m.lbl} (Tdo'=${m.Tdo}s)<br>t ensaio=${gv('Tstep')}s · Integração RK4 @${1/DT}Hz`;
 }
+// Marca o input como editado manualmente para não sobrescrever valores do usuário
+['Xd','Xdp','Xq'].forEach(id=>{
+  const el=$(id); if(el) el.addEventListener('input',()=>{ el._edited=true; });
+});
 function onStepChange(){
   const Vt0=gv('Vt0'), dV=gv('dVref'), If0=gv('If0'), dI=gv('dIf'),
         dVr=gv('dVrej'), Ts=gv('Tstep'), Tsim=gv('Tsim');
@@ -2116,6 +2299,24 @@ function calcVarAux(){
 // ═══════════════════════════════════════════════
 const APP_HISTORY = [
   {
+    ver:'V0.12', date:'2026-03-27',
+    changes:[
+      'Diagrama de Capabilidade P-Q: 5º gráfico (largura dupla) na aba Simulação',
+      'Limites exibidos: térmico do estator, térmico do rotor, OEL, turbina, SSSL, mínima excitação, UEL',
+      'Novos parâmetros de máquina: Xd, Xd\', Xq (auto-preenchidos pelo tipo de máquina)',
+      'Novos parâmetros de limitadores: If_max, If_min, Xs (sistema), FP mínimo UEL, margem OEL',
+      'Aba Normas: nova seção "Diagrama de Capabilidade" com tabela de limites e referências bibliográficas',
+      'Referências: SEL (Alla et al., 2019) e SEPOPE 2006 (Guimarães & Rangel) integradas',
+      'Modal de expansão: botão P-Q adicionado ao navegador de gráficos',
+    ]
+  },
+  {
+    ver:'V0.11', date:'2026-03-26',
+    changes:[
+      'Aba Funções com modelos IEEE 421.5 (AC8B) — AVR, FCR, MVAR, FP, PSS2B',
+    ]
+  },
+  {
     ver:'V0.10', date:'2026-03-26',
     changes:[
       'Botão SIMULAR: fundo verde #22a340 com texto branco, conforme layout de referência',
@@ -2275,6 +2476,7 @@ const _chartKeys = {
   cIf: {key:'If', label:'🔋 Corrente de Campo — If [pu]'},
   cEfd:{key:'Efd',label:'⚡ Tensão de Campo — Efd [pu]'},
   cErr:{key:'e',  label:'🎯 Erro de Controle — e(t) [%]'},
+  cPQ: {key:'PQ', label:'⚡ Diagrama de Capabilidade — P-Q [pu]'},
 };
 function expandChart(srcId, title){
   const src = CH[srcId];
@@ -2324,6 +2526,7 @@ onMaqChange(); onStepChange(); onMedChange(); calcEquip(); calcVarAux();
           <button class="cm-nb" onclick="expandChart('cIf','🔋 Corrente de Campo — If [pu]')">If</button>
           <button class="cm-nb" onclick="expandChart('cEfd','⚡ Tensão de Campo — Efd [pu]')">Efd</button>
           <button class="cm-nb" onclick="expandChart('cErr','🎯 Erro de Controle — e(t) [%]')">e(t)</button>
+          <button class="cm-nb" onclick="expandChart('cPQ','⚡ Diagrama de Capabilidade — P-Q [pu]')">P-Q</button>
         </div>
         <button id="chartModalClose" onclick="closeChartModal()">✕ Fechar</button>
       </div>

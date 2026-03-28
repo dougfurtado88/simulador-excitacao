@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Simulador de Ensaios Dinâmicos — Sistema de Excitação</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <!-- ANTHROPIC BRAND — Poppins (headings) + Lora (body) -->
@@ -203,6 +204,91 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
 .cm-nb:hover:not(.on){background:#d0e8f5;color:#141413}
 #chartModalBody{flex:1;padding:12px;min-height:0;position:relative}
 #chartModalBody canvas{width:100%!important;height:100%!important}
+/* EXPORT / IMPORT */
+.exp-bar{display:flex;gap:6px;flex-shrink:0;align-items:center;padding:5px 12px;background:#e8f4fb;border-radius:6px;border:1px solid #cde3f0}
+.exp-bar .el{font-size:10px;font-weight:700;color:#003a5e;font-family:'Poppins',Arial,sans-serif;margin-right:auto}
+.exp-btn{padding:4px 12px;border-radius:5px;border:1px solid #cde3f0;cursor:pointer;font-size:10px;font-weight:600;font-family:'Poppins',Arial,sans-serif;background:#fff;color:#005b92;transition:background .15s,border-color .15s}
+.exp-btn:hover{background:#d0e8f5;border-color:#0b9bd3}
+.imp-zone{border:2px dashed #cde3f0;border-radius:6px;padding:8px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;margin-top:4px}
+.imp-zone:hover,.imp-zone.dragover{border-color:#0b9bd3;background:rgba(11,155,211,.06)}
+.imp-zone input[type=file]{display:none}
+.imp-loaded{background:rgba(34,163,64,.06);border-color:#22a340;border-style:solid}
+.imp-info{font-size:9px;color:#7a9ab8;margin-top:3px;line-height:1.5}
+.imp-tag{display:inline-block;font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700;font-family:'Poppins',Arial,sans-serif}
+.imp-tag.on{background:#eef3e8;color:#005b92;border:1px solid #22a340}.imp-tag.off{background:#f0f7fb;color:#7a9ab8;border:1px solid #cde3f0}
+/* PRINT */
+@media print{
+  #hdr,#prm,#tabbar,#ph,#ava-ph,.exp-bar,.cx-btn,.imp-zone,#simtabbar,#chartModal,#ver-ov,#ver-modal,#simpanel,#legpanel,#sumpanel,#funpanel,.tb{display:none!important}
+  body{height:auto;overflow:visible;background:#fff;font-size:11px}
+  #body{flex-direction:column;overflow:visible;height:auto;padding:0}
+  #right{min-height:auto;display:block!important}
+  #avalpanel{display:block!important;overflow:visible;border:none;box-shadow:none;padding:0}
+  #mbar{display:flex!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  #evaltbl{display:block!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .ethead,.ettbl thead th,#etverdict,.mc,.sh{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  #print-hdr{display:block!important}
+}
+#print-hdr{display:none;padding:16px 0;border-bottom:3px solid #003a5e;margin-bottom:12px}
+#print-hdr h2{font-size:15px;font-weight:700;font-family:'Poppins',Arial,sans-serif;color:#003a5e}
+#print-hdr p{font-size:10px;color:#3a6080;margin-top:3px}
+/* SAVE / LOAD / PRESETS */
+.cfg-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+.cfg-btn{padding:3px 8px;border-radius:4px;border:1px solid #cde3f0;cursor:pointer;font-size:9px;font-weight:600;font-family:'Poppins',Arial,sans-serif;background:#fff;color:#005b92;transition:background .12s}
+.cfg-btn:hover{background:#d0e8f5}
+.cfg-btn.act{background:#005b92;color:#fff;border-color:#005b92}
+.cfg-sel{flex:1;min-width:0;padding:3px 5px;font-size:10px;border:1px solid #cde3f0;border-radius:4px;color:#141413;font-family:'Poppins',Arial,sans-serif}
+/* DARK MODE */
+body.dark{background:#1a1a2e;color:#e0e0e0}
+body.dark #hdr{background:linear-gradient(135deg,#0f1b2d 0%,#1a2d4a 100%)}
+body.dark #prm{background:#1e1e32;border-color:#2a2a44}
+body.dark .sb{background:#1a1a2e}
+body.dark .sec{border-color:#2a2a44}
+body.dark .row label{color:#8ab4d0}
+body.dark .row input,body.dark .row select{background:#252540;border-color:#3a3a5c;color:#e0e0e0}
+body.dark .row input:focus{border-color:#f3cb06}
+body.dark .row span{color:#6a8a9f}
+body.dark .note{color:#6a8a9f}
+body.dark .noteb{color:#e0e0e0}
+body.dark .tf{background:#0f1b2d}
+body.dark #right{background:transparent}
+body.dark .tb{background:#2a2a44;border-color:#3a3a5c;color:#8ab4d0}
+body.dark .tb.on{background:#252540;color:#e0e0e0;box-shadow:0 -3px 0 #f3cb06 inset}
+body.dark #simpanel,body.dark #avalpanel{background:#1a1a2e;border-color:#2a2a44}
+body.dark #legpanel,body.dark #sumpanel,body.dark #funpanel{background:#1e1e32;border-color:#2a2a44;color:#c0c0d0}
+body.dark .cb{background:#1e1e32;border-color:#2a2a44}
+body.dark .ct{color:#e0e0e0;border-color:#2a2a44}
+body.dark #ph{background:#1e1e32;border-color:#2a2a44}
+body.dark #ph .m{color:#8ab4d0}
+body.dark #grid-osc,body.dark #grid-pq{border-color:#2a2a44;background:#1e1e32}
+body.dark #mbar{background:#1e1e32;border-color:#2a2a44}
+body.dark .mc{border-color:#2a2a44}
+body.dark #evaltbl{border-color:#2a2a44}
+body.dark .ethead{background:#0f1b2d}
+body.dark .ettbl thead th{background:#1a2d4a}
+body.dark .ettbl td{border-color:#2a2a44;color:#c0c0d0}
+body.dark .ettbl tr:nth-child(even) td{background:#1a1a2e}
+body.dark .exp-bar{background:#1e1e32;border-color:#2a2a44}
+body.dark .exp-btn,.dark .cfg-btn{background:#252540;border-color:#3a3a5c;color:#8ab4d0}
+body.dark .imp-zone{border-color:#3a3a5c}
+body.dark .stb{background:#252540;border-color:#3a3a5c;color:#8ab4d0}
+body.dark .stb.on{background:#0f1b2d;color:#f3cb06}
+body.dark .lsec h3{color:#e0e0e0}
+body.dark .ltbl th,.dark .ftbl th{background:#0f1b2d}
+body.dark .ltbl td,.dark .ftbl td{border-color:#2a2a44}
+body.dark .ltbl tr:nth-child(even) td{background:#1a1a2e}
+body.dark .lscope{background:#1e1e32;color:#c0c0d0}
+body.dark .lcrit{background:#1a2d4a;border-color:#2a5580}
+body.dark .lfml{background:#0f1b2d}
+body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
+/* HEADER UTILITY BUTTONS */
+.hdr-util{display:flex;gap:5px;align-items:center;margin-top:3px}
+.hu-btn{padding:2px 8px;border-radius:4px;border:1px solid rgba(255,255,255,.2);cursor:pointer;font-size:9px;font-weight:600;font-family:'Poppins',Arial,sans-serif;background:rgba(255,255,255,.08);color:rgba(240,247,251,.8);transition:background .12s}
+.hu-btn:hover{background:rgba(255,255,255,.18)}
+.hu-btn.on{background:rgba(243,203,6,.25);color:#f3cb06;border-color:rgba(243,203,6,.5)}
+#pwa-install{display:none}
+#pwa-install.visible{display:inline-flex}
+/* SHORTCUTS HINT */
+.kbd{font-size:8px;background:rgba(255,255,255,.12);padding:1px 4px;border-radius:2px;font-family:monospace;color:rgba(255,255,255,.5);margin-left:3px}
 </style>
 </head>
 <body>
@@ -215,7 +301,7 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
     <!-- Title -->
     <div>
       <h1>SIMULADOR DE ENSAIOS DINÂMICOS — SISTEMA DE EXCITAÇÃO</h1>
-      <p>IEEE 421.5 &nbsp;·&nbsp; IEC 60034-16 &nbsp;·&nbsp; ONS Submódulo 2.6 &nbsp;|&nbsp; Integração RK4 · Δt = 5 ms</p>
+      <p>IEEE 421.5 &nbsp;·&nbsp; IEC 60034-16 &nbsp;·&nbsp; ONS Submódulo 2.10 &nbsp;|&nbsp; Integração RK4 · Δt = 5 ms</p>
       <div style="display:flex;align-items:center;gap:8px;margin-top:5px">
         <span style="font-size:9.5px;opacity:.55;letter-spacing:.3px">Desenvolvimento:</span>
         <span style="font-size:9.5px;font-weight:700;color:#f3cb06;letter-spacing:.3px">Eng° Douglas Furtado</span>
@@ -244,6 +330,12 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
       <button class="eb"    id="edneg" onclick="setEval('DNEG')">📉 Degrau −</button>
       <button class="eb"    id="ereje" onclick="setEval('REJE')">⚡ Rejeição de Carga</button>
     </div>
+    <!-- Linha 3: Utilitários -->
+    <div class="hdr-util">
+      <button class="hu-btn" id="btnDark" onclick="toggleDark()" title="Alternar modo escuro (Ctrl+D)">🌙 Escuro</button>
+      <button class="hu-btn" id="pwa-install" onclick="installPWA()" title="Instalar como aplicativo">📲 Instalar</button>
+      <button class="hu-btn" id="btnSelfTest" onclick="selfTest()" title="Auto-teste do simulador">🧪 Teste</button>
+    </div>
   </div>
 </div>
 
@@ -252,6 +344,21 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
 
   <!-- PARÂMETROS -->
   <div id="prm">
+
+    <!-- SAVE / LOAD / PRESETS -->
+    <div class="cfg-bar">
+      <button class="cfg-btn" onclick="saveConfig()" title="Salvar configuração (Ctrl+S)">💾 Salvar</button>
+      <button class="cfg-btn" onclick="loadConfig()" title="Carregar última configuração">📂 Carregar</button>
+      <button class="cfg-btn" onclick="clearConfig()" title="Limpar configuração salva">🗑 Limpar</button>
+      <select class="cfg-sel" id="presetSel" onchange="applyPreset(this.value)" title="Presets de máquinas típicas">
+        <option value="">— Preset de máquina —</option>
+        <option value="weg_hidro">WEG — Hidráulico 50 MVA</option>
+        <option value="abb_vapor">ABB — Turbo-Vapor 100 MVA</option>
+        <option value="ge_gas">GE — Turbo-Gás 80 MVA</option>
+        <option value="siemens_comp">Siemens — Comp. Síncrono 30 MVAR</option>
+        <option value="weg_diesel">WEG — Gerador Diesel 5 MVA</option>
+      </select>
+    </div>
 
     <div class="sec" id="sec-equip">
       <div class="sh" style="background:#003a5e">🏭 EQUIPAMENTO &amp; MÁQUINA</div>
@@ -403,6 +510,10 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
         <div class="row"><label>FP mínimo (UEL)</label><input type="number" id="fp_uel"    value="0.85" step="0.01" min="0.1" max="1"><span></span></div>
         <div class="row"><label>Margem OEL (%)</label> <input type="number" id="marg_oel"  value="5"    step="1"    min="0"   max="20"><span>%</span></div>
         <div class="note">UEL = linha de FP mínimo no plano P-Q. OEL = arco do rotor com margem interna.</div>
+        <div class="div"></div>
+        <div class="slbl">Saturação magnética (P-Q)</div>
+        <div class="row"><label>Fator kSat</label><input type="number" id="kSat" value="1.00" step="0.01" min="0.70" max="1.00"><span></span></div>
+        <div class="note">kSat = 1.0: sem saturação. Valores &lt; 1.0 reduzem Eq efetiva (arcos rotor/OEL encolhem). Típico: 0.85–0.95.</div>
       </div>
     </div>
 
@@ -470,6 +581,26 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
         </div>
         <div class="noteb" id="stepn">Novo Vref: 1.050 pu &nbsp;(+5.0%)</div>
         <div class="note"  id="tn">Degrau em t=0.02s · Obs. até t=1s · ~200 passos</div>
+      </div>
+    </div>
+
+    <!-- Importar Oscilogramas -->
+    <div class="sec">
+      <div class="sh" style="background:#005b92">📂 IMPORTAR OSCILOGRAMAS</div>
+      <div class="sb">
+        <div class="imp-zone" id="impZone" onclick="$('impFile').click()"
+             ondragover="event.preventDefault();this.classList.add('dragover')"
+             ondragleave="this.classList.remove('dragover')"
+             ondrop="event.preventDefault();this.classList.remove('dragover');handleImportDrop(event)">
+          <input type="file" id="impFile" accept=".csv,.txt,.tsv" onchange="handleImportFile(this.files[0])">
+          <div style="font-size:11px;color:#005b92;font-weight:600" id="impLabel">📂 Clique ou arraste CSV aqui</div>
+          <div class="imp-info">Formato: t, Vt, If, Efd (separador: vírgula, ponto-e-vírgula ou tab)</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
+          <span class="imp-tag off" id="impStatus">Sem dados</span>
+          <button onclick="clearImport()" style="font-size:9px;border:none;background:none;color:#dc2626;cursor:pointer;text-decoration:underline;display:none" id="impClear">Limpar</button>
+        </div>
+        <div class="note" id="impDetail"></div>
       </div>
     </div>
 
@@ -971,6 +1102,17 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
         <div class="e">📋</div>
         <p>Execute uma simulação para ver o laudo formal de avaliação.</p>
       </div>
+      <!-- Print-only header -->
+      <div id="print-hdr">
+        <h2>LAUDO DE AVALIAÇÃO — SISTEMA DE EXCITAÇÃO</h2>
+        <p id="print-info">Simulador de Ensaios Dinâmicos · IEEE 421.5 · ONS Sub. 2.10</p>
+      </div>
+      <!-- Export buttons -->
+      <div class="exp-bar" id="expbar" style="display:none">
+        <span class="el">📥 Exportar:</span>
+        <button class="exp-btn" onclick="exportCSV()">📊 CSV (dados)</button>
+        <button class="exp-btn" onclick="printReport()">🖨️ Imprimir Laudo</button>
+      </div>
       <!-- Metrics bar (content filled dynamically) -->
       <div id="mbar" style="display:none">
         <div id="mlbl">
@@ -1431,7 +1573,7 @@ body{font-family:'Lora',Georgia,serif;background:#f0f7fb;color:#141413;font-size
 // ═══════════════════════════════════════════════
 // VERSÃO DO SOFTWARE
 // ═══════════════════════════════════════════════
-const APP_VERSION = 'V0.12';
+const APP_VERSION = 'V0.14';
 const APP_YEAR    = '2026';
 const APP_DEV     = 'Eng° Douglas Furtado';
 
@@ -1447,6 +1589,8 @@ const MAQ={
 };
 const DT=0.005;
 let MODE='AVR', EVAL_TYPE='DPOS', CH={};
+let IMPORTED=null; // {t:[], Vt:[], If:[], Efd:[], filename:'', cols:[]}
+let SIM_DATA=null; // last simulation data array for CSV export
 
 const $  = id=>document.getElementById(id);
 const gv = id=>parseFloat($(id).value)||0;
@@ -1528,7 +1672,8 @@ function simAVR_rej(p){
 function simFCR(p){
   const{KP,KI,TA,VRmax,VRmin,Tdo,Kag,If0,dIf,TSIM,TSTEP}=p;
   const TAs=sf(TA,1e-4), N=Math.round(TSIM/DT), DEC=Math.max(1,Math.round(N/600));
-  let x=[0,If0,If0], out=[];
+  const xI0_f=Math.abs(KI)>1e-6?If0/KI:0;
+  let x=[xI0_f,If0,If0], out=[];
   for(let k=0;k<N;k++){
     const t=k*DT, Ir=If0+(t>=TSTEP?dIf:0);
     if(k%DEC===0){
@@ -1805,20 +1950,18 @@ function renderMetrics_std(M, VRmax){
 // Baseado em: SEPOPE 2006 (Guimarães & Rangel) e SEL 2019 (Alla et al.)
 // ═══════════════════════════════════════════════
 function buildCapabilityCurve(p){
-  const Vt=p.Vt0||1, Xd=Math.max(p.Xd||1.1,0.1), Xs=Math.max(p.Xs||0.3,0.05);
+  const Vt=p.Vt0||1, Xd=Math.max(p.Xd||1.1,0.1), Xq=Math.max(p.Xq||Xd,0.1), Xs=Math.max(p.Xs||0.3,0.05);
   const Ifmax=Math.max(p.Ifmax||1.05,0.5), Ifmin=Math.max(0.01,Math.min(p.Ifmin||0.10,1.0));
   const fp=Math.min(Math.max(p.fp||0.85,0.01),1), marg=Math.max(0,Math.min(p.marg_oel||5,20))/100;
   const fp_uel=Math.min(Math.max(p.fp_uel||0.85,0.1),0.999);
+  const kSat=Math.min(1,Math.max(0.7,p.kSat!=null?p.kSat:1)); // fator de saturação
 
-  // ── Ponto nominal e FEM interna (SEPOPE §3.2 — rotor cilíndrico sem saturação) ──
-  // Eq = |Vt + jXd × Ia| onde Ia = (P − jQ)/Vt (convenção gerador sobreexcitado)
-  const Q_n=Math.sqrt(Math.max(0,1-fp*fp)), P_n=fp;  // ponto nominal em pu
-  const Eq_n=Math.sqrt(Math.pow(Vt+Xd*Q_n,2)+Math.pow(Xd*P_n,2)); // FEM nominal
-  // Centro do arco de campo constante: (Q_c = −Vt²/Xd, P_c = 0)
+  // ── Ponto nominal e FEM interna (SEPOPE §3.2) ──
+  const Q_n=Math.sqrt(Math.max(0,1-fp*fp)), P_n=fp;
+  const Eq_n=Math.sqrt(Math.pow(Vt+Xd*Q_n,2)+Math.pow(Xd*P_n,2));
+  const Eq_sat=Eq_n*kSat; // FEM com saturação
   const a=Vt*Vt/Xd;
-  // Raio r = Vt × Eq / Xd  →  ponto nominal está EXATAMENTE no arco If=If_nominal
-  // Ifmax/Ifmin são múltiplos de If_nominal (ex: 1.05 = 5% acima do nominal)
-  const r_of=(mult)=>Vt*Eq_n*mult/Xd;
+  const r_of=(mult)=>Vt*Eq_sat*mult/Xd; // usa Eq_sat
 
   const N=200;
 
@@ -1853,16 +1996,30 @@ function buildCapabilityCurve(p){
   const P_turb=P_n;
   const turb=[{x:-1.5,y:P_turb},{x:1.5,y:P_turb}];
 
-  // ── 6. SSSL — círculo máquina + sistema (SEL 2019 §III) ──
-  // Centro: Qc = −Vt²(Xd+Xs)/(2XdXs)  Raio: r = Vt²|Xd−Xs|/(2XdXs)
-  const Qc_s=-(Vt*Vt*(Xd+Xs))/(2*Xd*Xs);
-  const r_s=Math.abs(Vt*Vt*(Xd-Xs))/(2*Xd*Xs);
+  // ── 6. SSSL — paramétrico para pólos salientes (Xd ≠ Xq) ──
+  // Ref: Kundur §3.5 / SEL 2019 §III. Para cilíndrico Xd≈Xq → reduz ao círculo clássico.
+  // P(δ) = (Eq·Vt·sinδ)/(Xd+Xs) + Vt²·(Xd−Xq)·sin2δ / (2·(Xd+Xs)·(Xq+Xs))
+  // Q(δ) = (Eq·Vt·cosδ)/(Xd+Xs) − Vt²·[sin²δ/(Xq+Xs) + cos²δ/(Xd+Xs)]
+  const salient=Math.abs(Xd-Xq)>0.05;
   const sssl=[];
-  for(let i=0;i<=N;i++){
-    const ang=-Math.PI/2+Math.PI*i/N;
-    const Q=Qc_s+r_s*Math.cos(ang), P=r_s*Math.sin(ang);
-    // Mostrar apenas o arco relevante: região sub-excitada, dentro da faixa de P operável
-    if(P>=-0.05 && P<=P_turb+0.25 && Q<0.05 && Q>-1.5) sssl.push({x:Q,y:P});
+  if(salient){
+    const Eq_s=Eq_sat; // usar FEM saturada
+    for(let i=0;i<=N;i++){
+      const d=Math.PI*i/N; // δ: 0 → π
+      const sd=Math.sin(d), cd=Math.cos(d), s2d=Math.sin(2*d);
+      const P=(Eq_s*Vt*sd)/(Xd+Xs) + (Vt*Vt*(Xd-Xq)*s2d)/(2*(Xd+Xs)*(Xq+Xs));
+      const Q=(Eq_s*Vt*cd)/(Xd+Xs) - Vt*Vt*(sd*sd/(Xq+Xs) + cd*cd/(Xd+Xs));
+      if(P>=-0.05 && P<=P_turb+0.25 && Q>-1.5 && Q<0.1) sssl.push({x:Q,y:P});
+    }
+  } else {
+    // Cilíndrico: círculo clássico (SEL 2019 §III)
+    const Qc_s=-(Vt*Vt*(Xd+Xs))/(2*Xd*Xs);
+    const r_s=Math.abs(Vt*Vt*(Xd-Xs))/(2*Xd*Xs);
+    for(let i=0;i<=N;i++){
+      const ang=-Math.PI/2+Math.PI*i/N;
+      const Q=Qc_s+r_s*Math.cos(ang), P=r_s*Math.sin(ang);
+      if(P>=-0.05 && P<=P_turb+0.25 && Q<0.05 && Q>-1.5) sssl.push({x:Q,y:P});
+    }
   }
 
   // ── 7. UEL — reta de FP mínimo (sub-excitado) ──
@@ -1872,12 +2029,11 @@ function buildCapabilityCurve(p){
   // ── 8. Ponto de operação nominal (sobreexcitado) ──
   const opPoint=[{x:Q_n,y:P_n}];
 
-  // ── 9. Linhas de eixo (Q=0 e P=0) para orientação ──
-  const axQ=[{x:0,y:-0.2},{x:0,y:1.5}];   // eixo vertical Q=0
-  const axP=[{x:-1.5,y:0},{x:1.5,y:0}];   // eixo horizontal P=0
+  // ── 9. Linhas de eixo ──
+  const axQ=[{x:0,y:-0.2},{x:0,y:1.5}];
+  const axP=[{x:-1.5,y:0},{x:1.5,y:0}];
 
-  // ── 10. Curva de proteção LOF — 5 pontos configuráveis (lado sub-excitado) ──
-  // Convenção: x = Q [pu], y = P [pu]
+  // ── 10. Curva de proteção LOF ──
   const protPoints=[];
   for(let i=1;i<=5;i++){
     const pi=p[`lof_p${i}`], qi=p[`lof_q${i}`];
@@ -1885,22 +2041,24 @@ function buildCapabilityCurve(p){
       protPoints.push({x:Number(qi),y:Number(pi)});
   }
 
-  return{stator,rotor,oel,minExc,turb,sssl,uel,opPoint,axQ,axP,protPoints,P_turb,Eq_n,a};
+  const sssl_lbl=salient?'SSSL (salientes)':'SSSL (cilíndrico)';
+  const sat_lbl=kSat<0.999?` · kSat=${kSat.toFixed(2)}`:'';
+  return{stator,rotor,oel,minExc,turb,sssl,uel,opPoint,axQ,axP,protPoints,P_turb,Eq_n:Eq_sat,a,sssl_lbl,sat_lbl};
 }
 
 function renderPQ(p){
   const cv=buildCapabilityCurve(p);
   if(CH['cPQ']){CH['cPQ'].destroy();}
   const LS=(dsh)=>({showLine:true,pointRadius:0,borderWidth:2,borderDash:dsh?[6,4]:[]});
-  const marg_lbl=`OEL (−${p.marg_oel||5}%)`;
+  const marg_lbl=`OEL (−${p.marg_oel||5}%)${cv.sat_lbl}`;
   const uel_lbl=`UEL (FP≥${(p.fp_uel||0.85).toFixed(2)})`;
   const datasets=[
     {label:'Térmico Estator', data:cv.stator,  borderColor:'#0b9bd3',...LS(false)},
-    {label:'Térmico Rotor',   data:cv.rotor,   borderColor:'#dc2626',...LS(false)},
+    {label:`Térmico Rotor${cv.sat_lbl}`, data:cv.rotor, borderColor:'#dc2626',...LS(false)},
     {label:marg_lbl,          data:cv.oel,     borderColor:'#f97316',...LS(true)},
     {label:'Mín. Excitação',  data:cv.minExc,  borderColor:'#7c3aed',...LS(false)},
     {label:'Turbina',         data:cv.turb,    borderColor:'#6b7280',...LS(true)},
-    {label:'SSSL',            data:cv.sssl,    borderColor:'#f3cb06',...LS(false)},
+    {label:cv.sssl_lbl,       data:cv.sssl,    borderColor:'#f3cb06',...LS(false)},
     {label:uel_lbl,           data:cv.uel,     borderColor:'#10b981',...LS(true)},
     {label:'Ponto de Operação',data:cv.opPoint,borderColor:'#ffffff',
       backgroundColor:'#f3cb06',pointRadius:8,pointHoverRadius:11,showLine:false},
@@ -1967,9 +2125,22 @@ const vL=(x,ylo,yhi,col='#7a9ab8',lbl='')=>({
   label:lbl,data:[{x,y:ylo},{x,y:yhi}],
   borderColor:col,borderWidth:1,borderDash:[4,2],pointRadius:0,parsing:false,showLine:true
 });
+function addOverlay(id,datasets){
+  if(!IMPORTED) return;
+  const keyMap={cVt:'Vt',cIf:'If',cEfd:'Efd'};
+  const colMap={cVt:'#dc2626',cIf:'#dc2626',cEfd:'#059669'};
+  const k=keyMap[id];
+  if(!k||!IMPORTED[k]||!IMPORTED[k].length) return;
+  const impPts=IMPORTED.t.map((t,i)=>({x:t,y:IMPORTED[k][i]})).filter(p=>!isNaN(p.y));
+  if(impPts.length<2) return;
+  datasets.push({
+    label:`${k} (medido)`,data:impPts,borderColor:colMap[id]||'#dc2626',
+    borderWidth:2,borderDash:[6,3],pointRadius:0,showLine:true,parsing:false,tension:0
+  });
+}
 function mkC(id,datasets,ymin,ymax,tsim){
   if(CH[id])CH[id].destroy();
-  // Formatação dinâmica do eixo X conforme duração da simulação
+  addOverlay(id,datasets);
   const fmt = !tsim||tsim>=5 ? v=>v.toFixed(1)+'s'
             : tsim>=1        ? v=>v.toFixed(2)+'s'
             : tsim>=0.1      ? v=>(v*1000).toFixed(0)+'ms'
@@ -2093,17 +2264,19 @@ function runSim(){
       // ── Diagrama de Capabilidade P-Q ──────────────
       renderPQ({Vt0:gv('Vt0'),Xd:gv('Xd'),Xdp:gv('Xdp'),Xq:gv('Xq'),
         Ifmax:gv('Ifmax'),Ifmin:gv('Ifmin'),Xs:gv('Xs'),
-        fp:gv('fp'),marg_oel:gv('marg_oel'),fp_uel:gv('fp_uel'),
+        fp:gv('fp'),marg_oel:gv('marg_oel'),fp_uel:gv('fp_uel'),kSat:gv('kSat')||1,
         lof_p1:gv('lof_p1'),lof_q1:parseFloat($('lof_q1').value)||0,
         lof_p2:gv('lof_p2'),lof_q2:parseFloat($('lof_q2').value)||0,
         lof_p3:gv('lof_p3'),lof_q3:parseFloat($('lof_q3').value)||0,
         lof_p4:gv('lof_p4'),lof_q4:parseFloat($('lof_q4').value)||0,
         lof_p5:gv('lof_p5'),lof_q5:parseFloat($('lof_q5').value)||0});
 
+      SIM_DATA=data; // salvar para exportação CSV
       $('ph').style.display='none';
       $('simtabbar').style.display='flex';
       showSimTab('osc');
       $('mbar').style.display='flex';
+      $('expbar').style.display='flex';
       $('ava-ph').style.display='none';
       showTab('sim');
 
@@ -2196,11 +2369,13 @@ function onStepChange(){
 }
 function resetSim(){
   Object.values(CH).forEach(c=>c.destroy()); CH={};
+  SIM_DATA=null;
   $('ph').style.display='flex';
   $('simtabbar').style.display='none';
   $('grid-osc').style.display='none';
   $('grid-pq').style.display='none';
   $('mbar').style.display='none';
+  $('expbar').style.display='none';
   $('evaltbl').style.display='none';
   $('ava-ph').style.display='flex';
   updateAvaBadge(null);
@@ -2293,7 +2468,7 @@ function renderEvalTable_degrau(M, VRmax, VRmin, Vt0, dVref, etype){
   const sign=etype==='DNEG'?'−':'+';
   const maq=MAQ[$('maq').value];
   const info=`AVR · Degrau ${sign} · ΔVref = ${Math.abs(dVref).toFixed(3)} pu · Vt0 = ${Vt0.toFixed(3)} pu · ${maq.lbl} · ${new Date().toLocaleString('pt-BR')}`;
-  const vfin=(Vt0+Math.abs(dVref)).toFixed(3);
+  const vfin=(Vt0+dVref).toFixed(3);
   const OS_v=parseFloat(M.OS), Te_v=parseFloat(M.Te), Ess_v=parseFloat(M.Ess), pk_v=parseFloat(M.pk);
   const rows=[
     {par:'Sobressinal máximo após degrau',     sym:'OS',      val:M.OS+' %',    lim:'≤ 10 %',          norm:'ONS Sub. 2.10 / IEC 60034-16', ok:!isNaN(OS_v)&&OS_v<=10},
@@ -2318,7 +2493,7 @@ function renderEvalTable_rej(M, VRmax, VRmin, Vt0){
   const rows=[
     {par:'Sobressinal de rejeição de carga',   sym:'OS',       val:M.OS+' %',          lim:'≤ 10 %',          norm:'ONS Sub. 2.10',  ok:!isNaN(OS_v)&&OS_v<=10},
     {par:'Retorno à banda ±5% (trees)',        sym:'trees',    val:M.trees+(typeof M.trees==='string'&&!M.trees.includes('>')?' s':''), lim:'≤ 2 s', norm:'ONS Sub. 2.10', ok:isFinite(tr_v)&&tr_v<=2},
-    {par:'Tensão terminal — pico após rejeição',sym:'Vpico',   val:M.Vpeak+' pu',      lim:`≤ ${(Vt0*1.05).toFixed(3)} pu (+5%)`, norm:'ONS Sub. 2.10', ok:!isNaN(vp_v)&&vp_v<=(Vt0*1.055)},
+    {par:'Tensão terminal — pico após rejeição',sym:'Vpico',   val:M.Vpeak+' pu',      lim:`≤ ${(Vt0*1.05).toFixed(3)} pu (+5%)`, norm:'ONS Sub. 2.10', ok:!isNaN(vp_v)&&vp_v<=(Vt0*1.05)},
     {par:'Tensão de campo — piso (min Efd)',   sym:'Efd_min',  val:M.Efd_floor+' pu',  lim:`≥ ${VRmin} pu`,   norm:'IEEE 421.5',    ok:!isNaN(ef_v)&&ef_v>=VRmin},
     {par:'Tensão de campo — pico (max |Efd|)', sym:'Efd_max',  val:M.Efd_peak+' pu',   lim:`≤ ${VRmax} pu`,   norm:'IEEE 421.5',    ok:!isNaN(ep_v)&&ep_v<=VRmax},
   ];
@@ -2398,6 +2573,35 @@ function calcVarAux(){
 // HISTÓRICO DE VERSÕES
 // ═══════════════════════════════════════════════
 const APP_HISTORY = [
+  {
+    ver:'V0.14', date:'2026-03-28',
+    changes:[
+      'Salvar/carregar configuração: persistência de todos os parâmetros via localStorage (💾/📂/🗑)',
+      'Presets de máquina: 5 templates típicos (WEG Hidro, ABB Vapor, GE Gás, Siemens Comp., WEG Diesel)',
+      'Modo escuro (dark mode): toggle no header com persistência — altera todo o CSS do app',
+      'Atalhos de teclado: Ctrl+Enter (simular), Ctrl+S (salvar), Ctrl+D (dark mode), Esc (fechar modais)',
+      'Auto-teste (self-test): 10 verificações automáticas — RK4, AVR, FCR, Chart.js, DOM, P-Q, métricas',
+      'PWA install prompt: botão "Instalar" aparece quando o navegador permite instalação como app',
+      'Acessibilidade (ARIA): roles, aria-labels e aria-selected em regiões, tabs, botões e inputs',
+    ]
+  },
+  {
+    ver:'V0.13', date:'2026-03-27',
+    changes:[
+      'Exportação CSV: botão para download dos dados da simulação (t, Vt, If, Efd, Vref, e) com cabeçalho de metadados',
+      'Impressão de laudo: botão "Imprimir Laudo" com CSS @media print dedicado — gera PDF via navegador',
+      'Importação de oscilogramas: área de drag-and-drop para CSV com auto-detecção de separador e colunas',
+      'Overlay simulado vs. medido: dados importados exibidos como curvas tracejadas vermelhas nos gráficos',
+      'Modelo de saturação magnética: fator kSat (0.70–1.00) reduz Eq efetiva nos arcos rotor/OEL do diagrama P-Q',
+      'SSSL para pólos salientes: cálculo paramétrico com Xd e Xq separados (antes usava aproximação cilíndrica)',
+      'Bug fix: FCR initial conditions — xI inicia em If0/KI para regime permanente correto',
+      'Bug fix: header ONS "Submódulo 2.6" corrigido para "2.10"',
+      'Bug fix: vfin na tabela de avaliação do DNEG — antes somava |dVref| ao invés de subtrair',
+      'Bug fix: tolerância Vpeak de rejeição corrigida de 1.055 para 1.05 (conforme ONS Sub. 2.10)',
+      'Bug fix: Service Worker cache atualizado para v13',
+      'Bug fix: viewport meta tag adicionada para responsividade mobile',
+    ]
+  },
   {
     ver:'V0.12', date:'2026-03-27',
     changes:[
@@ -2604,8 +2808,443 @@ function closeChartModal(){
 // ESC fecha o modal
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeChartModal(); });
 
+// ═══════════════════════════════════════════════
+// EXPORTAÇÃO CSV — dados da simulação
+// ═══════════════════════════════════════════════
+function exportCSV(){
+  if(!SIM_DATA||!SIM_DATA.length){ alert('Execute a simulação primeiro.'); return; }
+  const sep=';';
+  const maq=MAQ[$('maq').value];
+  const header=[
+    `# Simulador de Ensaios Dinâmicos — Sistema de Excitação (${APP_VERSION})`,
+    `# Data: ${new Date().toLocaleString('pt-BR')}`,
+    `# Modo: ${MODE} · Ensaio: ${EVAL_TYPE} · Máquina: ${maq.lbl}`,
+    `# Tdo'=${maq.Tdo}s · Kag=${maq.Kag} · DT=${DT}s`,
+    ''
+  ].join('\n');
+  const cols=['t','Vt','If','Efd','Vref','e'];
+  const rows=SIM_DATA.map(d=>cols.map(c=>d[c]).join(sep));
+  const csv=header+cols.join(sep)+'\n'+rows.join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`SimExcitacao_${MODE}_${EVAL_TYPE}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════
+// IMPRESSÃO DO LAUDO — abre diálogo de impressão
+// ═══════════════════════════════════════════════
+function printReport(){
+  if(!SIM_DATA||!SIM_DATA.length){ alert('Execute a simulação primeiro.'); return; }
+  const maq=MAQ[$('maq').value];
+  const pi=$('print-info');
+  if(pi) pi.textContent=`${APP_VERSION} · ${MODE} · ${EVAL_TYPE} · ${maq.lbl} · ${new Date().toLocaleString('pt-BR')} · ${APP_DEV}`;
+  showTab('ava');
+  setTimeout(()=>window.print(),200);
+}
+
+// ═══════════════════════════════════════════════
+// IMPORTAÇÃO DE OSCILOGRAMAS — CSV/TXT
+// ═══════════════════════════════════════════════
+function handleImportDrop(e){
+  const file=e.dataTransfer.files[0];
+  if(file) handleImportFile(file);
+}
+function handleImportFile(file){
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const raw=ev.target.result;
+      const parsed=parseImportCSV(raw);
+      if(!parsed){ alert('Formato não reconhecido. Use CSV com colunas: t, Vt, If, Efd'); return; }
+      IMPORTED=parsed;
+      IMPORTED.filename=file.name;
+      updateImportUI();
+    }catch(err){ alert('Erro ao ler arquivo: '+err.message); }
+  };
+  reader.readAsText(file,'utf-8');
+}
+function parseImportCSV(raw){
+  // Auto-detecta separador (;  ,  \t)
+  const lines=raw.trim().split(/\r?\n/).filter(l=>l.trim()&&!l.trim().startsWith('#'));
+  if(lines.length<2) return null;
+  let sep=';';
+  if(lines[0].split(';').length<2) sep=',';
+  if(lines[0].split(sep).length<2) sep='\t';
+  const hdr=lines[0].split(sep).map(h=>h.trim().toLowerCase().replace(/["\s]/g,''));
+  // Mapear colunas por nome
+  const findCol=(names)=>{ for(const n of names){ const i=hdr.indexOf(n); if(i>=0) return i; } return -1; };
+  const iT=findCol(['t','time','tempo','t(s)','time(s)']);
+  const iVt=findCol(['vt','v','tensao','vt(pu)','vt_pu','voltage']);
+  const iIf=findCol(['if','ifd','campo','if(pu)','if_pu','ifield']);
+  const iEfd=findCol(['efd','vfd','vf','efd(pu)','efd_pu']);
+  if(iT<0){ alert('Coluna de tempo (t) não encontrada no cabeçalho.'); return null; }
+  const parseNum=s=>{ if(!s||s.trim()==='') return NaN; return parseFloat(s.trim().replace(',','.')); };
+  const result={t:[],Vt:[],If:[],Efd:[],cols:[]};
+  if(iT>=0) result.cols.push('t');
+  if(iVt>=0) result.cols.push('Vt');
+  if(iIf>=0) result.cols.push('If');
+  if(iEfd>=0) result.cols.push('Efd');
+  for(let i=1;i<lines.length;i++){
+    const parts=lines[i].split(sep);
+    const t=parseNum(parts[iT]);
+    if(isNaN(t)) continue;
+    result.t.push(t);
+    result.Vt.push(iVt>=0?parseNum(parts[iVt]):NaN);
+    result.If.push(iIf>=0?parseNum(parts[iIf]):NaN);
+    result.Efd.push(iEfd>=0?parseNum(parts[iEfd]):NaN);
+  }
+  return result.t.length>=2?result:null;
+}
+function updateImportUI(){
+  const zone=$('impZone'), lbl=$('impLabel'), st=$('impStatus'), cl=$('impClear'), dt=$('impDetail');
+  if(IMPORTED){
+    zone.classList.add('imp-loaded');
+    lbl.textContent=`✅ ${IMPORTED.filename}`;
+    st.className='imp-tag on';
+    st.textContent=`${IMPORTED.t.length} pontos · ${IMPORTED.cols.join(', ')}`;
+    cl.style.display='inline';
+    const tMax=IMPORTED.t[IMPORTED.t.length-1], tMin=IMPORTED.t[0];
+    dt.textContent=`Período: ${tMin.toFixed(3)}s → ${tMax.toFixed(3)}s · Δt médio = ${((tMax-tMin)/(IMPORTED.t.length-1)*1000).toFixed(1)}ms`;
+  } else {
+    zone.classList.remove('imp-loaded');
+    lbl.textContent='📂 Clique ou arraste CSV aqui';
+    st.className='imp-tag off'; st.textContent='Sem dados';
+    cl.style.display='none'; dt.textContent='';
+  }
+}
+function clearImport(){
+  IMPORTED=null;
+  updateImportUI();
+  $('impFile').value='';
+}
+
+// ═══════════════════════════════════════════════
+// DARK MODE
+// ═══════════════════════════════════════════════
+function toggleDark(){
+  document.body.classList.toggle('dark');
+  const on=document.body.classList.contains('dark');
+  const btn=$('btnDark');
+  if(btn){ btn.textContent=on?'☀️ Claro':'🌙 Escuro'; btn.classList.toggle('on',on); }
+  try{ localStorage.setItem('simexc_dark',on?'1':'0'); }catch(e){}
+  // Re-render charts with appropriate colors if simulation is active
+  if(SIM_DATA&&SIM_DATA.length) Object.values(CH).forEach(c=>{
+    if(c&&c.options){
+      const tc=on?'#c0c0d0':'#666';
+      const gc=on?'#2a2a44':'#e0e0e0';
+      if(c.options.scales){
+        Object.values(c.options.scales).forEach(s=>{
+          if(s.ticks) s.ticks.color=tc;
+          if(s.grid)  s.grid.color=gc;
+          if(s.title) s.title.color=tc;
+        });
+      }
+      c.update('none');
+    }
+  });
+}
+function restoreDark(){
+  try{
+    if(localStorage.getItem('simexc_dark')==='1'){
+      document.body.classList.add('dark');
+      const btn=$('btnDark');
+      if(btn){ btn.textContent='☀️ Claro'; btn.classList.add('on'); }
+    }
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════════
+// SAVE / LOAD CONFIG (localStorage)
+// ═══════════════════════════════════════════════
+const CFG_KEY='simexc_config';
+const CFG_INPUTS=['fab','maq','tRot','tExc','Vt0','If0','KPa','KIa','KDa','Tfd',
+  'TC','TB','KA','TA','VRmax','VRmin','Tsim','Tstep','dVref','dVrej','dIf',
+  'KPf','KIf','Xd','Xdp','Xq','Xs','Ifmax','Ifmin','fp_uel','marg_oel','kSat',
+  'Sn','Vn','Pn','Qn','fn','fp','RPM','nPol','In','Zn',
+  'If0m','Efd0m','Vref0m','Iref0m',
+  'lof_p1','lof_q1','lof_p2','lof_q2','lof_p3','lof_q3','lof_p4','lof_q4','lof_p5','lof_q5'];
+
+function saveConfig(){
+  try{
+    const cfg={_mode:MODE,_eval:EVAL_TYPE,_ts:new Date().toISOString()};
+    CFG_INPUTS.forEach(id=>{
+      const el=$(id);
+      if(el) cfg[id]=el.value;
+    });
+    localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
+    const btn=event&&event.target;
+    if(btn){ btn.textContent='✅ Salvo!'; setTimeout(()=>btn.textContent='💾 Salvar',1500); }
+  }catch(e){ alert('Erro ao salvar: '+e.message); }
+}
+
+function loadConfig(){
+  try{
+    const raw=localStorage.getItem(CFG_KEY);
+    if(!raw){ alert('Nenhuma configuração salva encontrada.'); return; }
+    const cfg=JSON.parse(raw);
+    CFG_INPUTS.forEach(id=>{
+      const el=$(id);
+      if(el&&cfg[id]!==undefined) el.value=cfg[id];
+    });
+    if(cfg._mode){ setMode(cfg._mode); }
+    if(cfg._eval&&MODE==='AVR'){ setEval(cfg._eval); }
+    onMaqChange(); onStepChange(); onMedChange(); calcEquip(); calcVarAux();
+  }catch(e){ alert('Erro ao carregar: '+e.message); }
+}
+
+function clearConfig(){
+  try{
+    localStorage.removeItem(CFG_KEY);
+    alert('Configuração salva removida.');
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════════
+// PRESETS DE MÁQUINA
+// ═══════════════════════════════════════════════
+const PRESETS={
+  weg_hidro:{
+    fab:'WEG',maq:'hidraulico',tRot:'salientes',tExc:'tiristores',
+    Vt0:'1.000',If0:'1.000',Sn:'50',Vn:'13.8',fn:'60',fp:'0.90',RPM:'200',nPol:'36',
+    KPa:'25',KIa:'12',KDa:'0',Tfd:'0.01',TC:'1.0',TB:'10.0',KA:'200',TA:'0.02',
+    VRmax:'6.0',VRmin:'-6.0',Tsim:'15',Tstep:'1',dVref:'0.05',dVrej:'0.10',
+    Xd:'1.10',Xdp:'0.30',Xq:'0.70',Xs:'0.15',Ifmax:'2.5',Ifmin:'0.2',
+    kSat:'0.95',fp_uel:'0.85',marg_oel:'10',
+    KPf:'5',KIf:'10',dIf:'0.10'
+  },
+  abb_vapor:{
+    fab:'ABB',maq:'vapor',tRot:'lisos',tExc:'tiristores',
+    Vt0:'1.000',If0:'1.000',Sn:'100',Vn:'15.0',fn:'60',fp:'0.85',RPM:'3600',nPol:'2',
+    KPa:'30',KIa:'15',KDa:'0.5',Tfd:'0.01',TC:'0.8',TB:'8.0',KA:'300',TA:'0.015',
+    VRmax:'7.0',VRmin:'-7.0',Tsim:'12',Tstep:'1',dVref:'0.05',dVrej:'0.08',
+    Xd:'1.80',Xdp:'0.25',Xq:'1.70',Xs:'0.12',Ifmax:'2.8',Ifmin:'0.15',
+    kSat:'0.92',fp_uel:'0.80',marg_oel:'10',
+    KPf:'6',KIf:'12',dIf:'0.10'
+  },
+  ge_gas:{
+    fab:'GE',maq:'gas',tRot:'lisos',tExc:'sem-escovas',
+    Vt0:'1.000',If0:'1.000',Sn:'80',Vn:'13.8',fn:'60',fp:'0.85',RPM:'3600',nPol:'2',
+    KPa:'28',KIa:'14',KDa:'0.3',Tfd:'0.01',TC:'0.9',TB:'9.0',KA:'250',TA:'0.02',
+    VRmax:'6.5',VRmin:'-6.5',Tsim:'12',Tstep:'1',dVref:'0.05',dVrej:'0.08',
+    Xd:'1.50',Xdp:'0.22',Xq:'1.40',Xs:'0.13',Ifmax:'2.6',Ifmin:'0.18',
+    kSat:'0.93',fp_uel:'0.82',marg_oel:'10',
+    KPf:'5.5',KIf:'11',dIf:'0.10'
+  },
+  siemens_comp:{
+    fab:'Siemens',maq:'compensador',tRot:'salientes',tExc:'tiristores',
+    Vt0:'1.000',If0:'1.000',Sn:'30',Vn:'13.8',fn:'60',fp:'0.00',RPM:'300',nPol:'24',
+    KPa:'20',KIa:'10',KDa:'0',Tfd:'0.01',TC:'1.2',TB:'12.0',KA:'180',TA:'0.025',
+    VRmax:'5.5',VRmin:'-5.5',Tsim:'15',Tstep:'1',dVref:'0.05',dVrej:'0.10',
+    Xd:'1.40',Xdp:'0.28',Xq:'1.00',Xs:'0.15',Ifmax:'2.2',Ifmin:'0.20',
+    kSat:'0.90',fp_uel:'0.85',marg_oel:'12',
+    KPf:'4',KIf:'8',dIf:'0.10'
+  },
+  weg_diesel:{
+    fab:'WEG',maq:'diesel',tRot:'salientes',tExc:'sem-escovas',
+    Vt0:'1.000',If0:'1.000',Sn:'5',Vn:'4.16',fn:'60',fp:'0.80',RPM:'1800',nPol:'4',
+    KPa:'18',KIa:'8',KDa:'0',Tfd:'0.01',TC:'0.5',TB:'5.0',KA:'150',TA:'0.03',
+    VRmax:'5.0',VRmin:'-5.0',Tsim:'10',Tstep:'1',dVref:'0.05',dVrej:'0.12',
+    Xd:'1.10',Xdp:'0.25',Xq:'0.70',Xs:'0.18',Ifmax:'2.0',Ifmin:'0.25',
+    kSat:'0.96',fp_uel:'0.80',marg_oel:'10',
+    KPf:'4',KIf:'8',dIf:'0.10'
+  }
+};
+
+function applyPreset(name){
+  if(!name) return;
+  const p=PRESETS[name];
+  if(!p){ alert('Preset não encontrado.'); return; }
+  Object.keys(p).forEach(id=>{
+    const el=$(id);
+    if(el) el.value=p[id];
+  });
+  onMaqChange(); onStepChange(); onMedChange(); calcEquip(); calcVarAux();
+  $('presetSel').value='';
+  resetSim();
+}
+
+// ═══════════════════════════════════════════════
+// PWA INSTALL PROMPT
+// ═══════════════════════════════════════════════
+let deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredInstallPrompt=e;
+  const btn=$('pwa-install');
+  if(btn) btn.classList.add('visible');
+});
+function installPWA(){
+  if(!deferredInstallPrompt){ alert('App já instalado ou não disponível para instalação.'); return; }
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then(r=>{
+    if(r.outcome==='accepted'){
+      const btn=$('pwa-install');
+      if(btn) btn.classList.remove('visible');
+    }
+    deferredInstallPrompt=null;
+  });
+}
+window.addEventListener('appinstalled',()=>{
+  const btn=$('pwa-install');
+  if(btn) btn.classList.remove('visible');
+  deferredInstallPrompt=null;
+});
+
+// ═══════════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  // Ctrl+Enter → Simular
+  if(e.ctrlKey&&e.key==='Enter'){
+    e.preventDefault();
+    const btn=$('bsim');
+    if(btn&&!btn.disabled) runSim();
+  }
+  // Ctrl+S → Salvar config
+  if(e.ctrlKey&&!e.shiftKey&&e.key==='s'){
+    e.preventDefault();
+    saveConfig();
+  }
+  // Ctrl+D → Dark mode
+  if(e.ctrlKey&&!e.shiftKey&&e.key==='d'){
+    e.preventDefault();
+    toggleDark();
+  }
+  // Ctrl+R → Reset (previne reload acidental)
+  if(e.ctrlKey&&e.shiftKey&&e.key==='R'){
+    e.preventDefault();
+    resetSim();
+  }
+  // Escape → Fechar modal se aberto
+  if(e.key==='Escape'){
+    const cm=$('chartModal');
+    if(cm&&cm.style.display==='flex') closeChartModal();
+    const vm=$('ver-ov');
+    if(vm&&vm.style.display==='block') closeVerModal();
+  }
+});
+
+// ═══════════════════════════════════════════════
+// SELF-TEST
+// ═══════════════════════════════════════════════
+function selfTest(){
+  const results=[];
+  let pass=0, fail=0;
+
+  function check(name,fn){
+    try{
+      const ok=fn();
+      results.push({name,ok,err:ok?'':'Falhou'});
+      if(ok) pass++; else fail++;
+    }catch(e){
+      results.push({name,ok:false,err:e.message});
+      fail++;
+    }
+  }
+
+  // T1: Helpers existem
+  check('Helpers ($, gv, cl, sf)',()=>typeof $==='function'&&typeof gv==='function');
+
+  // T2: RK4 funciona — teste com dx/dt = -x → x(1) ≈ e^(-1)
+  check('RK4 integrador',()=>{
+    const f=(t,x)=>[-x[0]];
+    let x=[1]; const dt=0.01;
+    for(let t=0;t<1;t+=dt) x=rk4(f,t,x,dt);
+    return Math.abs(x[0]-Math.exp(-1))<0.001;
+  });
+
+  // T3: MAQ definida com todos os tipos
+  check('MAQ (5 tipos)',()=>['hidraulico','vapor','gas','compensador','diesel'].every(k=>MAQ[k]&&MAQ[k].Tdo>0));
+
+  // T4: simAVR retorna dados válidos
+  check('simAVR() executa',()=>{
+    const d=simAVR({KP:25,KI:10,KD:0,Tfd:0.01,TC:1,TB:10,KA:200,TA:0.02,VRmax:6,VRmin:-6,Tdo:8,Kag:1.05,Vt0:1,dVref:0.05,TSIM:2,TSTEP:0.5});
+    return d&&d.length>10&&d[0].Vt!==undefined;
+  });
+
+  // T5: simFCR retorna dados válidos
+  check('simFCR() executa',()=>{
+    const d=simFCR({KP:5,KI:10,TA:0.02,VRmax:6,VRmin:-6,Tdo:8,Kag:1.05,If0:1,dIf:0.1,TSIM:2,TSTEP:0.5});
+    return d&&d.length>10&&d[0].If!==undefined;
+  });
+
+  // T6: Chart.js disponível
+  check('Chart.js carregado',()=>typeof Chart==='function');
+
+  // T7: Elementos DOM essenciais
+  check('DOM essenciais',()=>['hdr','prm','simpanel','avalpanel','bsim'].every(id=>$(id)!==null));
+
+  // T8: calcM_degrau funciona
+  check('calcM_degrau()',()=>{
+    const d=simAVR({KP:25,KI:10,KD:0,Tfd:0.01,TC:1,TB:10,KA:200,TA:0.02,VRmax:6,VRmin:-6,Tdo:8,Kag:1.05,Vt0:1,dVref:0.05,TSIM:5,TSTEP:0.5});
+    const m=calcM_degrau(d,'Vt',1,0.05,0.5);
+    return m&&typeof m.OS==='number'&&typeof m.Ts==='number';
+  });
+
+  // T9: Nenhum NaN nos parâmetros padrão
+  check('Parâmetros sem NaN',()=>{
+    return ['Vt0','KPa','KIa','KA','TA','VRmax','VRmin','Tsim','Tstep'].every(id=>{
+      const v=parseFloat($(id).value);
+      return !isNaN(v);
+    });
+  });
+
+  // T10: buildCapabilityCurve funciona
+  check('Capabilidade P-Q',()=>{
+    const cv=buildCapabilityCurve({Vt0:1,Xd:1.1,Xdp:0.3,Xq:0.7,Xs:0.15,Ifmax:2.5,Ifmin:0.2,fpmin:0.85,margOel:10,kSat:1,
+      lof_p1:0,lof_q1:0,lof_p2:0,lof_q2:0,lof_p3:0,lof_q3:0,lof_p4:0,lof_q4:0,lof_p5:0,lof_q5:0});
+    return cv&&cv.stator&&cv.stator.length>0;
+  });
+
+  // Resultado
+  const total=pass+fail;
+  const pct=total>0?Math.round(pass/total*100):0;
+  const icon=fail===0?'✅':'⚠️';
+  let msg=`${icon} Self-Test: ${pass}/${total} testes passaram (${pct}%)\n\n`;
+  results.forEach((r,i)=>{
+    msg+=`${r.ok?'✅':'❌'} T${i+1}: ${r.name}${r.ok?'':' — '+r.err}\n`;
+  });
+  alert(msg);
+}
+
+// ═══════════════════════════════════════════════
+// ACESSIBILIDADE (ARIA)
+// ═══════════════════════════════════════════════
+function applyARIA(){
+  // Regiões principais
+  const hdr=$('hdr'); if(hdr) hdr.setAttribute('role','banner');
+  const prm=$('prm'); if(prm){ prm.setAttribute('role','region'); prm.setAttribute('aria-label','Parâmetros de simulação'); }
+  const sim=$('simpanel'); if(sim){ sim.setAttribute('role','region'); sim.setAttribute('aria-label','Painel de simulação — gráficos'); }
+  const ava=$('avalpanel'); if(ava){ ava.setAttribute('role','region'); ava.setAttribute('aria-label','Painel de avaliação normativa'); }
+  // Botões principais
+  const bsim=$('bsim'); if(bsim) bsim.setAttribute('aria-label','Executar simulação (Ctrl+Enter)');
+  const brst=$('brst'); if(brst) brst.setAttribute('aria-label','Resetar simulação');
+  // Tabs
+  const tabbar=$('tabbar');
+  if(tabbar){
+    tabbar.setAttribute('role','tablist');
+    tabbar.querySelectorAll('.tb').forEach(t=>{
+      t.setAttribute('role','tab');
+      t.setAttribute('aria-selected',t.classList.contains('on')?'true':'false');
+    });
+  }
+  // Inputs numéricos — label via título
+  document.querySelectorAll('#prm .row').forEach(row=>{
+    const lbl=row.querySelector('label');
+    const inp=row.querySelector('input,select');
+    if(lbl&&inp&&!inp.getAttribute('aria-label')){
+      inp.setAttribute('aria-label',lbl.textContent.trim());
+    }
+  });
+}
+
 // ═══ INIT ═══
 onMaqChange(); onStepChange(); onMedChange(); calcEquip(); calcVarAux();
+restoreDark();
+applyARIA();
 // Preenche badges de versão — header e sumário
 (function(){
   ['verBadge','sumVer'].forEach(id=>{ const el=$(id); if(el) el.textContent=APP_VERSION; });

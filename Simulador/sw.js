@@ -2,7 +2,7 @@
 // SERVICE WORKER — SimExcitação PWA
 // Cache offline: landing page + simulador + Chart.js
 // ═══════════════════════════════════════════════════════════
-const CACHE_NAME = 'simexcitacao-v1';
+const CACHE_NAME = 'simexcitacao-v14';
 
 const ASSETS_STATIC = [
   './',

@@ -290,7 +290,7 @@ footer b{color:var(--gold)}
   </div>
   <div class="header-right">
     <button id="btn-install-header">⬇ Instalar App</button>
-    <span class="badge-ver">V0.09</span>
+    <span class="badge-ver" id="app-ver-badge">V0.12</span>
   </div>
 </header>
 
@@ -590,7 +590,7 @@ footer b{color:var(--gold)}
       </div>
       <div class="spec-card">
         <div class="spec-label">Versão</div>
-        <div class="spec-value">V0.09 · 2026</div>
+        <div class="spec-value"><span id="app-ver-spec">V0.12</span> · 2026</div>
         <div class="spec-sub">Eng° Douglas Furtado</div>
       </div>
     </div>
@@ -610,7 +610,7 @@ footer b{color:var(--gold)}
 <!-- ══ FOOTER ════════════════════════════════════════════════ -->
 <footer>
   <b>ENERGY POWER SOLUTIONS & ENGINEERING LTDA</b> · Simulador de Ensaios Dinâmicos — Sistema de Excitação<br>
-  Desenvolvido por <b>Eng° Douglas Furtado</b> · 2026 · V0.09<br>
+  Desenvolvido por <b>Eng° Douglas Furtado</b> · 2026 · <span id="app-ver-footer">V0.12</span><br>
   IEEE 421.5 · IEEE 421.2 · ONS Submódulo 2.10 · IEC 60034-16 · ABNT NBR IEC 60034
 </footer>
 
@@ -624,6 +624,22 @@ footer b{color:var(--gold)}
 </div>
 
 <script>
+// ── Versão dinâmica — lê APP_VERSION do simulador ───────────
+(async function syncVersion() {
+  try {
+    const html = await fetch('Simulador_Excitacao.html?_=' + Date.now()).then(r => r.text());
+    const m = html.match(/APP_VERSION\s*=\s*'([^']+)'/);
+    if (!m) return;
+    const ver = m[1];
+    ['app-ver-badge', 'app-ver-spec', 'app-ver-footer'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = ver;
+    });
+  } catch (e) {
+    // offline ou erro — mantém o valor estático do HTML
+  }
+})();
+
 // ── Service Worker ──────────────────────────────────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

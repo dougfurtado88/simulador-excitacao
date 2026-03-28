@@ -15,3 +15,9 @@ desktop.ini
 *.tmp
 *.bak
 ~$*
+.tmp/
+
+# Ambiente e credenciais
+.env
+credentials.json
+token.json

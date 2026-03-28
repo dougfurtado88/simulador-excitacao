@@ -6,8 +6,42 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 > **Projeto:** Simulador de Ensaios Dinâmicos — Sistema de Excitação
 > **Desenvolvedor:** Eng° Douglas Furtado
-> **Versão atual:** V0.09
+> **Versão atual:** V0.12
 > **Normas:** IEEE 421.5 · IEEE 421.2 · IEC 60034-16 · ONS Submódulo 2.10
+
+---
+
+## Arquitetura de Agente (3 Camadas)
+
+Este projeto segue a arquitetura definida em `Agents.md`:
+
+| Camada | O que é | Onde fica |
+|--------|---------|-----------|
+| **Diretiva** | SOPs em Markdown — o que fazer e como | `directives/` |
+| **Orquestração** | Claude Code — lê diretivas, toma decisões, chama scripts | (você) |
+| **Execução** | Scripts Python determinísticos | `execution/` |
+
+### Scripts de execução disponíveis
+
+| Script | O que faz | Diretiva |
+|--------|-----------|----------|
+| `execution/check_version.py` | Exibe versão atual e changelog | — |
+| `execution/bump_version.py` | Incrementa versão + changelog + backup | `directives/nova_versao.md` |
+| `execution/extract_pdf.py` | Extrai texto de PDFs de normas | `directives/extrair_pdf_normas.md` |
+| `auto_sync.py` | Commit + push automático (watchdog) | `directives/sync_github.md` |
+| `Simulador/server.py` | Servidor HTTP local porta 8080 | `directives/rodar_simulador.md` |
+
+### Estrutura de diretórios do agente
+
+```
+directives/     ← SOPs: rodar_simulador.md, nova_versao.md, extrair_pdf_normas.md, sync_github.md
+execution/      ← Scripts Python: check_version.py, bump_version.py, extract_pdf.py
+.tmp/           ← Arquivos intermediários (regeneráveis, no .gitignore)
+.env            ← Variáveis de ambiente (no .gitignore — usar .env.example como base)
+```
+
+**Regra:** Antes de executar qualquer tarefa recorrente, ler a diretiva correspondente em `directives/`.
+Ao descobrir novos edge cases ou limitações, atualizar a diretiva (não criar novas sem autorização).
 
 ---
 

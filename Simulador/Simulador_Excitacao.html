@@ -54,8 +54,10 @@ body{font-family:'Lora',Georgia,serif;background:var(--bg);color:var(--c1);font-
 #body{display:flex;gap:8px;padding:8px;flex:1;min-height:0}
 /* PARAMS */
 #prm{width:clamp(195px,20vw,285px);flex-shrink:0;overflow-y:auto;background:var(--bg-panel);border-radius:9px;padding:9px;box-shadow:0 1px 4px rgba(0,0,0,.08);transition:width .15s;border:1px solid var(--bd)}
+.dn{display:none}
 .sec{margin-bottom:8px;border-radius:6px;border:1px solid var(--bd);overflow:hidden}
 .sh{color:#f0f7fb;padding:5px 9px;font-size:11px;font-weight:700;font-family:'Poppins',Arial,sans-serif;background:#003a5e}
+.sh-b{background:#005b92}.sh-c{background:#0b9bd3}
 .sb{padding:7px 9px;background:var(--bg)}
 .row{display:flex;align-items:center;gap:5px;margin-bottom:5px}
 .row:last-child{margin-bottom:0}
@@ -212,7 +214,7 @@ body{font-family:'Lora',Georgia,serif;background:var(--bg);color:var(--c1);font-
 .row input.inp-ro{background:#e8f4fb;color:#003a5e}
 .lof-col-hdr{font-size:10px;font-weight:700;text-align:center;color:#2a4d6b}
 .lof-pt-lbl{font-size:10px;color:var(--c2)}
-.norm-grp{margin:10px 0 4px;font-size:11px;font-weight:700;color:#fff;padding:4px 10px;border-radius:4px;letter-spacing:.5px}
+.norm-grp{margin:10px 0 4px;font-size:11px;font-weight:700;color:#fff;background:#003a5e;padding:4px 10px;border-radius:4px;letter-spacing:.5px}
 .proto-outer{background:#e8f4fb;border-radius:8px;padding:10px 12px;margin-top:10px;border:1px solid var(--bd)}
 .calc-outer{background:var(--bg-panel);border-radius:8px;padding:10px 12px;margin-top:10px;border:1px solid var(--bd)}
 .box-title{font-size:10px;font-weight:700;color:#003a5e;margin-bottom:8px;letter-spacing:.3px}
@@ -226,6 +228,14 @@ body{font-family:'Lora',Georgia,serif;background:var(--bg);color:var(--c1);font-
 .calc-out{font-size:14px;font-weight:700;text-align:center;padding:6px 4px;font-family:monospace;background:#fafafa}
 .badge-ok{background:#d0eaf8;color:#005b92;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700}
 .badge-fail{background:#fee2e2;color:#b91c1c;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700}
+.cv{font-size:10px;color:#a8d4ee}
+.c-note{color:#3a6080}
+.sum-lbl{font-size:8.5px;color:#f3cb06;opacity:.7;text-transform:uppercase;letter-spacing:.5px}
+.sum-val{font-size:10.5px;font-weight:700;color:#f3cb06}
+.sum-div{width:1px;height:28px;background:rgba(255,255,255,.2)}
+.hdr-sep{opacity:.3;font-size:9px}
+.hdr-lbl{font-size:10px;opacity:.65;margin-right:2px}
+.leg-h3{font-size:11px;margin:10px 0 6px}
 /* EXPAND CHART */
 .cx-btn{position:absolute;top:6px;right:8px;background:rgba(20,20,19,.07);border:1px solid var(--bd);border-radius:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;z-index:10;opacity:.6;transition:opacity .15s}
 .cx-btn:hover{opacity:1;background:rgba(11,155,211,.15)}
@@ -316,10 +326,10 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
       <div style="display:flex;align-items:center;gap:8px;margin-top:5px">
         <span style="font-size:9.5px;opacity:.55;letter-spacing:.3px">Desenvolvimento:</span>
         <span style="font-size:9.5px;font-weight:700;color:#f3cb06;letter-spacing:.3px">Eng° Douglas Furtado</span>
-        <span style="opacity:.3;font-size:9px">|</span>
+        <span class="hdr-sep">|</span>
         <span style="font-size:9px;background:rgba(0,58,94,.7);border:1px solid rgba(243,203,6,.5);color:#f3cb06;padding:1px 7px;border-radius:10px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:background .15s" id="verBadge" onclick="openVerModal()" title="📋 Clique para ver o histórico de versões"
           onmouseover="this.style.background='rgba(0,91,146,.85)'" onmouseout="this.style.background='rgba(0,58,94,.7)'"></span>
-        <span style="opacity:.3;font-size:9px">|</span>
+        <span class="hdr-sep">|</span>
         <span style="font-size:9px;opacity:.6" id="anoBadge"></span>
       </div>
     </div>
@@ -328,7 +338,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
   <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
     <!-- Linha 1: Modo de controle -->
     <div class="hb">
-      <span style="font-size:10px;opacity:.65;margin-right:2px">Controle:</span>
+      <span class="hdr-lbl">Controle:</span>
       <button class="mb on" id="bavr" onclick="setMode('AVR')">AVR</button>
       <button class="mb"    id="bfcr" onclick="setMode('FCR')">FCR</button>
       <button id="bsim" onclick="runSim()">▶ SIMULAR</button>
@@ -336,7 +346,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
     </div>
     <!-- Linha 2: Tipo de ensaio (somente AVR) -->
     <div id="evalrow" style="display:flex;gap:5px;align-items:center">
-      <span style="font-size:10px;opacity:.65;margin-right:2px">Ensaio:</span>
+      <span class="hdr-lbl">Ensaio:</span>
       <button class="eb on" id="edpos" onclick="setEval('DPOS')">📈 Degrau +</button>
       <button class="eb"    id="edneg" onclick="setEval('DNEG')">📉 Degrau −</button>
       <button class="eb"    id="ereje" onclick="setEval('REJE')">⚡ Rejeição de Carga</button>
@@ -372,7 +382,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
     </div>
 
     <div class="sec" id="sec-equip">
-      <div class="sh" style="background:#003a5e">🏭 EQUIPAMENTO &amp; MÁQUINA</div>
+      <div class="sh">🏭 EQUIPAMENTO &amp; MÁQUINA</div>
       <div class="sb">
         <div class="row"><label>Fabricante</label><input type="text" id="fab" placeholder="Ex: WEG, ABB, GE..." style="flex:1;min-width:0;width:auto"></div>
         <div class="row"><label>Tipo de máquina</label>
@@ -418,7 +428,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
     </div>
 
     <div class="sec">
-      <div class="sh" style="background:#005b92">📍 PONTO DE OPERAÇÃO</div>
+      <div class="sh sh-b">📍 PONTO DE OPERAÇÃO</div>
       <div class="sb">
         <div class="row"><label>Vt0 inicial</label><input type="number" id="Vt0" value="1.0" step="0.01" oninput="onMaqChange()"><span>pu</span></div>
         <div class="row"><label>If0 inicial</label><input type="number" id="If0" value="1.0" step="0.01"><span>pu</span></div>
@@ -428,7 +438,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
 
     <!-- Dados Medidos do Ensaio -->
     <div class="sec">
-      <div class="sh" style="background:#003a5e">📏 DADOS DO ENSAIO (MEDIDOS)</div>
+      <div class="sh">📏 DADOS DO ENSAIO (MEDIDOS)</div>
       <div class="sb">
         <div class="slbl">Condição inicial — valores medidos</div>
         <div class="row">
@@ -451,7 +461,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
             <span>pu</span>
           </div>
         </div>
-        <div id="sfcr-med" style="display:none">
+        <div id="sfcr-med" class="dn">
           <div class="row">
             <label>Iref₀ (FCR)</label>
             <input type="number" id="Iref0m" value="" placeholder="= If₀" step="0.001" min="0" oninput="onMedChange()">
@@ -464,7 +474,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
 
     <!-- AVR PID -->
     <div class="sec" id="savr">
-      <div class="sh" style="background:#005b92">🎛️ CONTROLADOR AVR — PID</div>
+      <div class="sh sh-b">🎛️ CONTROLADOR AVR — PID</div>
       <div class="sb">
         <div class="row"><label>KP (proporcional)</label><input type="number" id="KPa" value="5.0"  step="0.1"  ></div>
         <div class="row"><label>KI (integral)</label>    <input type="number" id="KIa" value="20.0" step="0.5"  ></div>
@@ -478,8 +488,8 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
     </div>
 
     <!-- FCR PI -->
-    <div class="sec" id="sfcr" style="display:none">
-      <div class="sh" style="background:#003a5e">🎛️ CONTROLADOR FCR — PI</div>
+    <div class="sec dn" id="sfcr">
+      <div class="sh">🎛️ CONTROLADOR FCR — PI</div>
       <div class="sb">
         <div class="row"><label>KP (proporcional)</label><input type="number" id="KPf" value="2.0" step="0.1"></div>
         <div class="row"><label>KI (integral)</label>    <input type="number" id="KIf" value="5.0" step="0.5"></div>
@@ -489,7 +499,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
 
     <!-- Excitador -->
     <div class="sec">
-      <div class="sh" style="background:#0b9bd3">⚡ EXCITADOR / AMPLIFICADOR</div>
+      <div class="sh sh-c">⚡ EXCITADOR / AMPLIFICADOR</div>
       <div class="sb">
         <div class="row"><label>KA (ganho)</label>    <input type="number" id="KA"    value="200"  step="10"  ></div>
         <div class="row"><label>TA (constante τ)</label><input type="number" id="TA"  value="0.02" step="0.001"><span>s</span></div>
@@ -501,7 +511,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
 
     <!-- Parâmetros da Máquina -->
     <div class="sec">
-      <div class="sh" style="background:#005b92">⚙️ PARÂMETROS DA MÁQUINA</div>
+      <div class="sh sh-b">⚙️ PARÂMETROS DA MÁQUINA</div>
       <div class="sb">
         <div class="row"><label>Xd síncrona</label><input type="number" id="Xd"    value="1.10" step="0.01" min="0.1"><span>pu</span></div>
         <div class="row"><label>Xd' transitória</label><input type="number" id="Xdp" value="0.30" step="0.01" min="0.01"><span>pu</span></div>
@@ -516,7 +526,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
 
     <!-- Limitadores UEL / OEL -->
     <div class="sec">
-      <div class="sh" style="background:#0b9bd3">🔒 LIMITADORES UEL / OEL</div>
+      <div class="sh sh-c">🔒 LIMITADORES UEL / OEL</div>
       <div class="sb">
         <div class="row"><label>FP mínimo (UEL)</label><input type="number" id="fp_uel"    value="0.85" step="0.01" min="0.1" max="1"><span></span></div>
         <div class="row"><label>Margem OEL (%)</label> <input type="number" id="marg_oel"  value="5"    step="1"    min="0"   max="20"><span>%</span></div>
@@ -558,7 +568,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
 
     <!-- Ensaio + Tempo -->
     <div class="sec">
-      <div class="sh" id="stepsh" style="background:#003a5e">📈 DEGRAU POSITIVO — TEMPO DE SIMULAÇÃO</div>
+      <div class="sh" id="stepsh">📈 DEGRAU POSITIVO — TEMPO DE SIMULAÇÃO</div>
       <div class="sb">
         <!-- AVR Degrau + -->
         <div class="row" id="rdvr">
@@ -567,13 +577,13 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
           <span>pu</span>
         </div>
         <!-- FCR Degrau -->
-        <div class="row" id="rdif" style="display:none">
+        <div class="row dn" id="rdif">
           <label>Δ If</label>
           <input type="number" id="dIf" value="0.05" step="0.01" oninput="onStepChange()">
           <span>pu</span>
         </div>
         <!-- Rejeição distúrbio -->
-        <div class="row" id="rrej" style="display:none">
+        <div class="row dn" id="rrej">
           <label>ΔV rejeição</label>
           <input type="number" id="dVrej" value="0.10" step="0.01" min="0.01" oninput="onStepChange()">
           <span>pu</span>
@@ -597,7 +607,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
 
     <!-- Importar Oscilogramas -->
     <div class="sec">
-      <div class="sh" style="background:#005b92">📂 IMPORTAR OSCILOGRAMAS</div>
+      <div class="sh sh-b">📂 IMPORTAR OSCILOGRAMAS</div>
       <div class="sb">
         <div class="imp-zone" id="impZone" onclick="$('impFile').click()"
              ondragover="event.preventDefault();this.classList.add('dragover')"
@@ -675,7 +685,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
           <li>Calcular OS, Ts, Te, Ess e comparar com os limites normativos.</li>
         </ol>
 
-        <h3 style="font-size:11px;margin:10px 0 6px">📈 Diagrama de Referência — Degrau Positivo (Tensão em Vazio)</h3>
+        <h3 class="leg-h3">📈 Diagrama de Referência — Degrau Positivo (Tensão em Vazio)</h3>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 232" style="width:100%;max-width:660px;background:#0d1b2a;border-radius:8px;display:block">
           <defs>
             <marker id="dg-arrd" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="270"><path d="M0,0 L6,3 L0,6 L2,3 Z" fill="#fff"/></marker>
@@ -836,7 +846,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
 
           <!-- Formula legend -->
           <div style="font-size:9px;color:#7a9ab8;margin-top:7px;line-height:1.7">
-            <b style="color:#3a6080">Fórmulas:</b>
+            <b class="c-note">Fórmulas:</b>
             &nbsp;10% = Vt₀ + (Δ%/100)×0,10
             &nbsp;·&nbsp; 90% = Vt₀ + (Δ%/100)×0,90
             &nbsp;·&nbsp; +5% = yf + (Δ%/100)×0,05
@@ -848,11 +858,11 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
           <div>
             <div class="lfml">
               <span class="flbl">FÓRMULAS — PARÂMETROS DO DEGRAU</span>
-              <code><span class="fv">Δ</span>  <span class="fo">=</span> Vref_novo − Vref_ant  <span style="color:#3a6080">[degrau aplicado]</span></code>
-              <code><span class="fv">y₀</span> <span class="fo">=</span> Vt antes de tp  <span style="color:#3a6080">[tensão inicial]</span></code>
+              <code><span class="fv">Δ</span>  <span class="fo">=</span> Vref_novo − Vref_ant  <span class="c-note">[degrau aplicado]</span></code>
+              <code><span class="fv">y₀</span> <span class="fo">=</span> Vt antes de tp  <span class="c-note">[tensão inicial]</span></code>
               <code><span class="fv">yf</span> <span class="fo">=</span> média(Vt) nos últimos 20% do registro</code>
-              <code><span class="fv">Mp</span> <span class="fo">=</span> max(Vt)  para  t ≥ tp  <span style="color:#3a6080">[degrau+]</span></code>
-              <code><span class="fv">Mp</span> <span class="fo">=</span> min(Vt)  para  t ≥ tp  <span style="color:#3a6080">[degrau−]</span></code>
+              <code><span class="fv">Mp</span> <span class="fo">=</span> max(Vt)  para  t ≥ tp  <span class="c-note">[degrau+]</span></code>
+              <code><span class="fv">Mp</span> <span class="fo">=</span> min(Vt)  para  t ≥ tp  <span class="c-note">[degrau−]</span></code>
               <code><span class="fv">t10</span> <span class="fo">=</span> t | Vt <span class="fo">=</span> y₀ <span class="fo">+</span> 10%·Δ  <span style="color:#a78bfa">→ 10% do degrau</span></code>
               <code><span class="fv">t90</span> <span class="fo">=</span> t | Vt <span class="fo">=</span> y₀ <span class="fo">+</span> 90%·Δ  <span style="color:#10b981">→ 90% do degrau</span></code>
               <code><span class="fv">tf</span>  <span class="fo">=</span> último t | |Vt − yf| <span class="fo">></span> 5%·|Δ|</code>
@@ -860,8 +870,8 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
             <div class="lfml">
               <span class="flbl">FÓRMULAS — INDICADORES DE DESEMPENHO</span>
               <code><span class="fc">OS</span>  <span class="fo">=</span> (Mp − yf) / |Δ| × 100  [%]</code>
-              <code><span class="fc">Ts</span>  <span class="fo">=</span> t90 − t10  [s]  <span style="color:#3a6080">(rise time)</span></code>
-              <code><span class="fc">Te</span>  <span class="fo">=</span> tf − tp  [s]  <span style="color:#3a6080">(settling time ±5%|Δ|)</span></code>
+              <code><span class="fc">Ts</span>  <span class="fo">=</span> t90 − t10  [s]  <span class="c-note">(rise time)</span></code>
+              <code><span class="fc">Te</span>  <span class="fo">=</span> tf − tp  [s]  <span class="c-note">(settling time ±5%|Δ|)</span></code>
               <code><span class="fc">Ess</span> <span class="fo">=</span> |Vref_fin − yf| / |Δ| × 100  [%]</code>
             </div>
           </div>
@@ -929,7 +939,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
           <li>Calcular OS e trees−trej. Verificar que Efd_min ≥ VRmin (sem limitação por piso).</li>
         </ol>
 
-        <h3 style="font-size:11px;margin:10px 0 6px">⚡ Diagrama de Referência — Rejeição de Carga</h3>
+        <h3 class="leg-h3">⚡ Diagrama de Referência — Rejeição de Carga</h3>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 200" style="width:100%;max-width:600px;background:#0f172a;border-radius:8px;display:block">
           <!-- Grid lines -->
           <line x1="52" y1="10" x2="52" y2="180" stroke="#003a5e" stroke-width="1"/>
@@ -979,8 +989,8 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
               <code><span class="fv">Vpico</span> <span class="fo">=</span> max(Vt) para t ≥ trej</code>
               <code><span class="fv">trees</span> <span class="fo">=</span> primeiro t | Vt ≤ Vt₀ × 1,05  (após pico)</code>
               <code><span class="fc">OS</span>    <span class="fo">=</span> (Vpico − Vt₀) / Vt₀ × 100  [%]</code>
-              <code><span class="fc">Δt_ac</span> <span class="fo">=</span> trees − trej  [s]  <span style="color:#3a6080">(acomodação)</span></code>
-              <code><span class="fv">Efd_min</span><span class="fo">=</span> min(Efd) para t ≥ trej  <span style="color:#3a6080">(piso)</span></code>
+              <code><span class="fc">Δt_ac</span> <span class="fo">=</span> trees − trej  [s]  <span class="c-note">(acomodação)</span></code>
+              <code><span class="fv">Efd_min</span><span class="fo">=</span> min(Efd) para t ≥ trej  <span class="c-note">(piso)</span></code>
             </div>
           </div>
           <div>
@@ -1016,10 +1026,10 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <div class="l2col">
           <div class="lfml">
             <span class="flbl">CRITÉRIOS FCR (IEEE 421.2)</span>
-            <code><span class="fc">OS</span>   <span class="fo">≤ 15 %</span>  <span style="color:#3a6080">(sobressinal)</span></code>
-            <code><span class="fc">ts</span>   <span class="fo">≤ 10 s</span>  <span style="color:#3a6080">(acomodação ±2%|ΔIf|)</span></code>
-            <code><span class="fc">Ess</span>  <span class="fo">≤ 1 %</span>   <span style="color:#3a6080">(erro estacionário)</span></code>
-            <code><span class="fc">ERF</span>  <span class="fo">≥ 2 pu/s</span> <span style="color:#3a6080">(taxa de excitação 0,5 s)</span></code>
+            <code><span class="fc">OS</span>   <span class="fo">≤ 15 %</span>  <span class="c-note">(sobressinal)</span></code>
+            <code><span class="fc">ts</span>   <span class="fo">≤ 10 s</span>  <span class="c-note">(acomodação ±2%|ΔIf|)</span></code>
+            <code><span class="fc">Ess</span>  <span class="fo">≤ 1 %</span>   <span class="c-note">(erro estacionário)</span></code>
+            <code><span class="fc">ERF</span>  <span class="fo">≥ 2 pu/s</span> <span class="c-note">(taxa de excitação 0,5 s)</span></code>
           </div>
           <div class="lcrit">
             <div class="ch">ℹ ERF — Excitation Response Factor (IEEE 421.2 Annex E)</div>
@@ -1096,14 +1106,14 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <button class="stb"    id="stb-pq"  onclick="showSimTab('pq')">⚡ Capabilidade P-Q</button>
       </div>
       <!-- Sub-painel: Oscilogramas (2×2) -->
-      <div id="grid-osc" style="display:none">
+      <div id="grid-osc" class="dn">
         <div class="cb"><div class="ct">📈 Tensão Terminal &nbsp; Vt [pu]</div><button class="cx-btn" onclick="expandChart('cVt','📈 Tensão Terminal — Vt [pu]')" title="Expandir gráfico">⤢</button><div class="cw"><canvas id="cVt"></canvas></div></div>
         <div class="cb"><div class="ct">🔋 Corrente de Campo &nbsp; If [pu]</div><button class="cx-btn" onclick="expandChart('cIf','🔋 Corrente de Campo — If [pu]')" title="Expandir gráfico">⤢</button><div class="cw"><canvas id="cIf"></canvas></div></div>
         <div class="cb"><div class="ct">⚡ Tensão de Campo &nbsp; Efd [pu]</div><button class="cx-btn" onclick="expandChart('cEfd','⚡ Tensão de Campo — Efd [pu]')" title="Expandir gráfico">⤢</button><div class="cw"><canvas id="cEfd"></canvas></div></div>
         <div class="cb"><div class="ct">🎯 Erro de Controle &nbsp; e(t) [%]</div><button class="cx-btn" onclick="expandChart('cErr','🎯 Erro de Controle — e(t) [%]')" title="Expandir gráfico">⤢</button><div class="cw"><canvas id="cErr"></canvas></div></div>
       </div>
       <!-- Sub-painel: Diagrama de Capabilidade P-Q -->
-      <div id="grid-pq" style="display:none">
+      <div id="grid-pq" class="dn">
         <div class="cb" id="cPQ-wrap"><div class="ct">⚡ Diagrama de Capabilidade &nbsp; P-Q [pu]</div><button class="cx-btn" onclick="expandChart('cPQ','⚡ Diagrama de Capabilidade — P-Q [pu]')" title="Expandir gráfico">⤢</button><div class="cw"><canvas id="cPQ"></canvas></div></div>
       </div>
     </div>
@@ -1119,13 +1129,13 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <p id="print-info">Simulador de Ensaios Dinâmicos · IEEE 421.5 · ONS Sub. 2.10</p>
       </div>
       <!-- Export buttons -->
-      <div class="exp-bar" id="expbar" style="display:none">
+      <div class="exp-bar dn" id="expbar">
         <span class="el">📥 Exportar:</span>
         <button class="exp-btn" onclick="exportCSV()">📊 CSV (dados)</button>
         <button class="exp-btn" onclick="printReport()">🖨️ Imprimir Laudo</button>
       </div>
       <!-- Metrics bar (content filled dynamically) -->
-      <div id="mbar" style="display:none">
+      <div id="mbar" class="dn">
         <div id="mlbl">
           <div>📊 MÉTRICAS</div>
           <div class="s1" id="mnorm">IEEE 421.2 / ONS Sub. 2.10</div>
@@ -1167,18 +1177,18 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <div style="text-align:right">
           <div style="display:flex;gap:14px;align-items:center">
             <div style="text-align:center">
-              <div style="font-size:8.5px;color:#f3cb06;opacity:.7;text-transform:uppercase;letter-spacing:.5px">Desenvolvimento</div>
-              <div style="font-size:10.5px;font-weight:700;color:#f3cb06">Eng° Douglas Furtado</div>
+              <div class="sum-lbl">Desenvolvimento</div>
+              <div class="sum-val">Eng° Douglas Furtado</div>
             </div>
-            <div style="width:1px;height:28px;background:rgba(255,255,255,.2)"></div>
+            <div class="sum-div"></div>
             <div style="text-align:center">
-              <div style="font-size:8.5px;color:#f3cb06;opacity:.7;text-transform:uppercase;letter-spacing:.5px">Versão</div>
+              <div class="sum-lbl">Versão</div>
               <div style="font-size:12px;font-weight:800;color:#f3cb06" id="sumVer"></div>
             </div>
-            <div style="width:1px;height:28px;background:rgba(255,255,255,.2)"></div>
+            <div class="sum-div"></div>
             <div style="text-align:center">
-              <div style="font-size:8.5px;color:#f3cb06;opacity:.7;text-transform:uppercase;letter-spacing:.5px">Ano</div>
-              <div style="font-size:10.5px;font-weight:700;color:#f3cb06" id="sumAno"></div>
+              <div class="sum-lbl">Ano</div>
+              <div class="sum-val" id="sumAno"></div>
             </div>
           </div>
         </div>
@@ -1189,7 +1199,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <h4>📋 Normas e Documentos Referenciados</h4>
 
         <!-- ONS — Operador Nacional do Sistema -->
-        <div class="norm-grp" style="background:#003a5e">🇧🇷 ONS — Operador Nacional do Sistema Elétrico</div>
+        <div class="norm-grp">🇧🇷 ONS — Operador Nacional do Sistema Elétrico</div>
         <table class="stbl">
           <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
           <tbody>
@@ -1201,7 +1211,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         </table>
 
         <!-- IEEE — Institute of Electrical and Electronics Engineers -->
-        <div class="norm-grp" style="background:#003a5e">🔵 IEEE — Institute of Electrical and Electronics Engineers</div>
+        <div class="norm-grp">🔵 IEEE — Institute of Electrical and Electronics Engineers</div>
         <table class="stbl">
           <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
           <tbody>
@@ -1231,7 +1241,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         </table>
 
         <!-- ABNT — Associação Brasileira de Normas Técnicas -->
-        <div class="norm-grp" style="background:#003a5e">🟣 ABNT — Associação Brasileira de Normas Técnicas</div>
+        <div class="norm-grp">🟣 ABNT — Associação Brasileira de Normas Técnicas</div>
         <table class="stbl">
           <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
           <tbody>
@@ -1355,13 +1365,13 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <div class="lfml">
           <span class="flbl">CONTROLADOR PID — IEEE 421.5 (NOTAÇÃO NORMALIZADA)</span>
           <code><span class="fc">G_PID</span>(s) = <span class="fv">K_PR</span> + <span class="fv">K_IR</span>/s + s·<span class="fv">K_DR</span> / (1 + s·<span class="fv">T_DR</span>)</code>
-          <code style="font-size:10px;color:#a8d4ee">K_PR: ganho proporcional  |  K_IR: ganho integral  |  K_DR: ganho derivativo  |  T_DR: cte. filtro derivativo</code>
+          <code class="cv">K_PR: ganho proporcional  |  K_IR: ganho integral  |  K_DR: ganho derivativo  |  T_DR: cte. filtro derivativo</code>
         </div>
 
         <div class="lfml">
           <span class="flbl">AMPLIFICADOR — 1ª ORDEM COM SATURAÇÃO (IEEE 421.5 §5.2)</span>
           <code><span class="fc">G_A</span>(s) = <span class="fv">K_A</span> / (1 + s·<span class="fv">T_A</span>) · sat[<span class="fv">V_Rmin</span>, <span class="fv">V_Rmax</span>]</code>
-          <code style="font-size:10px;color:#a8d4ee">Saída V_R saturada entre V_Rmin e V_Rmax antes do multiplicador com V_B</code>
+          <code class="cv">Saída V_R saturada entre V_Rmin e V_Rmax antes do multiplicador com V_B</code>
         </div>
 
         <div class="lfml">
@@ -1369,19 +1379,19 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
           <code><span class="fc">F_EX1</span> = 1 − 0,577·<span class="fv">I_N1</span>            ,  se <span class="fv">I_N1</span> ≤ 0,433</code>
           <code><span class="fc">F_EX1</span> = √(0,75 − <span class="fv">I_N1</span>²)           ,  se 0,433 &lt; <span class="fv">I_N1</span> ≤ 0,75</code>
           <code><span class="fc">F_EX1</span> = 0                          ,  se <span class="fv">I_N1</span> &gt; 0,75</code>
-          <code style="font-size:10px;color:#a8d4ee">I_N1 = K_C1·I_FD / V_E1  |  V_B = F_EX1·V_E1  (V_B ≤ V_Bmax)</code>
+          <code class="cv">I_N1 = K_C1·I_FD / V_E1  |  V_B = F_EX1·V_E1  (V_B ≤ V_Bmax)</code>
         </div>
 
         <div class="lfml">
           <span class="flbl">TENSÃO V_FE — EXCITAÇÃO RESULTANTE (referência ao campo)</span>
           <code><span class="fv">V_FE</span> = <span class="fv">K_E</span>·<span class="fv">E_FD</span> + <span class="fv">K_D</span>·<span class="fv">I_FD</span></code>
-          <code style="font-size:10px;color:#a8d4ee">K_E: cte. do excitador CA  |  K_D·I_FD: queda de tensão pela reatância de armadura do excitador</code>
+          <code class="cv">K_E: cte. do excitador CA  |  K_D·I_FD: queda de tensão pela reatância de armadura do excitador</code>
         </div>
 
         <div class="lfml">
           <span class="flbl">GERADOR SÍNCRONO — MODELO DE CAMPO (1ª ORDEM)</span>
           <code><span class="fc">G_gen</span>(s) = <span class="fv">K_ag</span> / (1 + s·<span class="fv">T'_do</span>)</code>
-          <code style="font-size:10px;color:#a8d4ee">T'_do: cte. de tempo de campo em vazio  |  K_ag: ganho estático de magnetização (por tipo de máquina)</code>
+          <code class="cv">T'_do: cte. de tempo de campo em vazio  |  K_ag: ganho estático de magnetização (por tipo de máquina)</code>
         </div>
 
         <table class="ftbl">
@@ -1444,7 +1454,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <div class="lfml">
           <span class="flbl">TAXA DE EXCITAÇÃO (ERF) — IEEE 421.2 Annex E</span>
           <code><span class="fc">ERF</span> <span class="fo">=</span> Δ<span class="fv">Efd</span> <span class="fo">/</span> Δ<span class="fv">t</span> &nbsp;&nbsp; [pu/s] <span class="fo">≥</span> <span class="fc">2 pu/s</span></code>
-          <code style="font-size:10px;color:#a8d4ee">Medido nos primeiros 0,5 s após o degrau de Iref</code>
+          <code class="cv">Medido nos primeiros 0,5 s após o degrau de Iref</code>
         </div>
 
         <div class="lcond">
@@ -1471,7 +1481,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <div class="lfml">
           <span class="flbl">REGULADOR DE POTÊNCIA REATIVA — INTEGRADOR</span>
           <code><span class="fc">G_Q</span>(s) <span class="fo">=</span> <span class="fv">KQ</span><span class="fo">/</span>s <span class="fo">·</span> (1 <span class="fo">+</span> <span class="fv">TQ</span><span class="fo">·</span>s)</code>
-          <code style="font-size:10px;color:#a8d4ee">KQ = ganho (típico: 0,05–0,2 pu/Mvar)  |  TQ = constante de tempo (típico: 5–30 s)</code>
+          <code class="cv">KQ = ganho (típico: 0,05–0,2 pu/Mvar)  |  TQ = constante de tempo (típico: 5–30 s)</code>
         </div>
         <div class="lfml">
           <span class="flbl">SAÍDA — CORREÇÃO DO SETPOINT</span>
@@ -1504,7 +1514,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <div class="lfml">
           <span class="flbl">REGULADOR DE FATOR DE POTÊNCIA — INTEGRADOR PURO</span>
           <code><span class="fc">G_FP</span>(s) <span class="fo">=</span> <span class="fv">KFP</span><span class="fo">/</span>s</code>
-          <code style="font-size:10px;color:#a8d4ee">KFP = ganho (típico: 0,1–0,5)  |  Ação integral garante fp = fpref em regime</code>
+          <code class="cv">KFP = ganho (típico: 0,1–0,5)  |  Ação integral garante fp = fpref em regime</code>
         </div>
         <div class="lfml">
           <span class="flbl">CÁLCULO DO FATOR DE POTÊNCIA MEDIDO</span>
@@ -1537,7 +1547,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <div class="lfml">
           <span class="flbl">FILTRO WASHOUT (passa-alta) — elimina componente DC</span>
           <code><span class="fc">G_W</span>(s) <span class="fo">=</span> <span class="fv">TW</span><span class="fo">·</span>s <span class="fo">/</span> (1 <span class="fo">+</span> <span class="fv">TW</span><span class="fo">·</span>s)</code>
-          <code style="font-size:10px;color:#a8d4ee">TW1, TW2 = constantes dos dois washouts (típico: 1–20 s)</code>
+          <code class="cv">TW1, TW2 = constantes dos dois washouts (típico: 1–20 s)</code>
         </div>
         <div class="lfml">
           <span class="flbl">COMPENSADORES LEAD-LAG (fase)</span>
@@ -1547,7 +1557,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <div class="lfml">
           <span class="flbl">FUNÇÃO DE TRANSFERÊNCIA COMPLETA — PSS2B</span>
           <code><span class="fv">Vstab</span>(s) <span class="fo">=</span> <span class="fv">Kpss</span> <span class="fo">·</span> <span class="fc">G_W1</span>(s) <span class="fo">·</span> <span class="fc">G_W2</span>(s) <span class="fo">·</span> <span class="fc">G_LL1</span>(s) <span class="fo">·</span> <span class="fc">G_LL2</span>(s) <span class="fo">·</span> <span class="fv">u</span>(s)</code>
-          <code style="font-size:10px;color:#a8d4ee">u(s) = sinal de entrada: Δω (velocidade) ou ΔP (potência elétrica) ou combinação</code>
+          <code class="cv">u(s) = sinal de entrada: Δω (velocidade) ou ΔP (potência elétrica) ou combinação</code>
         </div>
 
         <table class="ftbl">
@@ -1584,7 +1594,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
 // ═══════════════════════════════════════════════
 // VERSÃO DO SOFTWARE
 // ═══════════════════════════════════════════════
-const APP_VERSION = 'V0.16';
+const APP_VERSION = 'V0.17';
 const APP_YEAR    = '2026';
 const APP_DEV     = 'Eng° Douglas Furtado';
 
@@ -2499,6 +2509,19 @@ function calcVarAux(){
 // HISTÓRICO DE VERSÕES
 // ═══════════════════════════════════════════════
 const APP_HISTORY = [
+  {
+    ver:'V0.17', date:'2026-03-31',
+    changes:[
+      'R6 cont.: .dn — display:none via classe; 8 elementos com style removido e classe adicionada',
+      'R6 cont.: .sh-b/.sh-c — backgrounds alternativos dos cabeçalhos de seção (#005b92, #0b9bd3)',
+      'R6 cont.: background:#003a5e removido de .sh (redundante com CSS padrão) e .norm-grp (default adicionado)',
+      'R6 cont.: .cv — anotações de código na aba de legendas (10x font-size:10px;color:#a8d4ee)',
+      'R6 cont.: .c-note — spans de comentário em blocos de fórmula (13x color:#3a6080)',
+      'R6 cont.: .sum-lbl, .sum-val, .sum-div — elementos do painel Sumário',
+      'R6 cont.: .hdr-sep, .hdr-lbl, .leg-h3 — separadores e labels do header e títulos do legpanel',
+      'Total R6: 204 → 104 inline styles (−100, −49%) — 25 classes CSS novas adicionadas',
+    ]
+  },
   {
     ver:'V0.16', date:'2026-03-30',
     changes:[

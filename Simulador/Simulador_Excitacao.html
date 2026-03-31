@@ -236,6 +236,36 @@ body{font-family:'Lora',Georgia,serif;background:var(--bg);color:var(--c1);font-
 .hdr-sep{opacity:.3;font-size:9px}
 .hdr-lbl{font-size:10px;opacity:.65;margin-right:2px}
 .leg-h3{font-size:11px;margin:10px 0 6px}
+/* V0.18 — Dashboard Sumário */
+.sum-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+.kpi{background:linear-gradient(135deg,#003a5e,#005b92);border-radius:8px;padding:10px 14px;text-align:center;border:1px solid rgba(11,155,211,.3)}
+.kpi-n{font-size:22px;font-weight:800;color:#f3cb06;font-family:'Poppins',sans-serif;line-height:1}
+.kpi-l{font-size:9px;color:#a8d4ee;text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.sum-norms{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px;padding:8px 10px;background:var(--bg);border-radius:6px;border:1px solid var(--bd);align-items:center}
+.nbadge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:11px;letter-spacing:.3px}
+.nbadge-ons{background:#1e3a5f;color:#f3cb06;border:1px solid #2e5a8f}
+.nbadge-ieee{background:#1a3a6a;color:#7ecfff;border:1px solid #2e5a8f}
+.nbadge-iec{background:#1a4a3a;color:#7effd4;border:1px solid #1a6a4a}
+.nbadge-abnt{background:#3a1a5f;color:#d4a8ff;border:1px solid #5a2a8f}
+.nbadge-sep{display:inline-block;width:1px;height:14px;background:var(--bd);margin:0 4px;vertical-align:middle}
+.sum-chlog{margin-top:4px}
+.chlog-row{display:flex;align-items:baseline;gap:8px;padding:4px 0;border-bottom:1px solid var(--bd);font-size:10px;line-height:1.4}
+.chlog-v{font-weight:700;color:#f3cb06;min-width:36px;font-family:monospace;font-size:10.5px}
+.chlog-d{color:var(--c2);min-width:72px;font-size:9px}
+.chlog-t{color:var(--c1);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* V0.18 — Funções badges */
+.fimpl{display:inline-block;font-size:9px;font-weight:700;background:#d0eaf8;color:#005b92;padding:1px 7px;border-radius:10px;margin-left:8px;letter-spacing:.3px;vertical-align:middle}
+.fref-badge{display:inline-block;font-size:9px;font-weight:700;background:#f5f0ff;color:#7c3aed;padding:1px 7px;border-radius:10px;margin-left:8px;letter-spacing:.3px;vertical-align:middle}
+.fref-section{border:1px dashed #c4b5f9;border-radius:8px;padding:12px;margin-top:16px;background:var(--bg)}
+.fref-hdr{font-size:11px;font-weight:700;color:#7c3aed;margin:0 0 12px;padding-bottom:6px;border-bottom:1px dashed #c4b5f9;letter-spacing:.3px}
+/* V0.18 — Legpanel nav interna */
+.leg-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;padding:8px 0 10px;border-bottom:2px solid var(--bd);position:sticky;top:0;background:var(--bg-panel);z-index:2}
+.leg-nav-a{font-size:10px;font-weight:700;padding:4px 10px;border-radius:14px;border:1px solid var(--bd);background:var(--bg);color:var(--c1);cursor:pointer;text-decoration:none;display:inline-block}
+.leg-nav-a:hover{background:#003a5e;color:#fff;border-color:#003a5e}
+/* V0.18 — dark mode */
+body.dark .kpi{background:linear-gradient(135deg,#0a1628,#0a2040)}
+body.dark .fref-section{background:#100c20;border-color:#5a3a8f}
+body.dark .leg-nav-a:hover{background:#0b9bd3;border-color:#0b9bd3}
 /* EXPAND CHART */
 .cx-btn{position:absolute;top:6px;right:8px;background:rgba(20,20,19,.07);border:1px solid var(--bd);border-radius:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;z-index:10;opacity:.6;transition:opacity .15s}
 .cx-btn:hover{opacity:1;background:rgba(11,155,211,.15)}
@@ -318,7 +348,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
 <div id="hdr">
   <div style="display:flex;align-items:center;gap:14px">
     <!-- LOGO -->
-    <img src="Assinatura.svg" alt="Logo" style="height:44px;flex-shrink:0;filter:brightness(0) invert(1);opacity:.92">
+    <img src="logo.svg" alt="Logo EPSE" style="height:44px;flex-shrink:0;filter:brightness(0) invert(1);opacity:.92">
     <!-- Title -->
     <div>
       <h1>SIMULADOR DE ENSAIOS DINÂMICOS — SISTEMA DE EXCITAÇÃO</h1>
@@ -649,8 +679,71 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
     <!-- Painel Legenda -->
     <div id="legpanel">
 
+      <!-- ══ NAV INTERNA ══ -->
+      <nav class="leg-nav">
+        <a class="leg-nav-a" href="#leg-normas">📋 Normas</a>
+        <a class="leg-nav-a" href="#leg-ons">📜 Escopo ONS</a>
+        <a class="leg-nav-a" href="#leg-dp">📈 Degrau+</a>
+        <a class="leg-nav-a" href="#leg-dn">📉 Degrau−</a>
+        <a class="leg-nav-a" href="#leg-rej">⚡ Rejeição</a>
+        <a class="leg-nav-a" href="#leg-fcr">🔁 FCR</a>
+        <a class="leg-nav-a" href="#leg-pq">⊕ P-Q</a>
+      </nav>
+
+      <!-- ══ SEÇÃO 0: NORMAS E DOCUMENTOS REFERENCIADOS ══ -->
+      <div class="lsec" id="leg-normas">
+        <h3>📋 Normas e Documentos Referenciados</h3>
+
+        <!-- ONS -->
+        <div class="norm-grp">🇧🇷 ONS — Operador Nacional do Sistema Elétrico</div>
+        <table class="ltbl">
+          <tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr>
+          <tr><td><b>ONS Sub. 2.6</b></td><td>Requisitos Técnicos Mínimos para a Conexão ao Sistema de Transmissão — Controle de Tensão e Potência Reativa</td><td>Requisitos de regulação de tensão, faixa de operação Q, fator de potência nominal</td></tr>
+          <tr><td><b>ONS Sub. 2.10</b></td><td>Requisitos Técnicos Mínimos para a Conexão ao Sistema de Transmissão — Desempenho Dinâmico de Gerador Síncrono</td><td>Critérios de desempenho dinâmico: OS ≤ 10%, Te ≤ 2 s, Ess ≤ 1%, trees ≤ 2 s</td></tr>
+          <tr><td><b>ONS Sub. 2.13</b></td><td>Requisitos de Proteção de Geradores Síncronos Conectados ao Sistema de Transmissão</td><td>Interação entre proteções e sistema de excitação, limites de V/Hz</td></tr>
+          <tr><td><b>ONS Sub. 23.3</b></td><td>Procedimentos de Teste de Desempenho Dinâmico de Unidades Geradoras — Ensaios de Campo</td><td>Protocolo de realização dos ensaios de degrau e rejeição de carga</td></tr>
+        </table>
+
+        <!-- IEEE -->
+        <div class="norm-grp">🔵 IEEE — Institute of Electrical and Electronics Engineers</div>
+        <table class="ltbl">
+          <tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr>
+          <tr><td><b>IEEE 421.1-2021</b></td><td>IEEE Standard Definitions for Excitation Systems for Synchronous Machines</td><td>Terminologia e definições: AVR, FCR, VRmax, VRmin, ERF, ceiling voltage, Efd</td></tr>
+          <tr><td><b>IEEE 421.2-2014</b></td><td>IEEE Guide for Identification, Testing, and Evaluation of the Dynamic Performance of Excitation Control Systems</td><td>Metodologia de ensaio de degrau, cálculo de OS/Te/Ess/Ts, definição do ERF (Annex E), critério ±5%|Δ|</td></tr>
+          <tr><td><b>IEEE 421.3-2016</b></td><td>IEEE Standard for High-Potential Test Requirements for Excitation Systems for Synchronous Machines</td><td>Requisitos dielétricos e de isolamento do sistema de excitação</td></tr>
+          <tr><td><b>IEEE 421.4-2014</b></td><td>IEEE Guide for the Preparation of Excitation System Specifications</td><td>Base para especificação técnica de AVR/excitadores em editais e contratos</td></tr>
+          <tr><td><b>IEEE 421.5-2016</b></td><td>IEEE Recommended Practice for Excitation System Models for Power System Stability Studies</td><td>Modelos AC1A–AC8B, ST1A–ST4B, DC1A–DC3A; parâmetros KA, TA, VRmax, VRmin para o modelo de amplificador</td></tr>
+          <tr><td><b>IEEE 421.6-2022</b></td><td>IEEE Recommended Practice for the Specification and Design of Field Discharge Equipment for Synchronous Machines</td><td>Requisitos do circuito de descarga de campo — impacta VRmin e proteção do excitador</td></tr>
+          <tr><td><b>IEEE 115-2019</b></td><td>IEEE Guide for Test Procedures for Synchronous Machines Including Acceptance and Performance Testing</td><td>Ensaios de caracterização da máquina síncrona: curva de magnetização, Tdo', Xd, Xq</td></tr>
+          <tr><td><b>IEEE C37.102-2006</b></td><td>IEEE Guide for AC Generator Protection</td><td>Coordenação entre proteção de sobretensão (59), subtensão (27) e o AVR</td></tr>
+        </table>
+
+        <!-- IEC -->
+        <div class="norm-grp sh-b">🟢 IEC — International Electrotechnical Commission</div>
+        <table class="ltbl">
+          <tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr>
+          <tr><td><b>IEC 60034-1</b></td><td>Rotating Electrical Machines — Part 1: Rating and Performance</td><td>Dados nominais do gerador: Sn, Vn, fn, fp, In — base para cálculo de Zn e In estator</td></tr>
+          <tr><td><b>IEC 60034-3</b></td><td>Rotating Electrical Machines — Part 3: Specific Requirements for Synchronous Generators Driven by Steam Turbines or Combustion Gas Turbines</td><td>Requisitos de máquinas de polos lisos (turbo-geradores): Tdo', Xd, limites térmicos</td></tr>
+          <tr><td><b>IEC 60034-16-1</b></td><td>Rotating Electrical Machines — Excitation Systems — Part 1: Definitions</td><td>Terminologia IEC: regulador de tensão, regulador de corrente de campo, estabilizador, limitadores de sub/sobre-excitação</td></tr>
+          <tr><td><b>IEC 60034-16-2</b></td><td>Rotating Electrical Machines — Excitation Systems — Part 2: Models for Power System Studies</td><td>Modelos de excitação para estudos de estabilidade; compatibilidade com IEEE 421.5</td></tr>
+          <tr><td><b>IEC 60034-16-3</b></td><td>Rotating Electrical Machines — Excitation Systems — Part 3: Dynamic Performance Criteria and Testing</td><td>Critérios de desempenho dinâmico: OS ≤ 10%, Te — base normativa para ensaios de campo</td></tr>
+          <tr><td><b>IEC 60034-4-1</b></td><td>Rotating Electrical Machines — Methods for Determining Synchronous Machine Quantities from Tests</td><td>Determinação de Xd, Xq, Tdo', Tqo' por ensaios — parâmetros de entrada do modelo de gerador</td></tr>
+        </table>
+
+        <!-- ABNT -->
+        <div class="norm-grp">🟣 ABNT — Associação Brasileira de Normas Técnicas</div>
+        <table class="ltbl">
+          <tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr>
+          <tr><td><b>ABNT NBR IEC 60034-1</b></td><td>Máquinas Elétricas Girantes — Parte 1: Dados de placa e desempenho</td><td>Versão brasileira da IEC 60034-1 — dados de placa do gerador</td></tr>
+          <tr><td><b>ABNT NBR IEC 60034-16-1</b></td><td>Máquinas Elétricas Girantes — Sistemas de Excitação — Parte 1: Definições</td><td>Versão brasileira da IEC 60034-16-1 — terminologia em português</td></tr>
+          <tr><td><b>ABNT NBR IEC 60034-16-3</b></td><td>Máquinas Elétricas Girantes — Sistemas de Excitação — Parte 3: Critérios de Desempenho Dinâmico e Ensaios</td><td>Critérios de aprovação em ensaios de campo — referência para laudos e relatórios de comissionamento</td></tr>
+        </table>
+
+        <div class="leg-note"><b>Referências primárias:</b> ONS Sub. 2.10 (critérios de campo) · IEEE 421.2-2014 (metodologia) · IEEE 421.5-2016 (modelos) · IEC 60034-1 (dados de placa). Critérios consolidados disponíveis na aba <b>📋 Sumário</b>.</div>
+      </div>
+
       <!-- ══ SEÇÃO 1: ESCOPO ONS Sub. 2.10 ══ -->
-      <div class="lsec">
+      <div class="lsec" id="leg-ons">
         <h3>📜 ONS Submódulo 2.10 — Requisitos Técnicos Mínimos para Conexão de Geradores</h3>
         <div class="lscope">
           <b>Escopo e Aplicação</b>
@@ -667,7 +760,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
       </div>
 
       <!-- ══ SEÇÃO 2: DEGRAU POSITIVO ══ -->
-      <div class="lsec">
+      <div class="lsec" id="leg-dp">
         <h3>📈 Ensaio de Degrau Positivo — Procedimento e Critérios (ONS Sub. 2.10)</h3>
 
         <div class="lcond">
@@ -901,7 +994,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
       </div>
 
       <!-- ══ SEÇÃO 3: DEGRAU NEGATIVO ══ -->
-      <div class="lsec">
+      <div class="lsec" id="leg-dn">
         <h3>📉 Ensaio de Degrau Negativo — Procedimento e Critérios (ONS Sub. 2.10)</h3>
         <div class="lcond">
           <b>CONDIÇÕES DO ENSAIO</b>
@@ -922,7 +1015,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
       </div>
 
       <!-- ══ SEÇÃO 4: REJEIÇÃO DE CARGA ══ -->
-      <div class="lsec">
+      <div class="lsec" id="leg-rej">
         <h3>⚡ Ensaio de Rejeição de Carga — Procedimento e Critérios (ONS Sub. 2.10)</h3>
 
         <div class="lcond">
@@ -1017,7 +1110,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
       </div><!-- /lsec rejeição -->
 
       <!-- ══ SEÇÃO 5: FCR ══ -->
-      <div class="lsec">
+      <div class="lsec" id="leg-fcr">
         <h3>🎛️ Controle FCR — Regulador de Corrente de Campo (IEEE 421.2)</h3>
         <div class="lcond">
           <b>MODO FCR (Field Current Regulator)</b>
@@ -1038,29 +1131,8 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         </div>
       </div><!-- /lsec FCR -->
 
-      <!-- ══ SEÇÃO 6: TABELA CONSOLIDADA ══ -->
-      <div class="lsec">
-        <h3>📋 Tabela Consolidada de Critérios — ONS Sub. 2.10 / IEEE 421 / IEC 60034-16</h3>
-        <table class="ltbl">
-          <tr><th>Ensaio</th><th>Parâmetro</th><th>Símbolo</th><th>Limite</th><th>Norma</th></tr>
-          <tr><td>Degrau ± (em vazio)</td><td>Sobressinal máximo</td><td class="sym crit-ok">OS</td><td class="crit-ok crit">≤ 10 %</td><td>ONS Sub. 2.10 / IEC 60034-16</td></tr>
-          <tr><td>Degrau ± (em vazio)</td><td>Tempo de acomodação ±5%|Δ|</td><td class="sym crit-ok">Te</td><td class="crit-ok crit">≤ 1 s</td><td>ONS Sub. 2.10</td></tr>
-          <tr><td>Degrau ± (em vazio)</td><td>Erro estacionário</td><td class="sym crit-val">Ess</td><td class="crit-ok crit">≤ 1 %</td><td>IEEE 421.2</td></tr>
-          <tr><td>Degrau ± (em vazio)</td><td>Tempo de subida (informativo)</td><td class="sym">Ts</td><td>Referência</td><td>IEEE 421.2</td></tr>
-          <tr><td>Rejeição de Carga</td><td>Sobressinal de rejeição</td><td class="sym crit-ok">OS</td><td class="crit-ok crit">≤ 10 %</td><td>ONS Sub. 2.10</td></tr>
-          <tr><td>Rejeição de Carga</td><td>Retorno à banda ±5%</td><td class="sym crit-ok">trees−trej</td><td class="crit-ok crit">≤ 2 s</td><td>ONS Sub. 2.10</td></tr>
-          <tr><td>FCR — Degrau If</td><td>Sobressinal</td><td class="sym crit-ok">OS</td><td class="crit-ok crit">≤ 15 %</td><td>IEEE 421.2</td></tr>
-          <tr><td>FCR — Degrau If</td><td>Acomodação ±2%|ΔIf|</td><td class="sym crit-ok">ts</td><td class="crit-ok crit">≤ 10 s</td><td>IEEE 421.2</td></tr>
-          <tr><td>FCR — Degrau If</td><td>Taxa de excitação</td><td class="sym crit-ok">ERF</td><td class="crit-ok crit">≥ 2 pu/s</td><td>IEEE 421.2 Annex E</td></tr>
-          <tr><td>Todos os ensaios</td><td>Pico da tensão de campo</td><td class="sym">Efd_max</td><td class="crit-ok crit">≤ VRmax</td><td>IEEE 421.5</td></tr>
-          <tr><td>Todos os ensaios</td><td>Piso da tensão de campo</td><td class="sym">Efd_min</td><td class="crit-ok crit">≥ VRmin</td><td>IEEE 421.5</td></tr>
-          <tr><td>Todos os ensaios</td><td>Tensão de teto (ceiling)</td><td class="sym">Vefd_teto</td><td class="crit-ok crit">≥ 1,6 × Efd₀</td><td>ONS Sub. 2.10 / IEEE 421.5</td></tr>
-        </table>
-        <div class="leg-note"><b>Referências normativas aplicáveis:</b> ONS Submódulo 2.10 (Requisitos Técnicos para Conexão — vigente) &nbsp;·&nbsp; IEEE Std 421.2-2014 (Guide for Identification, Testing, and Evaluation of the Dynamic Performance of Excitation Control Systems) &nbsp;·&nbsp; IEEE Std 421.5-2016 (Recommended Practice for Excitation System Models for Power System Stability Studies) &nbsp;·&nbsp; IEC 60034-16 (Rotating Electrical Machines — Excitation Systems)</div>
-      </div>
-
       <!-- ══ SEÇÃO 7: DIAGRAMA DE CAPABILIDADE ══ -->
-      <div class="lsec">
+      <div class="lsec" id="leg-pq">
         <h3>⚡ Diagrama de Capabilidade — Limites Operativos do Gerador</h3>
         <div class="lscope">
           <b>O que é o Diagrama de Capabilidade (GCC)</b>
@@ -1168,7 +1240,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
     </div>
 
     <div id="sumpanel">
-      <!-- Cabeçalho de identificação do software -->
+      <!-- Hero card -->
       <div style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(90deg,#0f4c75,#003a5e);border-radius:6px;padding:10px 16px;margin-bottom:12px">
         <div>
           <div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:.5px">SIMULADOR DE ENSAIOS DINÂMICOS — SISTEMA DE EXCITAÇÃO</div>
@@ -1194,69 +1266,34 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         </div>
       </div>
 
-      <!-- SEÇÃO A — Normas e Documentos -->
+      <!-- KPI row -->
+      <div class="sum-kpis">
+        <div class="kpi"><div class="kpi-n">15</div><div class="kpi-l">Normas referenciadas</div></div>
+        <div class="kpi"><div class="kpi-n">3</div><div class="kpi-l">Tipos de ensaio</div></div>
+        <div class="kpi"><div class="kpi-n">2</div><div class="kpi-l">Modos de controle</div></div>
+        <div class="kpi"><div class="kpi-n">200 Hz</div><div class="kpi-l">Integração RK4</div></div>
+      </div>
+
+      <!-- Normas primárias — badges compactos -->
       <div class="stbl-sec">
-        <h4>📋 Normas e Documentos Referenciados</h4>
-
-        <!-- ONS — Operador Nacional do Sistema -->
-        <div class="norm-grp">🇧🇷 ONS — Operador Nacional do Sistema Elétrico</div>
-        <table class="stbl">
-          <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
-          <tbody>
-            <tr><td><b>ONS Sub. 2.6</b></td><td>Requisitos Técnicos Mínimos para a Conexão ao Sistema de Transmissão — Controle de Tensão e Potência Reativa</td><td>Requisitos de regulação de tensão, faixa de operação Q, fator de potência nominal</td></tr>
-            <tr><td><b>ONS Sub. 2.10</b></td><td>Requisitos Técnicos Mínimos para a Conexão ao Sistema de Transmissão — Desempenho Dinâmico de Gerador Síncrono</td><td>Critérios de desempenho dinâmico: OS ≤ 10%, Te ≤ 1 s, Ess ≤ 1%, trees ≤ 2 s</td></tr>
-            <tr><td><b>ONS Sub. 2.13</b></td><td>Requisitos de Proteção de Geradores Síncronos Conectados ao Sistema de Transmissão</td><td>Interação entre proteções e sistema de excitação, limites de V/Hz</td></tr>
-            <tr><td><b>ONS Sub. 23.3</b></td><td>Procedimentos de Teste de Desempenho Dinâmico de Unidades Geradoras — Ensaios de Campo</td><td>Protocolo de realização dos ensaios de degrau e rejeição de carga</td></tr>
-          </tbody>
-        </table>
-
-        <!-- IEEE — Institute of Electrical and Electronics Engineers -->
-        <div class="norm-grp">🔵 IEEE — Institute of Electrical and Electronics Engineers</div>
-        <table class="stbl">
-          <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
-          <tbody>
-            <tr><td><b>IEEE 421.1-2021</b></td><td>IEEE Standard Definitions for Excitation Systems for Synchronous Machines</td><td>Terminologia e definições: AVR, FCR, VRmax, VRmin, ERF, ceiling voltage, Efd</td></tr>
-            <tr><td><b>IEEE 421.2-2014</b></td><td>IEEE Guide for Identification, Testing, and Evaluation of the Dynamic Performance of Excitation Control Systems</td><td>Metodologia de ensaio de degrau, cálculo de OS/Te/Ess/Ts, definição do ERF (Annex E), critério ±5%|Δ|</td></tr>
-            <tr><td><b>IEEE 421.3-2016</b></td><td>IEEE Standard for High-Potential Test Requirements for Excitation Systems for Synchronous Machines</td><td>Requisitos dielétricos e de isolamento do sistema de excitação</td></tr>
-            <tr><td><b>IEEE 421.4-2014</b></td><td>IEEE Guide for the Preparation of Excitation System Specifications</td><td>Base para especificação técnica de AVR/excitadores em editais e contratos</td></tr>
-            <tr><td><b>IEEE 421.5-2016</b></td><td>IEEE Recommended Practice for Excitation System Models for Power System Stability Studies</td><td>Modelos AC1A–AC8B, ST1A–ST4B, DC1A–DC3A; parâmetros KA, TA, VRmax, VRmin para o modelo de amplificador</td></tr>
-            <tr><td><b>IEEE 421.6-2022</b></td><td>IEEE Recommended Practice for the Specification and Design of Field Discharge Equipment for Synchronous Machines</td><td>Requisitos do circuito de descarga de campo — impacta VRmin e proteção do excitador</td></tr>
-            <tr><td><b>IEEE 115-2019</b></td><td>IEEE Guide for Test Procedures for Synchronous Machines Including Acceptance and Performance Testing</td><td>Ensaios de caracterização da máquina síncrona: curva de magnetização, Tdo', Xd, Xq</td></tr>
-            <tr><td><b>IEEE C37.102-2006</b></td><td>IEEE Guide for AC Generator Protection</td><td>Coordenação entre proteção de sobretensão (59), subtensão (27) e o AVR</td></tr>
-          </tbody>
-        </table>
-
-        <!-- IEC — International Electrotechnical Commission -->
-        <div class="norm-grp" style="background:#005b92">🟢 IEC — International Electrotechnical Commission</div>
-        <table class="stbl">
-          <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
-          <tbody>
-            <tr><td><b>IEC 60034-1</b></td><td>Rotating Electrical Machines — Part 1: Rating and Performance</td><td>Dados nominais do gerador: Sn, Vn, fn, fp, In — base para cálculo de Zn e In estator</td></tr>
-            <tr><td><b>IEC 60034-3</b></td><td>Rotating Electrical Machines — Part 3: Specific Requirements for Synchronous Generators Driven by Steam Turbines or Combustion Gas Turbines</td><td>Requisitos de máquinas de polos lisos (turbo-geradores): Tdo', Xd, limites térmicos</td></tr>
-            <tr><td><b>IEC 60034-16-1</b></td><td>Rotating Electrical Machines — Excitation Systems — Part 1: Definitions</td><td>Terminologia IEC: regulador de tensão, regulador de corrente de campo, estabilizador, limitadores de sub/sobre-excitação</td></tr>
-            <tr><td><b>IEC 60034-16-2</b></td><td>Rotating Electrical Machines — Excitation Systems — Part 2: Models for Power System Studies</td><td>Modelos de excitação para estudos de estabilidade; compatibilidade com IEEE 421.5</td></tr>
-            <tr><td><b>IEC 60034-16-3</b></td><td>Rotating Electrical Machines — Excitation Systems — Part 3: Dynamic Performance Criteria and Testing</td><td>Critérios de desempenho dinâmico: OS ≤ 10%, Te — base normativa para ensaios de campo</td></tr>
-            <tr><td><b>IEC 60034-4-1</b></td><td>Rotating Electrical Machines — Methods for Determining Synchronous Machine Quantities from Tests</td><td>Determinação de Xd, Xq, Tdo', Tqo' por ensaios — parâmetros de entrada do modelo de gerador</td></tr>
-          </tbody>
-        </table>
-
-        <!-- ABNT — Associação Brasileira de Normas Técnicas -->
-        <div class="norm-grp">🟣 ABNT — Associação Brasileira de Normas Técnicas</div>
-        <table class="stbl">
-          <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
-          <tbody>
-            <tr><td><b>ABNT NBR IEC 60034-1</b></td><td>Máquinas Elétricas Girantes — Parte 1: Dados de placa e desempenho</td><td>Versão brasileira da IEC 60034-1 — dados de placa do gerador</td></tr>
-            <tr><td><b>ABNT NBR IEC 60034-16-1</b></td><td>Máquinas Elétricas Girantes — Sistemas de Excitação — Parte 1: Definições</td><td>Versão brasileira da IEC 60034-16-1 — terminologia em português</td></tr>
-            <tr><td><b>ABNT NBR IEC 60034-16-3</b></td><td>Máquinas Elétricas Girantes — Sistemas de Excitação — Parte 3: Critérios de Desempenho Dinâmico e Ensaios</td><td>Critérios de aprovação em ensaios de campo — referência para laudos e relatórios de comissionamento</td></tr>
-          </tbody>
-        </table>
-
-        <div style="margin-top:10px;padding:8px 12px;background:#e8f4fb;border-left:3px solid #2e75b6;border-radius:0 4px 4px 0;font-size:10px;color:#003a5e">
-          <b>Nota:</b> Os critérios de avaliação implementados neste simulador tomam como referência primária a <b>ONS Sub. 2.10</b> e a <b>IEEE 421.2-2014</b>. Os modelos matemáticos seguem a <b>IEEE 421.5-2016</b>. Os dados de placa do equipamento obedecem à <b>IEC 60034-1 / ABNT NBR IEC 60034-1</b>.
+        <h4>📋 Normas de Referência</h4>
+        <div class="sum-norms">
+          <span class="nbadge nbadge-ons">🇧🇷 ONS Sub. 2.10</span><span style="font-size:9px;color:var(--c2);margin-right:6px">Critérios dinâmicos (OS, Te, trees)</span>
+          <span class="nbadge-sep"></span>
+          <span class="nbadge nbadge-ieee">🔵 IEEE 421.5-2016</span><span style="font-size:9px;color:var(--c2);margin-right:6px">Modelos AVR/FCR (AC8B…)</span>
+          <span class="nbadge-sep"></span>
+          <span class="nbadge nbadge-ieee">🔵 IEEE 421.2-2014</span><span style="font-size:9px;color:var(--c2);margin-right:6px">Metodologia de ensaio e ERF</span>
+          <span class="nbadge-sep"></span>
+          <span class="nbadge nbadge-iec">🟢 IEC 60034-16</span><span style="font-size:9px;color:var(--c2);margin-right:6px">Definições e modelos IEC</span>
+          <span class="nbadge-sep"></span>
+          <span class="nbadge nbadge-abnt">🟣 ABNT NBR IEC 60034</span><span style="font-size:9px;color:var(--c2)">Terminologia em português</span>
+        </div>
+        <div style="padding:6px 10px;background:#e8f4fb;border-left:3px solid #2e75b6;border-radius:0 4px 4px 0;font-size:9.5px;color:#003a5e">
+          Lista completa de normas com títulos e aplicações disponível na aba <b>📘 Normas e Legendas</b>.
         </div>
       </div>
 
-      <!-- SEÇÃO B — Modelos de Simulação -->
+      <!-- Modelos implementados -->
       <div class="stbl-sec">
         <h4>🔄 Modelos de Simulação Implementados</h4>
         <div class="l2col">
@@ -1275,9 +1312,9 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         </div>
       </div>
 
-      <!-- SEÇÃO C — Tabela Consolidada de Critérios -->
+      <!-- Critérios normativos — FONTE ÚNICA -->
       <div class="stbl-sec">
-        <h4>✅ Tabela Consolidada de Critérios de Avaliação</h4>
+        <h4>✅ Critérios de Avaliação Normativos</h4>
         <table class="stbl">
           <thead>
             <tr><th style="width:20%">Ensaio</th><th style="width:25%">Parâmetro</th><th style="width:10%">Símbolo</th><th style="width:15%">Limite</th><th style="width:30%">Norma</th></tr>
@@ -1299,15 +1336,10 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         </table>
       </div>
 
-      <!-- SEÇÃO D — Integrador Numérico -->
+      <!-- Histórico de versões (populado por JS) -->
       <div class="stbl-sec">
-        <h4>⚙️ Método de Integração Numérica</h4>
-        <div class="ref-card">
-          <p><b>Runge-Kutta 4ª Ordem (RK4)</b><br>
-          Passo de integração: Δt = 5 ms (200 Hz)<br>
-          Precisão: adequada para dinâmica de excitação (τ_min ≈ 20 ms)<br>
-          Decimação: 1 ponto salvo a cada ~3 passos (para ~200 pontos/segundo de simulação)</p>
-        </div>
+        <h4>🕐 Histórico de Versões</h4>
+        <div class="sum-chlog" id="sum-changelog"></div>
       </div>
     </div>
 
@@ -1326,7 +1358,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
       <div class="fcard avr">
         <div class="fcard-head">
           <span class="ficon">🎛️</span>
-          <h3>AVR — Regulador Automático de Tensão (Tipo AC)</h3>
+          <h3>AVR — Regulador Automático de Tensão (Tipo AC)<span class="fimpl">✅ Implementado</span></h3>
           <span class="fnorm">IEEE 421.5-2016 §6.4 · Modelo AC8B · ONS Sub. 2.10</span>
         </div>
         <p>Excitador CA rotativo com controlador PID, portas de seleção <b>HV/LV</b> para limitadores de sub/sobrexcitação (<b>UEL/OEL</b>), compensação de corrente de carga e função de saturação não-linear F<sub>EX1</sub>. Referência: <b>IEEE 421.5-2016 §6.4 (AC8B)</b>.</p>
@@ -1431,7 +1463,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
       <div class="fcard fcr">
         <div class="fcard-head">
           <span class="ficon">🔁</span>
-          <h3>FCR — Regulador de Corrente de Campo</h3>
+          <h3>FCR — Regulador de Corrente de Campo<span class="fimpl">✅ Implementado</span></h3>
           <span class="fnorm">IEEE 421.5 · IEEE 421.2 Annex E</span>
         </div>
         <p>Controle PI em malha fechada sobre a corrente de campo If. Utilizado durante ensaios de caracterização e partida da máquina.</p>
@@ -1462,6 +1494,10 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
           xI (integrador PI) · xA (amplificador) · xIf (campo do gerador)
         </div>
       </div>
+
+      <!-- ══ MODELOS DE REFERÊNCIA (não simulados) ══ -->
+      <div class="fref-section">
+      <p class="fref-hdr">📚 MODELOS DE REFERÊNCIA NORMATIVA <span class="fref-badge">não simulados</span></p>
 
       <!-- ══ MVAR ══ -->
       <div class="fcard mvar">
@@ -1584,6 +1620,8 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <b>Nota:</b> As funções MVAR, FP e PSS são apresentadas como referência normativa. A implementação ativa no simulador cobre AVR (PID + Lead-Lag) e FCR (PI). Futuros módulos poderão incluir a simulação dinâmica dos laços externos (MVAR/FP) e o sinal de estabilização (PSS) somado à entrada do AVR.
       </div>
 
+      </div><!-- /fref-section -->
+
     </div><!-- /funpanel -->
 
   </div><!-- /right -->
@@ -1594,7 +1632,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
 // ═══════════════════════════════════════════════
 // VERSÃO DO SOFTWARE
 // ═══════════════════════════════════════════════
-const APP_VERSION = 'V0.17';
+const APP_VERSION = 'V0.19';
 const APP_YEAR    = '2026';
 const APP_DEV     = 'Eng° Douglas Furtado';
 
@@ -1970,7 +2008,8 @@ function buildCapabilityCurve(p){
 function renderPQ(p){
   const cv=buildCapabilityCurve(p);
   if(CH['cPQ']){CH['cPQ'].destroy();}
-  const LS=(dsh)=>({showLine:true,pointRadius:0,borderWidth:2,borderDash:dsh?[6,4]:[]});
+  const P_n = p.fp || 0.85;
+  const LS=(dsh)=>({showLine:true,pointRadius:0,borderWidth:1.8,borderDash:dsh?[6,4]:[]});
   const marg_lbl=`OEL (−${p.marg_oel||5}%)${cv.sat_lbl}`;
   const uel_lbl=`UEL (FP≥${(p.fp_uel||0.85).toFixed(2)})`;
   const datasets=[
@@ -1981,43 +2020,70 @@ function renderPQ(p){
     {label:'Turbina',         data:cv.turb,    borderColor:'#6b7280',...LS(true)},
     {label:cv.sssl_lbl,       data:cv.sssl,    borderColor:'#f3cb06',...LS(false)},
     {label:uel_lbl,           data:cv.uel,     borderColor:'#10b981',...LS(true)},
-    {label:'Ponto de Operação',data:cv.opPoint,borderColor:'#ffffff',
-      backgroundColor:'#f3cb06',pointRadius:8,pointHoverRadius:11,showLine:false},
-    {label:'Proteção LOF',     data:cv.protPoints, borderColor:'#ef4444',
-      borderWidth:2.5, borderDash:[8,4], showLine:true,
-      pointRadius:5, pointStyle:'circle', pointBackgroundColor:'#ef4444',
-      pointBorderColor:'#fff', pointBorderWidth:1.5, pointHoverRadius:7},
+    {label:'Ponto de Operação',data:cv.opPoint,
+      borderColor:'#f3cb06',backgroundColor:'transparent',
+      pointRadius:9,pointHoverRadius:12,pointStyle:'crossRot',
+      borderWidth:2.5,showLine:false},
+    {label:'Proteção LOF',    data:cv.protPoints,borderColor:'#ef4444',
+      borderWidth:2.5,borderDash:[8,4],showLine:true,
+      pointRadius:5,pointStyle:'circle',pointBackgroundColor:'#ef4444',
+      pointBorderColor:'#fff',pointBorderWidth:1.5,pointHoverRadius:7},
   ];
-  // Linhas de eixo (Q=0, P=0) — adicionadas ao início para ficarem atrás dos dados
-  const axStyle={showLine:true,pointRadius:0,borderWidth:1,borderDash:[],borderColor:'rgba(160,160,160,0.35)',label:''};
+  const axStyle={showLine:true,pointRadius:0,borderWidth:1,borderDash:[],borderColor:'rgba(200,200,200,0.18)',label:''};
   datasets.unshift(
-    {data:cv.axP,...axStyle},  // eixo P=0 (horizontal)
-    {data:cv.axQ,...axStyle}   // eixo Q=0 (vertical)
+    {data:cv.axP,...axStyle},
+    {data:cv.axQ,...axStyle}
   );
-  // Eixos fixos para que os arcos apareçam como círculos (ΔQ/ΔP ≈ 2.6/1.3 = 2.0 = largura/altura)
-  // Q: −1.5 … +1.1  (ΔQ = 2.6)    P: −0.15 … +1.15  (ΔP = 1.3)
+  // Plugin: fundo escuro (estilo osciloscopio)
+  const bgPlugin={id:'pqBg',
+    beforeDraw(chart){
+      const ctx=chart.ctx;
+      ctx.save();
+      ctx.fillStyle='#0d1b2a';
+      ctx.fillRect(0,0,chart.width,chart.height);
+      ctx.restore();
+    }
+  };
+  // Plugin: rótulos P_nom e S_nom desenhados no canvas
+  const pqLabels={id:'pqLabels',
+    afterDraw(chart){
+      const ctx=chart.ctx, xs=chart.scales.x, ys=chart.scales.y;
+      ctx.save();
+      ctx.font='bold 9px Poppins,monospace';
+      ctx.fillStyle='rgba(210,210,210,0.75)';
+      // P_nom — ao lado esquerdo da linha da turbina
+      ctx.textAlign='left';
+      ctx.fillText('P\u2099\u2092\u2098 = '+P_n.toFixed(2)+' pu',
+        xs.getPixelForValue(-1.15)+2, ys.getPixelForValue(P_n)-5);
+      // S_nom — topo do arco do estator (Q≈0, P=1)
+      ctx.fillText('S\u2099\u2092\u2098', xs.getPixelForValue(0.04), ys.getPixelForValue(1.0)-5);
+      ctx.restore();
+    }
+  };
   CH['cPQ']=new Chart($('cPQ'),{type:'scatter',data:{datasets},
     options:{animation:false,responsive:true,maintainAspectRatio:false,
       interaction:{mode:'nearest',intersect:false},
       plugins:{
-        legend:{
-          labels:{font:{size:9},boxWidth:10,padding:5,
-            filter:(item)=>item.text!==''
-          }
-        },
+        legend:{labels:{font:{size:9},boxWidth:10,padding:5,
+          color:'rgba(200,200,200,0.85)',filter:(item)=>item.text!==''}},
         tooltip:{callbacks:{label:ctx=>`P = ${ctx.parsed.y.toFixed(3)} pu   Q = ${ctx.parsed.x.toFixed(3)} pu`}}
       },
       scales:{
-        x:{type:'linear',min:-1.5,max:1.5,
-           title:{display:true,text:'Q [pu]   ◀ Sub-excitado  |  Sobreexcitado ▶',font:{size:9}},
-           ticks:{font:{size:9},maxTicksLimit:13,stepSize:0.25},
-           grid:{color:'rgba(0,0,0,.06)'}},
-        y:{type:'linear',min:-0.2,max:1.5,
-           title:{display:true,text:'P [pu]',font:{size:9}},
-           ticks:{font:{size:9},maxTicksLimit:9,stepSize:0.25},
-           grid:{color:'rgba(0,0,0,.06)'}}
+        x:{type:'linear',min:-1.2,max:1.2,
+          title:{display:true,text:'Potência reativa — Q [pu]   ◀ Sub-exc.  |  Sobreexc. ▶',
+            font:{size:9},color:'rgba(190,210,230,0.8)'},
+          ticks:{font:{size:9},stepSize:0.2,color:'rgba(190,210,230,0.75)'},
+          grid:{color:'rgba(255,255,255,0.09)'},
+          border:{color:'rgba(200,200,200,0.2)'}},
+        y:{type:'linear',min:-0.2,max:1.2,
+          title:{display:true,text:'Potência ativa — P [pu]',
+            font:{size:9},color:'rgba(190,210,230,0.8)'},
+          ticks:{font:{size:9},stepSize:0.2,color:'rgba(190,210,230,0.75)'},
+          grid:{color:'rgba(255,255,255,0.09)'},
+          border:{color:'rgba(200,200,200,0.2)'}}
       }
-    }
+    },
+    plugins:[bgPlugin,pqLabels]
   });
 }
 
@@ -2509,6 +2575,30 @@ function calcVarAux(){
 // HISTÓRICO DE VERSÕES
 // ═══════════════════════════════════════════════
 const APP_HISTORY = [
+  {
+    ver:'V0.19', date:'2026-03-31',
+    changes:[
+      'Diagrama P-Q: fundo escuro (#0d1b2a) via plugin Chart.js beforeDraw — estilo osciloscopio',
+      'Diagrama P-Q: marcador do ponto de operação alterado de círculo para ✕ (crossRot)',
+      'Diagrama P-Q: rótulos Pₙₒₘ e Sₙₒₘ desenhados no canvas via plugin afterDraw',
+      'Diagrama P-Q: range de eixos ajustado para Q ∈ [−1.2, 1.2] e P ∈ [−0.2, 1.2]',
+      'Diagrama P-Q: cores de eixo, ticks e grade adaptadas para fundo escuro (rgba branco)',
+      'Diagrama P-Q: stepSize 0.20 (antes 0.25) para corresponder à referência normativa',
+    ]
+  },
+  {
+    ver:'V0.18', date:'2026-03-31',
+    changes:[
+      'Redesign Sumário: KPI row (15 normas/3 ensaios/2 modos/200 Hz), norm badges compactos, histórico dinâmico via JS',
+      'Sumário: tabelas bibliográficas ONS/IEEE/IEC/ABNT movidas para Normas e Legendas — fonte única',
+      'Normas e Legendas: nav interna sticky com 7 âncoras (Normas, ONS, Degrau+, Degrau−, Rejeição, FCR, P-Q)',
+      'Normas e Legendas: Seção 0 com 15 normas completas (ONS/IEEE/IEC/ABNT) adicionada no topo',
+      'Normas e Legendas: Seção 6 (tabela de critérios duplicada) removida — fonte única no Sumário',
+      'Funções: badge ✅ Implementado nos cards AVR e FCR',
+      'Funções: MVAR, FP, PSS agrupados em seção dashed com badge "não simulados"',
+      'CSS: 12 classes novas — .kpi, .sum-kpis, .nbadge*, .chlog-*, .fimpl, .fref-*, .leg-nav*',
+    ]
+  },
   {
     ver:'V0.17', date:'2026-03-31',
     changes:[
@@ -3223,6 +3313,10 @@ applyARIA();
 (function(){
   ['verBadge','sumVer'].forEach(id=>{ const el=$(id); if(el) el.textContent=APP_VERSION; });
   ['anoBadge','sumAno'].forEach(id=>{ const el=$(id);  if(el) el.textContent=APP_YEAR;    });
+  const cl=$('sum-changelog');
+  if(cl) cl.innerHTML=APP_HISTORY.slice(0,5).map(h=>
+    `<div class="chlog-row"><span class="chlog-v">${h.ver}</span><span class="chlog-d">${h.date}</span><span class="chlog-t">${h.changes[0]}</span></div>`
+  ).join('');
 })();
 </script>
 

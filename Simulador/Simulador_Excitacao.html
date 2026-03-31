@@ -208,6 +208,24 @@ body{font-family:'Lora',Georgia,serif;background:var(--bg);color:var(--c1);font-
 .stbl-sec h4{font-size:12px;font-weight:700;font-family:'Poppins',Arial,sans-serif;color:var(--c1);margin-bottom:8px}
 .ref-card{background:var(--bg-panel);padding:10px;border-radius:6px;border:1px solid var(--bd);margin:6px 0}
 .ref-card p{font-size:10px;color:var(--c3);line-height:1.6;margin:3px 0}
+/* R6 — Inline styles extracted to named classes ────── */
+.row input.inp-ro{background:#e8f4fb;color:#003a5e}
+.lof-col-hdr{font-size:10px;font-weight:700;text-align:center;color:#2a4d6b}
+.lof-pt-lbl{font-size:10px;color:var(--c2)}
+.norm-grp{margin:10px 0 4px;font-size:11px;font-weight:700;color:#fff;padding:4px 10px;border-radius:4px;letter-spacing:.5px}
+.proto-outer{background:#e8f4fb;border-radius:8px;padding:10px 12px;margin-top:10px;border:1px solid var(--bd)}
+.calc-outer{background:var(--bg-panel);border-radius:8px;padding:10px 12px;margin-top:10px;border:1px solid var(--bd)}
+.box-title{font-size:10px;font-weight:700;color:#003a5e;margin-bottom:8px;letter-spacing:.3px}
+.proto-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.proto-card{background:var(--bg-panel);border-radius:6px;padding:8px 10px;border:1px solid var(--bd)}
+.proto-card-hdr{font-size:9.5px;font-weight:700;color:#005b92;border-bottom:1px solid var(--bd);padding-bottom:4px;margin-bottom:6px}
+.calc-box{border-radius:6px;overflow:hidden;border:1px solid var(--bd)}
+.calc-tip{font-size:9px;color:#3a6080;padding:4px 8px;background:var(--bg);border-bottom:1px solid var(--bd)}
+.calc-hdr{font-size:9.5px;font-weight:700;background:#003a5e;color:#fff;padding:4px 8px;text-align:center}
+.calc-inp{width:100%;padding:5px 8px;font-size:13px;border:none;border-top:2px solid #fbbf24;text-align:center;font-family:monospace;font-weight:700;color:#92400e;background:#fff7ed;outline:none}
+.calc-out{font-size:14px;font-weight:700;text-align:center;padding:6px 4px;font-family:monospace;background:#fafafa}
+.badge-ok{background:#d0eaf8;color:#005b92;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700}
+.badge-fail{background:#fee2e2;color:#b91c1c;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700}
 /* EXPAND CHART */
 .cx-btn{position:absolute;top:6px;right:8px;background:rgba(20,20,19,.07);border:1px solid var(--bd);border-radius:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;z-index:10;opacity:.6;transition:opacity .15s}
 .cx-btn:hover{opacity:1;background:rgba(11,155,211,.15)}
@@ -386,15 +404,15 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         </div>
         <div class="div"></div>
         <div class="row"><label>Sn nominal</label><input type="number" id="Sn"  value="100"  step="1"   oninput="calcEquip()"><span>MVA</span></div>
-        <div class="row"><label>Pn ativa</label>   <input type="number" id="Pn"  value="" placeholder="calc" readonly style="background:#e8f4fb;color:#003a5e"><span>MW</span></div>
-        <div class="row"><label>Qn reativa</label> <input type="number" id="Qn"  value="" placeholder="calc" readonly style="background:#e8f4fb;color:#003a5e"><span>Mvar</span></div>
+        <div class="row"><label>Pn ativa</label>   <input type="number" id="Pn"  value="" placeholder="calc" readonly class="inp-ro"><span>MW</span></div>
+        <div class="row"><label>Qn reativa</label> <input type="number" id="Qn"  value="" placeholder="calc" readonly class="inp-ro"><span>Mvar</span></div>
         <div class="row"><label>fp nominal</label> <input type="number" id="fp"  value="0.85" step="0.01" min="0.1" max="1" oninput="calcEquip()"><span></span></div>
         <div class="row"><label>Vn terminal</label><input type="number" id="Vn"  value="13.8" step="0.1"  oninput="calcEquip()"><span>kV</span></div>
-        <div class="row"><label>In estator</label> <input type="number" id="In"  value="" placeholder="calc" readonly style="background:#e8f4fb;color:#003a5e"><span>kA</span></div>
-        <div class="row"><label>Zn estator</label> <input type="number" id="Zn"  value="" placeholder="calc" readonly style="background:#e8f4fb;color:#003a5e"><span>Ω</span></div>
+        <div class="row"><label>In estator</label> <input type="number" id="In"  value="" placeholder="calc" readonly class="inp-ro"><span>kA</span></div>
+        <div class="row"><label>Zn estator</label> <input type="number" id="Zn"  value="" placeholder="calc" readonly class="inp-ro"><span>Ω</span></div>
         <div class="row"><label>Frequência</label> <input type="number" id="fn"  value="60"   step="1"   oninput="calcEquip()"><span>Hz</span></div>
         <div class="row"><label>Velocidade</label> <input type="number" id="RPM" value="1800" step="60"  oninput="calcEquip()"><span>rpm</span></div>
-        <div class="row"><label>Nº de polos</label><input type="number" id="nPol" value="" placeholder="auto" readonly style="background:#e8f4fb;color:#003a5e"><span>polos</span></div>
+        <div class="row"><label>Nº de polos</label><input type="number" id="nPol" value="" placeholder="auto" readonly class="inp-ro"><span>polos</span></div>
         <div class="note">Pn = Sn·fp &nbsp;·&nbsp; Qn = Sn·√(1−fp²) &nbsp;·&nbsp; In = Sn/(√3·Vn) &nbsp;·&nbsp; Zn = Vn²/Sn &nbsp;·&nbsp; nPolos = 120·fn/RPM</div>
       </div>
     </div>
@@ -516,21 +534,21 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
       <div class="sb">
         <div style="display:grid;grid-template-columns:28px 1fr 1fr;gap:3px 5px;align-items:center">
           <span></span>
-          <span style="font-size:10px;font-weight:700;text-align:center;color:#2a4d6b">P [pu]</span>
-          <span style="font-size:10px;font-weight:700;text-align:center;color:#2a4d6b">Q [pu]</span>
-          <label style="font-size:10px;color:#7a9ab8">Pt 1</label>
+          <span class="lof-col-hdr">P [pu]</span>
+          <span class="lof-col-hdr">Q [pu]</span>
+          <label class="lof-pt-lbl">Pt 1</label>
           <input type="number" id="lof_p1" value="0.00" step="0.01" min="0" max="1.5">
           <input type="number" id="lof_q1" value="-0.10" step="0.01" min="-1.5" max="0">
-          <label style="font-size:10px;color:#7a9ab8">Pt 2</label>
+          <label class="lof-pt-lbl">Pt 2</label>
           <input type="number" id="lof_p2" value="0.25" step="0.01" min="0" max="1.5">
           <input type="number" id="lof_q2" value="-0.35" step="0.01" min="-1.5" max="0">
-          <label style="font-size:10px;color:#7a9ab8">Pt 3</label>
+          <label class="lof-pt-lbl">Pt 3</label>
           <input type="number" id="lof_p3" value="0.50" step="0.01" min="0" max="1.5">
           <input type="number" id="lof_q3" value="-0.50" step="0.01" min="-1.5" max="0">
-          <label style="font-size:10px;color:#7a9ab8">Pt 4</label>
+          <label class="lof-pt-lbl">Pt 4</label>
           <input type="number" id="lof_p4" value="0.75" step="0.01" min="0" max="1.5">
           <input type="number" id="lof_q4" value="-0.55" step="0.01" min="-1.5" max="0">
-          <label style="font-size:10px;color:#7a9ab8">Pt 5</label>
+          <label class="lof-pt-lbl">Pt 5</label>
           <input type="number" id="lof_p5" value="1.00" step="0.01" min="0" max="1.5">
           <input type="number" id="lof_q5" value="-0.55" step="0.01" min="-1.5" max="0">
         </div>
@@ -727,13 +745,13 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         </svg>
 
         <!-- ═══ 3 PASSOS DE AVALIAÇÃO ═══ -->
-        <div style="background:#e8f4fb;border-radius:8px;padding:10px 12px;margin-top:10px;border:1px solid #cde3f0">
-          <div style="font-size:10px;font-weight:700;color:#003a5e;margin-bottom:8px;letter-spacing:.3px">📋 PROTOCOLO DE AVALIAÇÃO — 3 PASSOS (baseado em IEEE 421.2 / ONS Sub. 2.10)</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div class="proto-outer">
+          <div class="box-title">📋 PROTOCOLO DE AVALIAÇÃO — 3 PASSOS (baseado em IEEE 421.2 / ONS Sub. 2.10)</div>
+          <div class="proto-grid">
 
             <!-- PASSO 1 -->
-            <div style="background:#fff;border-radius:6px;padding:8px 10px;border:1px solid #cde3f0">
-              <div style="font-size:9.5px;font-weight:700;color:#005b92;border-bottom:1px solid #cde3f0;padding-bottom:4px;margin-bottom:6px">1° PASSO — Identificar Variáveis</div>
+            <div class="proto-card">
+              <div class="proto-card-hdr">1° PASSO — Identificar Variáveis</div>
               <div style="font-size:10px;color:#003a5e;line-height:1.8">
                 <span style="color:#ef4444;font-weight:700">Mp</span> — pico de tensão [pu]<br>
                 <span style="color:#6366f1;font-weight:700">yf</span> — tensão final [pu]<br>
@@ -744,8 +762,8 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
             </div>
 
             <!-- PASSO 2 -->
-            <div style="background:#fff;border-radius:6px;padding:8px 10px;border:1px solid #cde3f0">
-              <div style="font-size:9.5px;font-weight:700;color:#005b92;border-bottom:1px solid #cde3f0;padding-bottom:4px;margin-bottom:6px">2° PASSO — Calcular Indicadores</div>
+            <div class="proto-card">
+              <div class="proto-card-hdr">2° PASSO — Calcular Indicadores</div>
               <div style="font-size:10px;color:#003a5e;font-family:'Courier New',monospace;line-height:2.1;background:#f0f7fb;border-radius:4px;padding:6px 8px">
                 <span style="color:#0b9bd3;font-weight:700">OS</span> = (Mp − yf) / |Δ| × 100 [%]<br>
                 <span style="color:#fbbf24;font-weight:700">Te</span> = tf − tp [s]
@@ -754,13 +772,13 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
             </div>
 
             <!-- PASSO 3 -->
-            <div style="background:#fff;border-radius:6px;padding:8px 10px;border:1px solid #cde3f0">
-              <div style="font-size:9.5px;font-weight:700;color:#005b92;border-bottom:1px solid #cde3f0;padding-bottom:4px;margin-bottom:6px">3° PASSO — Verificar Requisitos</div>
+            <div class="proto-card">
+              <div class="proto-card-hdr">3° PASSO — Verificar Requisitos</div>
               <div style="font-size:10px;line-height:1.9">
-                <span style="color:#005b92;font-weight:700">OS ≤ 10 %</span> <span style="background:#d0eaf8;color:#005b92;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700">APROVADO</span><br>
-                <span style="color:#dc2626;font-weight:700">OS &gt; 10 %</span> <span style="background:#fee2e2;color:#b91c1c;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700">REPROVADO</span><br>
-                <span style="color:#005b92;font-weight:700">Te ≤ 1 s&nbsp;&nbsp;</span> <span style="background:#d0eaf8;color:#005b92;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700">APROVADO</span><br>
-                <span style="color:#dc2626;font-weight:700">Te &gt; 1 s&nbsp;&nbsp;</span> <span style="background:#fee2e2;color:#b91c1c;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700">REPROVADO</span>
+                <span style="color:#005b92;font-weight:700">OS ≤ 10 %</span> <span class="badge-ok">APROVADO</span><br>
+                <span style="color:#dc2626;font-weight:700">OS &gt; 10 %</span> <span class="badge-fail">REPROVADO</span><br>
+                <span style="color:#005b92;font-weight:700">Te ≤ 1 s&nbsp;&nbsp;</span> <span class="badge-ok">APROVADO</span><br>
+                <span style="color:#dc2626;font-weight:700">Te &gt; 1 s&nbsp;&nbsp;</span> <span class="badge-fail">REPROVADO</span>
               </div>
             </div>
 
@@ -768,51 +786,51 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         </div>
 
         <!-- ═══ CALCULADORA AUXILIAR ═══ -->
-        <div style="background:#fff;border-radius:8px;padding:10px 12px;margin-top:10px;border:1px solid #cde3f0">
-          <div style="font-size:10px;font-weight:700;color:#003a5e;margin-bottom:8px;letter-spacing:.3px">🧮 CALCULADORA AUXILIAR — Como Encontrar as Variáveis</div>
+        <div class="calc-outer">
+          <div class="box-title">🧮 CALCULADORA AUXILIAR — Como Encontrar as Variáveis</div>
 
           <!-- Inputs: Degrau, Vt0, yf -->
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
-            <div style="border-radius:6px;overflow:hidden;border:1px solid #cde3f0">
-              <div style="font-size:9px;color:#3a6080;padding:4px 8px;background:#f0f7fb;border-bottom:1px solid #cde3f0">Entrar com o degrau aplicado</div>
-              <div style="font-size:9.5px;font-weight:700;background:#003a5e;color:#fff;padding:4px 8px;text-align:center">Degrau em %</div>
+            <div class="calc-box">
+              <div class="calc-tip">Entrar com o degrau aplicado</div>
+              <div class="calc-hdr">Degrau em %</div>
               <input type="number" id="calc-degrau" value="5" step="1"
                 oninput="calcVarAux()"
-                style="width:100%;padding:5px 8px;font-size:13px;border:none;border-top:2px solid #fbbf24;text-align:center;font-family:monospace;font-weight:700;color:#92400e;background:#fff7ed;outline:none">
+                class="calc-inp">
             </div>
-            <div style="border-radius:6px;overflow:hidden;border:1px solid #cde3f0">
-              <div style="font-size:9px;color:#3a6080;padding:4px 8px;background:#f0f7fb;border-bottom:1px solid #cde3f0">Entrar com a tensão inicial</div>
-              <div style="font-size:9.5px;font-weight:700;background:#003a5e;color:#fff;padding:4px 8px;text-align:center">Tensão inicial (Vt₀) em pu</div>
+            <div class="calc-box">
+              <div class="calc-tip">Entrar com a tensão inicial</div>
+              <div class="calc-hdr">Tensão inicial (Vt₀) em pu</div>
               <input type="number" id="calc-vt0" value="1.0" step="0.001"
                 oninput="calcVarAux()"
-                style="width:100%;padding:5px 8px;font-size:13px;border:none;border-top:2px solid #fbbf24;text-align:center;font-family:monospace;font-weight:700;color:#92400e;background:#fff7ed;outline:none">
+                class="calc-inp">
             </div>
-            <div style="border-radius:6px;overflow:hidden;border:1px solid #cde3f0">
-              <div style="font-size:9px;color:#3a6080;padding:4px 8px;background:#f0f7fb;border-bottom:1px solid #cde3f0">Valor final de tensão</div>
-              <div style="font-size:9.5px;font-weight:700;background:#003a5e;color:#fff;padding:4px 8px;text-align:center">Valor final (yf) em pu</div>
+            <div class="calc-box">
+              <div class="calc-tip">Valor final de tensão</div>
+              <div class="calc-hdr">Valor final (yf) em pu</div>
               <input type="number" id="calc-yf" value="1.05" step="0.001"
                 oninput="calcVarAux()"
-                style="width:100%;padding:5px 8px;font-size:13px;border:none;border-top:2px solid #fbbf24;text-align:center;font-family:monospace;font-weight:700;color:#92400e;background:#fff7ed;outline:none">
+                class="calc-inp">
             </div>
           </div>
 
           <!-- Outputs: 10%, 90%, +5%, -5% -->
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
-            <div style="border-radius:6px;overflow:hidden;border:1px solid #cde3f0">
-              <div style="font-size:9.5px;font-weight:700;background:#003a5e;color:#fff;padding:4px 8px;text-align:center">Valor 10%</div>
-              <div id="calc-v10" style="font-size:14px;font-weight:700;text-align:center;padding:6px 4px;font-family:monospace;color:#7c3aed;background:#fafafa">—</div>
+            <div class="calc-box">
+              <div class="calc-hdr">Valor 10%</div>
+              <div id="calc-v10" class="calc-out" style="color:#7c3aed">—</div>
             </div>
-            <div style="border-radius:6px;overflow:hidden;border:1px solid #cde3f0">
-              <div style="font-size:9.5px;font-weight:700;background:#003a5e;color:#fff;padding:4px 8px;text-align:center">Valor 90%</div>
-              <div id="calc-v90" style="font-size:14px;font-weight:700;text-align:center;padding:6px 4px;font-family:monospace;color:#0369a1;background:#fafafa">—</div>
+            <div class="calc-box">
+              <div class="calc-hdr">Valor 90%</div>
+              <div id="calc-v90" class="calc-out" style="color:#0369a1">—</div>
             </div>
-            <div style="border-radius:6px;overflow:hidden;border:1px solid #cde3f0">
-              <div style="font-size:9.5px;font-weight:700;background:#003a5e;color:#fff;padding:4px 8px;text-align:center">+ 5%</div>
-              <div id="calc-vp5" style="font-size:14px;font-weight:700;text-align:center;padding:6px 4px;font-family:monospace;color:#005b92;background:#fafafa">—</div>
+            <div class="calc-box">
+              <div class="calc-hdr">+ 5%</div>
+              <div id="calc-vp5" class="calc-out" style="color:#005b92">—</div>
             </div>
-            <div style="border-radius:6px;overflow:hidden;border:1px solid #cde3f0">
-              <div style="font-size:9.5px;font-weight:700;background:#003a5e;color:#fff;padding:4px 8px;text-align:center">- 5%</div>
-              <div id="calc-vm5" style="font-size:14px;font-weight:700;text-align:center;padding:6px 4px;font-family:monospace;color:#b91c1c;background:#fafafa">—</div>
+            <div class="calc-box">
+              <div class="calc-hdr">- 5%</div>
+              <div id="calc-vm5" class="calc-out" style="color:#b91c1c">—</div>
             </div>
           </div>
 
@@ -1171,7 +1189,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         <h4>📋 Normas e Documentos Referenciados</h4>
 
         <!-- ONS — Operador Nacional do Sistema -->
-        <div style="margin:10px 0 4px;font-size:11px;font-weight:700;color:#fff;background:#003a5e;padding:4px 10px;border-radius:4px;letter-spacing:.5px">🇧🇷 ONS — Operador Nacional do Sistema Elétrico</div>
+        <div class="norm-grp" style="background:#003a5e">🇧🇷 ONS — Operador Nacional do Sistema Elétrico</div>
         <table class="stbl">
           <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
           <tbody>
@@ -1183,7 +1201,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         </table>
 
         <!-- IEEE — Institute of Electrical and Electronics Engineers -->
-        <div style="margin:12px 0 4px;font-size:11px;font-weight:700;color:#fff;background:#003a5e;padding:4px 10px;border-radius:4px;letter-spacing:.5px">🔵 IEEE — Institute of Electrical and Electronics Engineers</div>
+        <div class="norm-grp" style="background:#003a5e">🔵 IEEE — Institute of Electrical and Electronics Engineers</div>
         <table class="stbl">
           <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
           <tbody>
@@ -1199,7 +1217,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         </table>
 
         <!-- IEC — International Electrotechnical Commission -->
-        <div style="margin:12px 0 4px;font-size:11px;font-weight:700;color:#fff;background:#005b92;padding:4px 10px;border-radius:4px;letter-spacing:.5px">🟢 IEC — International Electrotechnical Commission</div>
+        <div class="norm-grp" style="background:#005b92">🟢 IEC — International Electrotechnical Commission</div>
         <table class="stbl">
           <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
           <tbody>
@@ -1213,7 +1231,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
         </table>
 
         <!-- ABNT — Associação Brasileira de Normas Técnicas -->
-        <div style="margin:12px 0 4px;font-size:11px;font-weight:700;color:#fff;background:#003a5e;padding:4px 10px;border-radius:4px;letter-spacing:.5px">🟣 ABNT — Associação Brasileira de Normas Técnicas</div>
+        <div class="norm-grp" style="background:#003a5e">🟣 ABNT — Associação Brasileira de Normas Técnicas</div>
         <table class="stbl">
           <thead><tr><th style="width:16%">Norma</th><th style="width:44%">Título</th><th>Aplicação neste simulador</th></tr></thead>
           <tbody>
@@ -1566,7 +1584,7 @@ body.dark .lcond{background:#2a1a1a;color:#e0a0a0;border-color:#dc2626}
 // ═══════════════════════════════════════════════
 // VERSÃO DO SOFTWARE
 // ═══════════════════════════════════════════════
-const APP_VERSION = 'V0.15';
+const APP_VERSION = 'V0.16';
 const APP_YEAR    = '2026';
 const APP_DEV     = 'Eng° Douglas Furtado';
 
@@ -2481,6 +2499,18 @@ function calcVarAux(){
 // HISTÓRICO DE VERSÕES
 // ═══════════════════════════════════════════════
 const APP_HISTORY = [
+  {
+    ver:'V0.16', date:'2026-03-30',
+    changes:[
+      'R6: 16 classes CSS extraídas de inline styles (inp-ro, norm-grp, proto-*, calc-*, badge-ok/fail)',
+      'R6: 43 inline styles removidos do HTML — de 204 para 161 (−21%)',
+      'R6: .lof-col-hdr, .lof-pt-lbl — labels LOF P-Q via classe',
+      'R6: .proto-outer, .calc-outer, .box-title, .proto-grid, .proto-card/.proto-card-hdr',
+      'R6: .calc-box, .calc-tip, .calc-hdr, .calc-inp, .calc-out — calculadora auxiliar',
+      'R6: .norm-grp — cabeçalhos de seção de normas (ONS/IEEE/IEC/ABNT)',
+      'R6: .badge-ok / .badge-fail — indicadores APROVADO/REPROVADO',
+    ]
+  },
   {
     ver:'V0.15', date:'2026-03-30',
     changes:[

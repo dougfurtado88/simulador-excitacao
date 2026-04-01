@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 > **Projeto:** Simulador de Ensaios Dinâmicos — Sistema de Excitação
 > **Desenvolvedor:** Eng° Douglas Furtado
-> **Versão atual:** V0.12
+> **Versão atual:** V0.19
 > **Normas:** IEEE 421.5 · IEEE 421.2 · IEC 60034-16 · ONS Submódulo 2.10
 
 ---
@@ -96,7 +96,7 @@ Deixar a janela aberta enquanto trabalha. Encerrar com `Ctrl + C`.
 Após modificar o simulador, além do versionamento interno (`APP_VERSION`), fazer commit descritivo:
 ```bash
 git add -A
-git commit -m "V0.10: descrição da mudança"
+git commit -m "V0.20: descrição da mudança"
 git push
 ```
 
@@ -118,6 +118,7 @@ Desenvolvimento/
 │   ├── sw.js                      ← service worker (cache offline)
 │   ├── server.py                  ← servidor Python para rodar localmente
 │   ├── icon.svg                   ← ícone do app
+│   ├── logo.svg                   ← logo EPSE (usado no header do simulador)
 │   ├── Assinatura.svg             ← logo do desenvolvedor (cópia local para o servidor)
 │   └── Backups/                   ← versões anteriores do simulador
 ├── Normas/
@@ -243,11 +244,12 @@ const Mp = data.reduce((m, d) => d.Vt > m ? d.Vt : m, data[0].Vt);
 
 A cada sessão que modifica `Simulador_Excitacao.html`:
 
-1. Incrementar `APP_VERSION` no topo do `<script>`: `'V0.09'` → `'V0.10'`
-2. Adicionar entrada no array `CHANGELOG` interno:
+1. Incrementar `APP_VERSION` no topo do `<script>`: `'V0.19'` → `'V0.20'`
+2. Adicionar entrada no array `APP_HISTORY` interno:
    ```javascript
-   { v:'V0.10', d:'2026-MM-DD', t:'Descrição da mudança' },
+   { ver:'V0.20', date:'2026-MM-DD', changes:['Descrição da mudança'] },
    ```
+3. Incrementar `CACHE_NAME` em `sw.js`: `'simexcitacao-v19'` → `'simexcitacao-v20'`
 
 ---
 
@@ -285,9 +287,9 @@ Fontes carregadas via Google Fonts (requer internet na primeira carga; cacheadas
 
 `index.html` é a entrada do app (PWA). Não contém lógica de simulação — apenas apresentação e link para `Simulador_Excitacao.html`.
 
-`sw.js` cacheia localmente: `index.html`, `Simulador_Excitacao.html`, `manifest.json`, `icon.svg` e Chart.js (CDN). Após primeira carga com internet, o app funciona offline.
+`sw.js` cacheia localmente: `index.html`, `Simulador_Excitacao.html`, `manifest.json`, `icon.svg`, `logo.svg` e Chart.js (CDN). Após primeira carga com internet, o app funciona offline.
 
 Para atualizar o cache do SW após mudanças no simulador, incrementar `CACHE_NAME` em `sw.js`:
 ```javascript
-const CACHE_NAME = 'simexcitacao-v2';  // ← incrementar
+const CACHE_NAME = 'simexcitacao-v19';  // ← incrementar a cada versão
 ```
